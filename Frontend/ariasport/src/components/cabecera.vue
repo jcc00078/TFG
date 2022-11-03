@@ -1,6 +1,9 @@
 <template>
   <MDBNavbar class="justify-content-end" expand="lg" light bg="light" container>
-    <MDBNavbarBrand to="/">LOGO</MDBNavbarBrand>
+    <MDBNavbarBrand router-link to="/">
+      <!-- <img src="../assets/logo.png"> -->
+      LOGO
+    </MDBNavbarBrand>
     <MDBNavbarToggler
       @click="collapse1 = !collapse1"
       target="#navbarSupportedContent"
@@ -27,10 +30,12 @@
             </MDBDropdownMenu>
           </MDBDropdown>
         </MDBNavbarItem>
-        <MDBNavbarItem to="#" disabled> Usuario anónimo </MDBNavbarItem>
+        <MDBNavbarItem to="/" disabled> Usuario anónimo </MDBNavbarItem>
       </MDBNavbarNav>
-      <router-link to="/inicioSesion" class="bg-primary text-white">
-        Iniciar Sesión
+      <router-link to="/inicioSesion">
+        <MDBBtn color ="primary" class="text-white">
+          Iniciar Sesión
+        </MDBBtn>
       </router-link>
     </MDBCollapse>
   </MDBNavbar>
@@ -49,9 +54,9 @@ import {
   MDBDropdownToggle,
   MDBDropdownMenu,
   MDBDropdownItem,
+MDBBtn,
 } from "mdb-vue-ui-kit";
 import { ref } from "vue";
-
 export default {
   components: {
     MDBNavbar,
@@ -64,7 +69,8 @@ export default {
     MDBDropdownToggle,
     MDBDropdownMenu,
     MDBDropdownItem,
-  },
+    MDBBtn
+},
   setup() {
     const collapse1 = ref(false);
     const dropdown1 = ref(false);

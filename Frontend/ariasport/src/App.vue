@@ -1,7 +1,7 @@
 <template> <!--Template general donde voy a cargar la cabecera y las distintas rutas-->
  <div id="app">
     <cabecera/>
-    <router-view/>
+    <router-view></router-view>
  </div>
 </template>
 

@@ -5,7 +5,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 
 const routes = [
     {
-      path: "/",
+      path: "/principal",
       name: "principal",
       component: principal,
     },
