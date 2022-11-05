@@ -23,14 +23,14 @@
               >Servicios</MDBDropdownToggle
             >
             <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
-              <MDBDropdownItem href="#"
+              <MDBDropdownItem to="/mantenimiento"
                 >Consultar Mantenimiento</MDBDropdownItem
               >
               <MDBDropdownItem href="#">Pedir cita</MDBDropdownItem>
             </MDBDropdownMenu>
           </MDBDropdown>
         </MDBNavbarItem>
-        <MDBNavbarItem to="/" disabled> Usuario anónimo </MDBNavbarItem>
+        <MDBNavbarItem v-if="store.noEsanonimo" to="/" disabled> Usuario anónimo </MDBNavbarItem>
       </MDBNavbarNav>
       <router-link to="/inicioSesion">
         <MDBBtn color ="primary" class="text-white">
@@ -57,6 +57,8 @@ import {
 MDBBtn,
 } from "mdb-vue-ui-kit";
 import { ref } from "vue";
+import { useStore } from "@/store/autenticar";
+
 export default {
   components: {
     MDBNavbar,
@@ -74,9 +76,13 @@ export default {
   setup() {
     const collapse1 = ref(false);
     const dropdown1 = ref(false);
+    const store = useStore();
+    
+
     return {
       collapse1,
       dropdown1,
+      store
     };
   },
 };

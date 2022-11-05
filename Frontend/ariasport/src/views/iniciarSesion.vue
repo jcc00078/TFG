@@ -25,7 +25,7 @@
       />
       <!-- Submit button -->
       <MDBBtn id="estoyLogueado" color="primary" block @click="logueado()"> Conectarse </MDBBtn>
-      <cabecera logincorrecto></cabecera>
+      <!-- <cabecera logincorrecto></cabecera> -->
     </form>
   </MDBCardBody>
   </MDBCard>
@@ -45,6 +45,7 @@ MDBCardBody,
 MDBCardTitle
 } from "mdb-vue-ui-kit";
 import { ref } from "vue";
+import { useStore } from "@/store/autenticar";
 
 export default {
   components: {
@@ -62,12 +63,14 @@ export default {
     const form1Password = ref("");
     const form1LoginCheck = ref("");
     const loginCorrecto = ref("false");
+    const store = useStore();
 
     return {
       form1Email,
       form1Password,
       form1LoginCheck,
-      loginCorrecto
+      loginCorrecto,
+      store,
     };
   },
   methods: {
@@ -75,6 +78,7 @@ export default {
       if(this.form1Email =="a" && this.form1Password =="b"){
          this.loginCorrecto=true;
           router.push("/");
+          this.store.login();
       } else
           this.form1LoginCheck = "Error, introduce las credenciales de nuevo"
     }
