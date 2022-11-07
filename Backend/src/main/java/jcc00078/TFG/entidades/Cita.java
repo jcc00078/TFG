@@ -1,4 +1,4 @@
-package entidades;
+package jcc00078.TFG.entidades;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

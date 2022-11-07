@@ -1,4 +1,4 @@
-package entidades;
+package jcc00078.TFG.entidades;
 
 import java.io.Serializable;
 import java.util.List;
@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
+//import javax.validation.constraints.Size;
 
 /**
  * Entidad Usuario
@@ -15,20 +15,20 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name="usuarios")
-public class Usuario implements Serializable {
+public class Usuario {
     
     @Id
-    @Size(min = 8, max = 8)
+    //@Size(min = 8, max = 8)
     @Column(unique = true)
     private int dni_usuario;
     
-    @Size(min = 1, max = 30)
+    //@Size(min = 1, max = 30)
     private String nombre;
     
-    @Size(min = 1, max = 30)
+    //@Size(min = 1, max = 30)
     private String apellidos;
     
-    @Size(min = 1, max = 20)
+   // @Size(min = 1, max = 20)
     private String contraseña;
     
     /** Citas asociadas al usuario */
