@@ -3,7 +3,10 @@ spring.dataSource.url: jdbc:mysql://localhost:3306/ariasport
 spring.dataSource.username: ariasport
 spring.dataSource.password: secret
 
-spring.jpa.hibernate.ddl-auto: create
-# spring.jpa.open-in-view: false
+#Configuración JPA
+spring.jpa.hibernate.ddl-auto: none 
+#spring.jpa.hibernate.ddl-auto: create
+
+
 
 server.port: 8084

@@ -24,9 +24,8 @@
             >
             <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
               <MDBDropdownItem to="/mantenimiento"
-                >Consultar Mantenimiento</MDBDropdownItem
-              >
-              <MDBDropdownItem href="#">Pedir cita</MDBDropdownItem>
+              :disabled ="store.noEsanonimo" >Consultar Mantenimiento</MDBDropdownItem>
+              <MDBDropdownItem href="#" :disabled ="store.noEsanonimo">Pedir cita</MDBDropdownItem>
             </MDBDropdownMenu>
           </MDBDropdown>
         </MDBNavbarItem>
