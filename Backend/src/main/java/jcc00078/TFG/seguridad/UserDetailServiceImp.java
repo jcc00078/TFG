@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package jcc00078.TFG.seguridad;
 import jcc00078.TFG.entidades.Usuario;
 import jcc00078.TFG.repositorios.UsuarioRepositorio;
@@ -16,7 +12,6 @@ import org.springframework.stereotype.Service;
  * @author juanc
  */
 @Service
-
 public class UserDetailServiceImp implements UserDetailsService{
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;

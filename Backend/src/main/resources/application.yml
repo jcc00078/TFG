@@ -7,6 +7,5 @@ spring.dataSource.password: secret
 spring.jpa.hibernate.ddl-auto: none 
 #spring.jpa.hibernate.ddl-auto: create
 
-
-
+#Puerto que utilizo
 server.port: 8084

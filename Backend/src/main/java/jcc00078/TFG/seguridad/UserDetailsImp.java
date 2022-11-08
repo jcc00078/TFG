@@ -16,10 +16,14 @@ import org.springframework.security.core.userdetails.UserDetails;
  *
  * @author juanc
  */
-@AllArgsConstructor
+//@AllArgsConstructor
 public class UserDetailsImp implements UserDetails {
 
     private final Usuario usuario;
+
+    public UserDetailsImp(Usuario usuario) {
+        this.usuario = usuario;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -55,9 +59,4 @@ public class UserDetailsImp implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-    
-    public String getNombre(){
-        return usuario.getNombre();
-    }
-
 }

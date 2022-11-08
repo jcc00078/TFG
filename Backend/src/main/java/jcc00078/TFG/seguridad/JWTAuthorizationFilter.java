@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package jcc00078.TFG.seguridad;
 
 import java.io.IOException;
@@ -17,8 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * Clase que implementa un filtro para el proceso de autorización.
  *
- * @note Sirve para que el cliente utilice el token que se le ha respondido
- * adjuntado ya a las solicitudes para ingresar a los endpoints que requiera.
+ * @note Sirve para que el cliente utilice el token que se le da como respuesta e ingrese a los endpoints que requiera.
  * Esta clase se anota como Component para poder usar DI
  *
  * @author juanc
@@ -28,16 +23,15 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        //Comprobamos la existencia de la cabecera Authorization y que tiene el formato que elegimos
         String bearerToken = request.getHeader("Authorization");
-        //Comprobamos que no sea nulo y que tiene el formato que elegimos
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             String token = bearerToken.replace("Bearer ", "");
-            UsernamePasswordAuthenticationToken usernamePAT = Utils.getAuthentication(token);
+            UsernamePasswordAuthenticationToken usernamePAT = Utils.obtenerAutenticacion(token);
             //Establecemos la autenticación
             SecurityContextHolder.getContext().setAuthentication(usernamePAT);
             
         }
         filterChain.doFilter(request, response);
     }
-    
 }
