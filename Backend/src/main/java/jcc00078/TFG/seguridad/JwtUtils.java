@@ -6,28 +6,31 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Collections;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author juanc
  */
-//Estos parametros probablemente se migrarán al application.yml
-public class Utils {
-    private final static String token_acceso = "p7CzwU6Gejdc42Bo4gygwyWY+0HMTtei5QHedb1DUspigR2R0KyUF8eLlYN9Zs607MG5HwCbv/NJLGXqnqkjI5LMb9Jrh6bMh7o3p18wnTQ";  //Clave privada
-    
-    private final static Long tiempo_token_seg = 5_184_000L; //2 meses sería valido el token
+@Component
+public class JwtUtils {
+    @Value("${jwt.secreto}")
+    private String token_acceso;  //Clave privada
+    @Value("${jwt.tiempo_seg}")
+    private  Long tiempo_token_seg; //2 meses sería valido el token
 
 /**
  * Función que genera un token 
- * @param authentication Objeto de tipo authentication del cual necesitaremos el name
+ * @param subject 
  * @return String Devuelve un token
  */
-    public static String generarToken(Authentication authentication) {
+    public String generarToken(String subject) {
         long expiracionTokenMS = tiempo_token_seg * 1_000;
         Date fechaExpiracion = new Date(System.currentTimeMillis() + expiracionTokenMS);
-        String dni = authentication.getName();
+        String dni = subject;
         return Jwts.builder().setSubject(dni)
                 .setExpiration(fechaExpiracion)
                 .signWith(Keys.hmacShaKeyFor(token_acceso.getBytes()))
@@ -43,7 +46,7 @@ public class Utils {
      * @return Devuelve token UsernamePasswordAuthenticationToken o null si no
      * se ha podido crear
      */
-    public static UsernamePasswordAuthenticationToken obtenerAutenticacion(String token) {
+    public UsernamePasswordAuthenticationToken obtenerAutenticacion(String token) {
         // Validacion del request, si el usuario envia un token en un formato incorrecto o un token inválido o expirado, ocurre excepción.  
         try {
             //Proceso inverso a la creación del token.

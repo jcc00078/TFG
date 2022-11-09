@@ -10,15 +10,10 @@ package jcc00078.TFG.controladoresREST.dto;
  */
 public class RespuestaLogin {
     
-    public boolean exito;
-    public String descripcionFallo;
+    public String access_token;
 
-
-    public static RespuestaLogin invalidParams(){
-        RespuestaLogin res = new RespuestaLogin();
-        res.exito=false;
-        res.descripcionFallo="No se ha introducido el usuario o la contraseña";
-        return res;
+    public RespuestaLogin(String access_token) {
+        this.access_token = access_token;
     }
     
 }

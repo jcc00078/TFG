@@ -5,6 +5,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -19,15 +20,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * @author juanc
  */
 @Component
-public class JWTAuthorizationFilter extends OncePerRequestFilter {
-    
+public class JwtFilter extends OncePerRequestFilter {
+    @Autowired
+    private JwtUtils jwtUtils;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //Comprobamos la existencia de la cabecera Authorization y que tiene el formato que elegimos
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             String token = bearerToken.replace("Bearer ", "");
-            UsernamePasswordAuthenticationToken usernamePAT = Utils.obtenerAutenticacion(token);
+            UsernamePasswordAuthenticationToken usernamePAT = jwtUtils.obtenerAutenticacion(token);
             //Establecemos la autenticación
             SecurityContextHolder.getContext().setAuthentication(usernamePAT);
             

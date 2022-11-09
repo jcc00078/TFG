@@ -9,3 +9,9 @@ spring.jpa.hibernate.ddl-auto: none
 
 #Puerto que utilizo
 server.port: 8084
+
+#Clave privada
+jwt.secreto: p7CzwU6Gejdc42Bo4gygwyWY0HMTtei5QHedb1DUspigR2R0KyUF8eLlYN9Zs607MG5HwCbvNJLGXqnqkjI5LMb9Jrh6bMh7o3p18wnTQ
+
+#Tiempo de validez del token (2 meses)
+jwt.tiempo_seg: 5184000
