@@ -1,8 +1,12 @@
 import home from '@/views/home';
 import iniciarSesion from '@/views/iniciarSesion';
 import configurador from '@/views/configurador';
+import comparador from '@/views/comparador';
 import mantenimiento from '@/views/mantenimiento';
 import historial from '@/views/historial';
+import configuradorKawasaki from '@/views/configurador';
+import configuradorSuzuki from '@/views/configurador';
+
 
 import { createRouter, createWebHashHistory } from "vue-router";
 
@@ -21,6 +25,21 @@ const routes = [
       path:"/configurador",
       name:"configurador",
       component: configurador
+    },
+    {
+      path:"/comparador",
+      name:"comparador",
+      component: comparador
+    },
+    {
+      path:"/configurador-Kawasaki",
+      name:"configuradorKawasaki",
+      component: configuradorKawasaki
+    },
+    {
+      path:"/configurador-Suzuki",
+      name:"configuradorSuzuki",
+      component: configuradorSuzuki
     },
     {
       path:"/mantenimiento",

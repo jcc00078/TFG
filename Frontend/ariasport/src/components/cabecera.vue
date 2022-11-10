@@ -12,6 +12,7 @@
       <MDBNavbarNav>
         <MDBNavbarItem to="/"> Inicio </MDBNavbarItem>
         <MDBNavbarItem to="/configurador"> Configurador </MDBNavbarItem>
+        <MDBNavbarItem to="/comparador"> Comparador </MDBNavbarItem>
         <MDBNavbarItem to="/">Recomendador </MDBNavbarItem>
         <MDBNavbarItem>
           <!-- Navbar dropdown -->
