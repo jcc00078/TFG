@@ -3,18 +3,26 @@ import {defineStore} from 'pinia'
 export const useStore = defineStore('autenticar',{
     state: () => {
       return {
-        esAnonimo: true
+        username: "",
+        jwt: ""
       }
     },
     getters: {
-      noEsanonimo(state){
-          return state.esAnonimo;
-      },
+      // noEsanonimo(state){
+      //     return state.esAnonimo;
+      // },
+
     },
     actions: {
-      login() {
-        this.esAnonimo=false;
+      login(username, jwt) {
+        this.username=username;
+        this.jwt=jwt;
       },
+      logout(){
+        this.username="";
+        this.jwt="";
+      }
+      ,
     },
   })
 export default useStore;

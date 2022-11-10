@@ -1,4 +1,4 @@
-import principal from '@/views/principal';
+import home from '@/views/home';
 import iniciarSesion from '@/views/iniciarSesion';
 import configurador from '@/views/configurador';
 import mantenimiento from '@/views/mantenimiento';
@@ -8,9 +8,9 @@ import { createRouter, createWebHashHistory } from "vue-router";
 
 const routes = [
     {
-      path: "/principal",
-      name: "principal",
-      component: principal,
+      path: "/",
+      name: "home",
+      component: home,
     },
     {
       path: "/inicioSesion",

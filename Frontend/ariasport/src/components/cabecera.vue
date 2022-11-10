@@ -10,7 +10,7 @@
     ></MDBNavbarToggler>
     <MDBCollapse v-model="collapse1" id="navbarSupportedContent">
       <MDBNavbarNav>
-        <MDBNavbarItem to="/principal"> Inicio </MDBNavbarItem>
+        <MDBNavbarItem to="/"> Inicio </MDBNavbarItem>
         <MDBNavbarItem to="/configurador"> Configurador </MDBNavbarItem>
         <MDBNavbarItem to="/">Recomendador </MDBNavbarItem>
         <MDBNavbarItem>
@@ -23,18 +23,33 @@
               >Servicios</MDBDropdownToggle
             >
             <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
-              <MDBDropdownItem to="/mantenimiento"
-              :disabled ="store.noEsanonimo" >Consultar Mantenimiento</MDBDropdownItem>
-              <MDBDropdownItem href="#" :disabled ="store.noEsanonimo">Pedir cita</MDBDropdownItem>
+              <MDBDropdownItem to="/mantenimiento" :disabled="!store.username"
+                >Consultar Mantenimiento</MDBDropdownItem
+              >
+              <MDBDropdownItem href="#" :disabled="!store.username"
+                >Pedir cita</MDBDropdownItem
+              >
             </MDBDropdownMenu>
           </MDBDropdown>
         </MDBNavbarItem>
-        <MDBNavbarItem v-if="store.noEsanonimo" to="/" disabled> Usuario anónimo </MDBNavbarItem>
+        <MDBNavbarItem v-if="!store.username" to="/" disabled>
+          Usuario anónimo
+        </MDBNavbarItem>
       </MDBNavbarNav>
       <router-link to="/inicioSesion">
-        <MDBBtn color ="primary" class="text-white">
+        <MDBBtn v-if="!store.username" color="primary" class="text-white">
           Iniciar Sesión
         </MDBBtn>
+        <router-link to="/">
+          <MDBBtn
+            v-if="store.username"
+            color="warning"
+            class="text-white"
+            @click="logout()"
+          >
+            Cerrar Sesión
+          </MDBBtn>
+        </router-link>
       </router-link>
     </MDBCollapse>
   </MDBNavbar>
@@ -53,10 +68,11 @@ import {
   MDBDropdownToggle,
   MDBDropdownMenu,
   MDBDropdownItem,
-MDBBtn,
+  MDBBtn,
 } from "mdb-vue-ui-kit";
 import { ref } from "vue";
 import { useStore } from "@/store/autenticar";
+import router from "@/router";
 
 export default {
   components: {
@@ -70,19 +86,24 @@ export default {
     MDBDropdownToggle,
     MDBDropdownMenu,
     MDBDropdownItem,
-    MDBBtn
-},
+    MDBBtn,
+  },
   setup() {
     const collapse1 = ref(false);
     const dropdown1 = ref(false);
     const store = useStore();
-    
 
     return {
       collapse1,
       dropdown1,
-      store
+      store,
     };
+  },
+  methods: {
+    logout() {
+      this.store.logout();
+      router.push("/");
+    },
   },
 };
 </script>

@@ -1,87 +1,97 @@
 <template>
-<div class="container my-5">
-      <div class="alert alert-danger border-color-red" border-color="red" role="alert" v-show="form1LoginCheck !=''">
-        {{this.form1LoginCheck}}
+  <div class="container my-5">
+    <div
+      class="alert alert-danger border-color-red"
+      border-color="red"
+      role="alert"
+      v-show="comprobarLogin != ''"
+    >
+      {{ this.comprobarLogin }}
     </div>
-      <MDBCard class="shadow-4-strong w-responsive mx-auto" text="center">
-        <MDBCardBody>
-          <MDBCardTitle>Inicia sesión</MDBCardTitle>
-    <form v-if="loginCorrecto">
-      <!-- Email input -->
-      <MDBInput
-        type="email"
-        label="Email"
-        id="form1Email"
-        v-model="form1Email"
-        wrapperClass="mb-4"
-      />
-      <!-- Password input -->
-      <MDBInput
-        type="password"
-        label="Contraseña"
-        id="form1Password"
-        v-model="form1Password"
-        wrapperClass="mb-4"
-      />
-      <!-- Submit button -->
-      <MDBBtn id="estoyLogueado" color="primary" block @click="logueado()"> Conectarse </MDBBtn>
-      <!-- <cabecera logincorrecto></cabecera> -->
-    </form>
-  </MDBCardBody>
-  </MDBCard>
-    </div>
-  </template>
+    <MDBCard class="shadow-4-strong w-responsive mx-auto" text="center">
+      <MDBCardBody>
+        <MDBCardTitle>Inicia sesión</MDBCardTitle>
+        <form>
+          <!-- Dni input -->
+          <MDBInput
+            type="text"
+            label="DNI"
+            id="dni"
+            v-model="dni"
+            wrapperClass="mb-4"
+          />
+          <!-- Password input -->
+          <MDBInput
+            type="password"
+            label="Contraseña"
+            id="password"
+            v-model="password"
+            wrapperClass="mb-4"
+          />
+          <!-- Submit button -->
+          <MDBBtn id="estoyLogueado" color="primary" block @click="login()">
+            Conectarse
+          </MDBBtn>
+        </form>
+      </MDBCardBody>
+    </MDBCard>
+  </div>
+</template>
 
 <script>
 import router from "@/router";
 import {
-//   MDBRow,
-//   MDBCol,
   MDBInput,
-//   MDBCheckbox,
   MDBBtn,
-MDBCard,
-MDBCardBody,
-MDBCardTitle
+  MDBCard,
+  MDBCardBody,
+  MDBCardTitle,
 } from "mdb-vue-ui-kit";
 import { ref } from "vue";
 import { useStore } from "@/store/autenticar";
-
+import axios from "axios";
 export default {
   components: {
-    // MDBRow,
-    // MDBCol,
     MDBInput,
-    // MDBCheckbox,
     MDBBtn,
     MDBCard,
     MDBCardBody,
-    MDBCardTitle
-},
+    MDBCardTitle,
+  },
   setup() {
-    const form1Email = ref("");
-    const form1Password = ref("");
-    const form1LoginCheck = ref("");
+    const dni = ref("");
+    const password = ref("");
+    const comprobarLogin = ref("");
     const loginCorrecto = ref("false");
     const store = useStore();
 
     return {
-      form1Email,
-      form1Password,
-      form1LoginCheck,
+      dni,
+      password,
+      comprobarLogin,
       loginCorrecto,
       store,
     };
   },
   methods: {
-    logueado(){
-      if(this.form1Email =="a" && this.form1Password =="b"){
-         this.loginCorrecto=true;
-          router.push("/");
-          this.store.login();
-      } else
-          this.form1LoginCheck = "Error, introduce las credenciales de nuevo"
+    login() {
+      let json = {
+        dni: this.dni,
+        password: this.password,
+      };
+      axios
+        .post("http://localhost:8084/login", json)
+        .then(({data}) => {
+            this.loginCorrecto = true;
+            router.push("/");
+            this.store.login(this.dni,data.access_token);
+          console.log(data);
+        })
+        .catch(() => {
+          this.comprobarLogin = "Error, introduce las credenciales de nuevo";
+        });
+    },
+    
     }
-  },
 };
 </script>
