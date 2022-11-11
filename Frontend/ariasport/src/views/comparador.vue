@@ -1,63 +1,35 @@
 <template>
-  <div class="card" style="width: 18rem">
-    <img src="../assets/logoHonda.jpg" class="card-img-top" alt="..." />
-
-    <div class="card-body">
-      <h5 class="card-title">Primera moto {{ seleccion }}</h5>
+  <div class="container">
+    <div class="row">
+      <cartaComparador
+        class="col"
+        v-model:moto-seleccionada="moto1"
+        titulo="Primera moto"
+      />
+      <cartaComparador
+        class="col"
+        :desactivado="moto1 === ''"
+        v-model:moto-seleccionada="moto2"
+        titulo="Segunda moto"
+      />
     </div>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">
-        <select
-          v-model="seleccion"
-          class="form-select"
-          aria-label="Default select example"
-        >
-          <option selected value="">Selecciona una marca</option>
-          <option id="Kawasaki" value="kawasaki">Kawasaki</option>
-          <option id="Suzuki" value="suzuki">Suzuki</option>
-          <option id="Honda" value="honda">Honda</option>
-          <option id="Triumph" value="triumph">Triumph</option>
-        </select>
-      </li>
-
-      <li class="list-group-item" v-if="seleccion">
-        <select class="form-select" aria-label="Default select example">
-            <option selected value="">Selecciona un modelo</option>
-          <option v-for=" moto in motos" :key="moto">{{moto}}</option>
-        </select>
-      </li>
-    </ul>
   </div>
 </template>
   
   <script>
+import cartaComparador from "@/components/cartaComparador.vue";
 import { ref } from "vue";
 export default {
+  components: {
+    cartaComparador,
+  },
   setup() {
-    const seleccion = ref("");
-    const modelo = {
-      kawasaki: ["Z650", "Ninja 1000", "Vulcan S", "H2"],
-      suzuki: ["GSX-S1000", "Hayabusa", "GSX-S125", "Scooter"],
-      honda: ["CBR-650R", "Africa twin", "ADV", "CB1000R"],
-      triumph: ["Street triple 765", "Speed Triple", "Trident", "Tiger"],
-    };
+    const moto1 = ref("");
+    const moto2 = ref("");
     return {
-      seleccion,
-      modelo
+      moto1,
+      moto2,
     };
   },
-
-  computed:{
-    motos(){
-        return this.modelo[this.seleccion];
-    }
-  }
-  
-  //   methods: {
-  //     seleccionado(id) {
-  //       this.seleccion = id;
-  //       console.log(this.seleccion);
-  //     },
-  //   },
 };
 </script>

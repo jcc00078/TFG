@@ -9,11 +9,12 @@
 <script>
 import cabecera from '@/components/cabecera.vue'
 import piepagina from '@/components/piepagina.vue'
+
 export default {
   name: 'App',
   components: {
     cabecera,
-    piepagina
+    piepagina,
   }
 }
 </script>
