@@ -16,7 +16,7 @@ import jcc00078.TFG.controladoresREST.dto.UsuarioDTO;
  */
 @Entity
 @Table(name="usuarios")
-public class Usuario {
+public class Usuario  {
     
     @Id
     //@Size(min = 8, max = 8)
