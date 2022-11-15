@@ -72,7 +72,7 @@ import {
   MDBBtn,
 } from "mdb-vue-ui-kit";
 import { ref } from "vue";
-import { useStore } from "@/store/autenticar";
+import {useAuthStore } from "@/store/autenticar";
 import router from "@/router";
 
 export default {
@@ -92,7 +92,7 @@ export default {
   setup() {
     const collapse1 = ref(false);
     const dropdown1 = ref(false);
-    const store = useStore();
+    const store = useAuthStore();
 
     return {
       collapse1,

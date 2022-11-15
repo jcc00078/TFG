@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 
-export const useStore = defineStore('autenticar',{
+export const useAuthStore = defineStore('autenticar',{
     state: () => {
       return {
         username: "",
@@ -25,4 +25,4 @@ export const useStore = defineStore('autenticar',{
       ,
     },
   })
-export default useStore;
+export default useAuthStore;

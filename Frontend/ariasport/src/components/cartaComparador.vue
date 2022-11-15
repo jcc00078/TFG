@@ -1,5 +1,5 @@
 <template>
-  <div class="card" :class="{ desactivado }" style="width: 18rem; border: 0px">
+  <div class="card" :class="{ desactivado }">
     <img src="../assets/logoComparador.png" class="card-img-top" alt="..." />
 
     <div class="card-body">
@@ -15,10 +15,9 @@
             aria-label="Default select example"
           >
             <option value="">Selecciona una marca</option>
-            <option id="Kawasaki" value="kawasaki">Kawasaki</option>
-            <option id="Suzuki" value="suzuki">Suzuki</option>
-            <option id="Honda" value="honda">Honda</option>
-            <option id="Triumph" value="triumph">Triumph</option>
+            <option :value="marca" v-for="marca in marcas" :key="marca">
+              {{ marca }}
+            </option>
           </select>
         </li>
 
@@ -39,15 +38,19 @@
     </div>
   </div>
 </template>
-<style>
-.desactivado {
-  filter: brightness(75%);
+  <style scoped>
+.card {
+  margin-top: 40px;
+  margin-right: 20px;
+  width: 18rem;
+  border: 0px;
 }
 </style>
-  
-    <script>
-import { ref, watchEffect } from "vue";
-
+<script>
+import { ref, watchEffect, onMounted } from "vue";
+import { storeToRefs } from "pinia";
+import axios from "axios";
+import useMotoStore from "@/store/motos";
 export default {
   props: {
     titulo: String,
@@ -57,27 +60,42 @@ export default {
   emits: ["update:motoSeleccionada"],
   setup(props, { emit }) {
     const seleccion = ref("");
-    const modelo = {
-      kawasaki: ["Z650", "Ninja 1000", "Vulcan S", "H2"],
-      suzuki: ["GSX-S1000", "Hayabusa", "GSX-S125", "Scooter"],
-      honda: ["CBR-650R", "Africa twin", "ADV", "CB1000R"],
-      triumph: ["Street triple 765", "Speed Triple", "Trident", "Tiger"],
-    };
     watchEffect(() => {
       if (seleccion.value === "") {
         emit("update:motoSeleccionada", "");
       }
     });
+    const store = useMotoStore();
+    const { marcas, modelos } = storeToRefs(store);
+
+    if (!props.desactivado) {
+      onMounted(async () => {
+        const { data: arrayMarcas } = await axios.get(
+          "http://localhost:8084/motos/marcas"
+        );
+
+        store.setMarcas(arrayMarcas);
+
+        arrayMarcas.forEach(async (marca) => {
+          const { data: arrayModelos } = await axios.get(
+            `http://localhost:8084/motos/${marca}/modelos`
+          );
+          store.setModelo(marca, arrayModelos);
+        });
+      });
+    }
 
     return {
       seleccion,
-      modelo,
+      marcas,
+      modelos,
     };
   },
+
   computed: {
     motos() {
       if (this.seleccion != "") {
-        return this.modelo[this.seleccion];
+        return this.modelos[this.seleccion];
       } else {
         return [];
       }

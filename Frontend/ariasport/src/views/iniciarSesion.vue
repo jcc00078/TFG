@@ -48,7 +48,7 @@ import {
   MDBCardTitle,
 } from "mdb-vue-ui-kit";
 import { ref } from "vue";
-import { useStore } from "@/store/autenticar";
+import { useAuthStore } from "@/store/autenticar";
 import axios from "axios";
 export default {
   components: {
@@ -63,7 +63,7 @@ export default {
     const password = ref("");
     const comprobarLogin = ref("");
     const loginCorrecto = ref("false");
-    const store = useStore();
+    const store = useAuthStore();
 
     return {
       dni,
@@ -85,7 +85,6 @@ export default {
             this.loginCorrecto = true;
             router.push("/");
             this.store.login(this.dni,data.access_token);
-          console.log(data);
         })
         .catch(() => {
           this.comprobarLogin = "Error, introduce las credenciales de nuevo";
