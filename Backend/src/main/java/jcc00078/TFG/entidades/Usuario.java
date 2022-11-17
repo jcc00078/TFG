@@ -36,7 +36,7 @@ public class Usuario  {
     @OneToMany(mappedBy="cliente")
     private List<Cita> citas;
     
-    /** Citas asociadas al usuario */
+    /** Motos asociadas al usuario */
     @OneToMany(mappedBy="cliente")
     private List<Motocicleta> motos;
     
@@ -127,6 +127,13 @@ public class Usuario  {
      */
     public void setMotos(List<Motocicleta> motos) {
         this.motos = motos;
+    }
+    
+    public void fromDTO(UsuarioDTO usuario){
+        this.dni=usuario.getDni_usuario();
+        this.nombre=usuario.getNombre();
+        this.apellidos=usuario.getApellidos();
+        this.contrasena=usuario.getContrasena();
     }
 
 }

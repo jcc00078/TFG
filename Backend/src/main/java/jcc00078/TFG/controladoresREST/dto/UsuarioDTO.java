@@ -9,6 +9,7 @@ public class UsuarioDTO {
     private String dni_usuario;
     private String nombre;
     private String apellidos;
+    private String contrasena;
     
     public UsuarioDTO(String dni_usuario, String nombre, String apellidos) {
             this.dni_usuario=dni_usuario;
@@ -56,6 +57,20 @@ public class UsuarioDTO {
      */
     public void setApellidos(String apellidos) {
         this.apellidos = apellidos;
+    }
+
+    /**
+     * @return the contrasena
+     */
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    /**
+     * @param contrasena the contrasena to set
+     */
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
         
 }
