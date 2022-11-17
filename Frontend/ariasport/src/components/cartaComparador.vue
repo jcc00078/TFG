@@ -64,9 +64,15 @@ export default {
       if (seleccion.value === "") {
         emit("update:motoSeleccionada", "");
       }
+      if(props.desactivado){
+        emit("update:motoSeleccionada", "");
+        seleccion.value="";
+      }
     });
     const store = useMotoStore();
     const { marcas, modelos } = storeToRefs(store);
+
+
 
     if (!props.desactivado) {
       onMounted(async () => {
