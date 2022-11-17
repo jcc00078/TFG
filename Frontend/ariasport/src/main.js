@@ -9,6 +9,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
   const pinia = createPinia()
   const app = createApp(App)
+  axios.defaults.baseURL='http://localhost:8084/'
   app.use(pinia)
   app.use(router)
   app.use(VueAxios,axios)

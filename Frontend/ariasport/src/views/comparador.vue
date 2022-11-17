@@ -7,7 +7,7 @@
         class="col"
         v-model:moto-seleccionada="motos[i].value"
         :desactivado="i > 0 && motos[i - 1].value === ''"
-        titulo="Primera moto elegida"
+        titulo="Moto elegida"
         style="font-family: Verdana"
       />
     </div>
@@ -43,7 +43,7 @@ export default {
     cartaComparador,
   },
   setup() {
-    const motos = [ref("Z650"), ref("Z650")];
+    const motos = [ref(""), ref("")];
     const propiedades = ref([]);
     const muestraTabla = ref(false);
 
@@ -51,7 +51,7 @@ export default {
       Promise.all(
         modelos.map(async (modelo) => {
           const { data: infoModelo } = await axios.get(
-            `http://localhost:8084/motos/${modelo}`
+           `motos/${modelo}`
           );
           return infoModelo;
         })
@@ -69,21 +69,6 @@ export default {
       muestraTabla,
       motos,
     };
-  },
-  computed: {},
-  methods: {
-    async getInfo() {
-      this.muestraTabla = true;
-      const { data: infoModelo } = await axios.get(
-        `http://localhost:8084/motos/${this.moto1}`
-      );
-      const { data: infoModelo2 } = await axios.get(
-        `http://localhost:8084/motos/${this.moto2}`
-      );
-      this.propiedades.push(infoModelo);
-      this.propiedades.push(infoModelo2);
-      console.log(this.propiedades);
-    },
   },
 };
 </script>

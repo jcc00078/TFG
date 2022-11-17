@@ -80,7 +80,7 @@ export default {
         password: this.password,
       };
       axios
-        .post("http://localhost:8084/login", json)
+        .post("login", json)
         .then(({data}) => {
             this.loginCorrecto = true;
             router.push("/");

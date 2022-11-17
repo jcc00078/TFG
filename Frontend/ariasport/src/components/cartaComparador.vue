@@ -75,14 +75,14 @@ export default {
     if (!props.desactivado) {
       onMounted(async () => {
         const { data: arrayMarcas } = await axios.get(
-          "http://localhost:8084/motos/marcas"
+          "motos/marcas"
         );
 
         store.setMarcas(arrayMarcas);
 
         arrayMarcas.forEach(async (marca) => {
           const { data: arrayModelos } = await axios.get(
-            `http://localhost:8084/motos/${marca}/modelos`
+            `motos/${marca}/modelos`
           );
           store.setModelo(marca, arrayModelos);
         });
