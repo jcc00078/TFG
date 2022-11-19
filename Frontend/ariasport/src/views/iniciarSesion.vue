@@ -32,6 +32,10 @@
           <MDBBtn id="estoyLogueado" color="primary" block @click="login()">
             Conectarse
           </MDBBtn>
+          <router-link to="/registrarme">
+          <MDBBtn color="link" style="background-color:transparent ">¿No tienes cuenta? Regístrate aquí
+          </MDBBtn>
+        </router-link>
         </form>
       </MDBCardBody>
     </MDBCard>

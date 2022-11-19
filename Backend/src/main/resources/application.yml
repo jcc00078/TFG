@@ -15,3 +15,6 @@ jwt.secreto: p7CzwU6Gejdc42Bo4gygwyWY0HMTtei5QHedb1DUspigR2R0KyUF8eLlYN9Zs607MG5
 
 #Tiempo de validez del token (2 meses)
 jwt.tiempo_seg: 5184000
+
+#No mostrar campos nulos del JSON en las response
+spring.jackson.default-property-inclusion: NON_NULL

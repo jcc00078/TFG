@@ -12,37 +12,42 @@ import jcc00078.TFG.controladoresREST.dto.UsuarioDTO;
 
 /**
  * Entidad Usuario
+ *
  * @author juanc
  */
 @Entity
-@Table(name="usuarios")
-public class Usuario  {
-    
+@Table(name = "usuarios")
+public class Usuario {
+
     @Id
     //@Size(min = 8, max = 8)
     @Column(unique = true)
     private String dni;
-    
+
     //@Size(min = 1, max = 30)
     private String nombre;
-    
+
     //@Size(min = 1, max = 30)
     private String apellidos;
-    
-   // @Size(min = 1, max = 20)
+
+    // @Size(min = 1, max = 20)
     private String contrasena;
-    
-    /** Citas asociadas al usuario */
-    @OneToMany(mappedBy="cliente")
+
+    /**
+     * Citas asociadas al usuario
+     */
+    @OneToMany(mappedBy = "cliente")
     private List<Cita> citas;
-    
-    /** Motos asociadas al usuario */
-    @OneToMany(mappedBy="cliente")
+
+    /**
+     * Motos asociadas al usuario
+     */
+    @OneToMany(mappedBy = "cliente")
     private List<Motocicleta> motos;
-    
+
     public UsuarioDTO toDTO() {
         UsuarioDTO usrDTO = new UsuarioDTO(getDni_usuario(), getNombre(), getApellidos());
-        return usrDTO; 
+        return usrDTO;
     }
 
     /**
@@ -128,12 +133,12 @@ public class Usuario  {
     public void setMotos(List<Motocicleta> motos) {
         this.motos = motos;
     }
-    
-    public void fromDTO(UsuarioDTO usuario){
-        this.dni=usuario.getDni_usuario();
-        this.nombre=usuario.getNombre();
-        this.apellidos=usuario.getApellidos();
-        this.contrasena=usuario.getContrasena();
+
+    public void fromDTO(UsuarioDTO usuario) {
+        this.dni = usuario.getDni_usuario();
+        this.nombre = usuario.getNombre();
+        this.apellidos = usuario.getApellidos();
+        this.contrasena = usuario.getContrasena();
     }
 
 }

@@ -1,96 +1,102 @@
 <template>
-    <div class="container my-5">
-      <div
-        class="alert alert-danger border-color-red"
-        border-color="red"
-        role="alert"
-        v-show="comprobarLogin != ''"
-      >
-        {{ this.comprobarLogin }}
-      </div>
-      <MDBCard class="shadow-4-strong w-responsive mx-auto" text="center">
-        <MDBCardBody>
-          <MDBCardTitle>Inicia sesión</MDBCardTitle>
-          <form>
-            <!-- Dni input -->
-            <MDBInput
-              type="text"
-              label="DNI"
-              id="dni"
-              v-model="dni"
-              wrapperClass="mb-4"
-            />
-            <!-- Password input -->
-            <MDBInput
+  <div class="container my-5">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title text-center">Registro de usuarios</h3>
+        <form class="row g-3 form-floating" novalidate>
+          <div class="col-md-12">
+            <label for="dni" class="form-label">Introduce tu DNI</label>
+            <input 
+            type="text" 
+            class="form-control" 
+            id="dni" 
+            v-model="dni"
+            required />
+          </div>
+          <div class="col-md-12">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input 
+            type="text" 
+            class="form-control" 
+            id="nombre" 
+            v-model="nombre"
+            required />
+          </div>
+          <div class="col-md-12">
+            <label for="Apellidos" class="form-label">Apellidos</label>
+            <div class="input-group has-validation">
+              <input
+                type="text"
+                class="form-control"
+                id="Apellidos"
+                v-model="apellidos"
+                aria-describedby="inputGroupPrepend"
+                required
+              />
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="password" class="form-label">Contraseña</label>
+            <input
               type="password"
-              label="Contraseña"
+              class="form-control"
               id="password"
               v-model="password"
-              wrapperClass="mb-4"
+              required
             />
-            <!-- Submit button -->
-            <MDBBtn id="estoyLogueado" color="primary" block @click="login()">
-              Conectarse
-            </MDBBtn>
-          </form>
-        </MDBCardBody>
-      </MDBCard>
+          </div>
+          <div class="row">
+            <div class="d-grid col-4 mx-auto">
+              <button class="btn btn-primary center my-5" type="submit" @click="registro()">
+                Registrarme
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
-  </template>
+  </div>
+</template>
   
   <script>
   import router from "@/router";
-  import {
-    MDBInput,
-    MDBBtn,
-    MDBCard,
-    MDBCardBody,
-    MDBCardTitle,
-  } from "mdb-vue-ui-kit";
   import { ref } from "vue";
-  import { useAuthStore } from "@/store/autenticar";
   import axios from "axios";
-  export default {
-    components: {
-      MDBInput,
-      MDBBtn,
-      MDBCard,
-      MDBCardBody,
-      MDBCardTitle,
-    },
-    setup() {
-      const dni = ref("");
-      const password = ref("");
-      const comprobarLogin = ref("");
-      const loginCorrecto = ref("false");
-      const store = useAuthStore();
-  
-      return {
-        dni,
-        password,
-        comprobarLogin,
-        loginCorrecto,
-        store,
-      };
-    },
-    methods: {
-      login() {
-        let json = {
-          dni: this.dni,
-          password: this.password,
-        };
-        axios
-          .post("login", json)
-          .then(({data}) => {
-              this.loginCorrecto = true;
-              router.push("/");
-              this.store.login(this.dni,data.access_token);
-          })
-          .catch(() => {
-            this.comprobarLogin = "Error, introduce las credenciales de nuevo";
-          });
-      },
-      
-      }
+
+export default{
+setup() {
+  const dni = ref("");
+  const password = ref("");
+  const nombre = ref("");
+  const apellidos = ref("");
+  const creacionCorrecta=ref("false");
+
+  return {
+    dni,
+    password,
+    nombre,
+    apellidos,
+    creacionCorrecta,
   };
-  </script>
+},
+  methods: {
+    registro(){
+      let json = {
+        dni_usuario: this.dni,
+        contrasena: this.password,
+        nombre: this.nombre,
+        apellidos: this.apellidos, 
+      };
+      axios
+      .post("usuarios", json)
+      .then(() => {
+        this.creacionCorrecta =true;
+        router.push("inicioSesion");        
+      })
+      .catch(()=> {
+        this.creacionCorrecta = "Error, no se ha podido registrar al usuario";
+      });
+    },
+  }
+};
+</script>

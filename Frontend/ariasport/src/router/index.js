@@ -6,7 +6,7 @@ import mantenimiento from '@/views/mantenimiento';
 import historial from '@/views/historial';
 import configuradorKawasaki from '@/views/configurador';
 import configuradorSuzuki from '@/views/configurador';
-
+import registroUsuario from '@/views/registroUsuario'
 
 import { createRouter, createWebHashHistory } from "vue-router";
 
@@ -50,6 +50,11 @@ const routes = [
       path:"/mantenimiento/historial",
       name:"historial",
       component: historial
+    },
+    {
+      path:"/registrarme",
+      name:"registrarme",
+      component: registroUsuario
     }
   ];
 
