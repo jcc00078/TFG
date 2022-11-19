@@ -43,7 +43,7 @@ public class ControladorUsuario {
         u.fromDTO(usuario);
         u.setContrasena(pass.encode(u.getContrasena()));
         if(usuarioRepositorio.existsByDni(u.getDni_usuario())){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Usuario ya registrado anteriormente");
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Usuario ya registrado anteriormente");
         }
                 usuarioRepositorio.save(u);
     }

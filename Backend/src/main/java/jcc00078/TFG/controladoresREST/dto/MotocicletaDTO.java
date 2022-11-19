@@ -5,34 +5,37 @@ package jcc00078.TFG.controladoresREST.dto;
  * @author juanc
  */
 public class MotocicletaDTO{
-    private String num_bastidor;
+    private String numBastidor;
     private String marca;
     private String modelo;
     private String color;
     private String tipo;
     private float precio;
+    private String dni_usuario;
 
-    public MotocicletaDTO(String num_bastidor, String marca, String modelo, String color, String tipo, float precio) {
-        this.num_bastidor=num_bastidor;
+
+    public MotocicletaDTO(String num_bastidor, String marca, String modelo, String color, String tipo, float precio, String dni) {
+        this.numBastidor=num_bastidor;
         this.marca = marca;
         this.modelo = modelo;
         this.color = color;
         this.tipo = tipo;
         this.precio = precio;
+        this.dni_usuario=dni;
     }
 
     /**
-     * @return the num_bastidor
+     * @return the numBastidor
      */
-    public String getNum_bastidor() {
-        return num_bastidor;
+    public String getNumBastidor() {
+        return numBastidor;
     }
 
     /**
-     * @param num_bastidor the num_bastidor to set
+     * @param numBastidor the numBastidor to set
      */
-    public void setNum_bastidor(String num_bastidor) {
-        this.num_bastidor = num_bastidor;
+    public void setNumBastidor(String numBastidor) {
+        this.numBastidor = numBastidor;
     }
 
     /**
@@ -103,6 +106,20 @@ public class MotocicletaDTO{
      */
     public void setPrecio(float precio) {
         this.precio = precio;
+    }
+
+    /**
+     * @return the dni_usuario
+     */
+    public String getDni_usuario() {
+        return dni_usuario;
+    }
+
+    /**
+     * @param dni_usuario the dni_usuario to set
+     */
+    public void setDni_usuario(String dni_usuario) {
+        this.dni_usuario = dni_usuario;
     }
 
 }

@@ -5,12 +5,18 @@ import java.util.stream.Collectors;
 import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
 import jcc00078.TFG.entidades.Motocicleta;
 import jcc00078.TFG.repositorios.MotocicletaRepositorio;
+import jcc00078.TFG.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
@@ -26,8 +32,7 @@ public class ControladorMotocicleta {
 
     @GetMapping("{marca}/modelos")
     public List<String> listarModelos(@PathVariable String marca) {
-        List<Motocicleta> motos = (List<Motocicleta>) motocicletaRepositorio.findByMarca(marca);
-        return motos.stream().map((moto) -> moto.getModelo()).collect(Collectors.toUnmodifiableList());
+        return  motocicletaRepositorio.findDistinctModeloByMarca(marca);
     }
 
     @GetMapping("{modelo}")
@@ -39,8 +44,18 @@ public class ControladorMotocicleta {
 
     @GetMapping("marcas")
     public List<String> listarMarcas() {
-        List<Motocicleta> motos = motocicletaRepositorio.findAll();
-        return motos.stream().map((moto) -> moto.getMarca()).collect(Collectors.toUnmodifiableList());
+        return motocicletaRepositorio.findAllByDistinctMarca();
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void crearMotocicleta(@RequestBody MotocicletaDTO moto){
+        Motocicleta m = new Motocicleta();
+        m.fromDTO(moto);
+        if(motocicletaRepositorio.existsByNumBastidor(m.getNumBastidor())||motocicletaRepositorio.existsByModelo(m.getModelo())){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Motocicleta ya registrada anteriormente");
+        }
+        motocicletaRepositorio.save(m);
+    }
+    
 }

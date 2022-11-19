@@ -60,7 +60,8 @@ public class Motocicleta implements Serializable {
     private List<Pieza> piezas;
 
     public MotocicletaDTO toDTO() {
-        MotocicletaDTO motoDTO = new MotocicletaDTO(getNumBastidor(),getMarca(), getModelo(), getColor(), getTipo(), getPrecio());
+        MotocicletaDTO motoDTO = new MotocicletaDTO(getNumBastidor(), getMarca(), getModelo(), getColor(), 
+                getTipo(), getPrecio(), cliente!=null? cliente.getDni_usuario(): null);
         return motoDTO;
     }
 
@@ -188,5 +189,14 @@ public class Motocicleta implements Serializable {
      */
     public void setPiezas(List<Pieza> piezas) {
         this.piezas = piezas;
+    }
+
+    public void fromDTO(MotocicletaDTO moto) {
+        this.marca = moto.getMarca();
+        this.modelo = moto.getModelo();
+        this.numBastidor = moto.getNumBastidor();
+        this.color = moto.getColor();
+        this.tipo = moto.getTipo();
+        this.precio = moto.getPrecio();
     }
 }
