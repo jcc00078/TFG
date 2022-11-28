@@ -12,6 +12,7 @@ public class MotocicletaDTO{
     private String tipo;
     private float precio;
     private String dni_usuario;
+ 
 
 
     public MotocicletaDTO(String num_bastidor, String marca, String modelo, String color, String tipo, float precio, String dni) {
@@ -118,8 +119,9 @@ public class MotocicletaDTO{
     /**
      * @param dni_usuario the dni_usuario to set
      */
-    public void setDni_usuario(String dni_usuario) {
+    public MotocicletaDTO setDni_usuario(String dni_usuario) {
         this.dni_usuario = dni_usuario;
+        return this;
     }
 
 }

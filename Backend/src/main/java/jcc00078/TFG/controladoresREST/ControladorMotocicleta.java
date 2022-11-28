@@ -26,6 +26,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("motos")
 @CrossOrigin
 public class ControladorMotocicleta {
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
 
     @Autowired
     private MotocicletaRepositorio motocicletaRepositorio;
@@ -50,7 +52,7 @@ public class ControladorMotocicleta {
     @GetMapping("modelos")
     public List<MotocicletaDTO> listarDatosTodosModelos() {
         List<Motocicleta> motos= motocicletaRepositorio.findAllByDistinctModelo();
-        return motos.stream().map((moto)->moto.toDTO()).collect(Collectors.toUnmodifiableList());
+        return motos.stream().map((moto)->moto.toDTO().setDni_usuario(null)).collect(Collectors.toUnmodifiableList());
     }
     
     @PostMapping
@@ -61,8 +63,10 @@ public class ControladorMotocicleta {
         if(motocicletaRepositorio.existsByNumBastidor(m.getNumBastidor())||motocicletaRepositorio.existsByModelo(m.getModelo())){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Motocicleta ya registrada anteriormente");
         }
+        if(moto.getDni_usuario()!=null){
+            m.setCliente(usuarioRepositorio.findOneByDni(moto.getDni_usuario())
+                    .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado")));
+        }
         motocicletaRepositorio.save(m);
     }
-    
-    
 }
