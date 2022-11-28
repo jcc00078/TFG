@@ -15,4 +15,6 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, Integer> {
     Optional<Usuario> findOneByDni(String dni);
 
     boolean existsByDni(String dni);
+
+
 }

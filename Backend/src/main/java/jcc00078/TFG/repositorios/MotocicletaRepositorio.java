@@ -1,11 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package jcc00078.TFG.repositorios;
 
 import java.util.List;
 import java.util.Optional;
+import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
 import jcc00078.TFG.entidades.Motocicleta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,4 +32,7 @@ public interface MotocicletaRepositorio extends JpaRepository<Motocicleta, Strin
 
     @Query("SELECT DISTINCT m.modelo FROM Motocicleta m WHERE m.marca = (:marca)")
     List<String> findDistinctModeloByMarca(@Param("marca") String marca);
+    
+    @Query("SELECT m FROM Motocicleta m")
+    List<Motocicleta> findAllByDistinctModelo();
 }

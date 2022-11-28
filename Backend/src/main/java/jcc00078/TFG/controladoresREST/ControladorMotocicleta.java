@@ -47,6 +47,12 @@ public class ControladorMotocicleta {
         return motocicletaRepositorio.findAllByDistinctMarca();
     }
 
+    @GetMapping("modelos")
+    public List<MotocicletaDTO> listarDatosTodosModelos() {
+        List<Motocicleta> motos= motocicletaRepositorio.findAllByDistinctModelo();
+        return motos.stream().map((moto)->moto.toDTO()).collect(Collectors.toUnmodifiableList());
+    }
+    
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void crearMotocicleta(@RequestBody MotocicletaDTO moto){
@@ -57,5 +63,6 @@ public class ControladorMotocicleta {
         }
         motocicletaRepositorio.save(m);
     }
+    
     
 }

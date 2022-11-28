@@ -22,7 +22,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in propiedades" v-bind:key="item.num_bastidor">
+        <tr v-for="item in propiedades" v-bind:key="item.modelo">
           <th scope="row">{{ item.marca }}</th>
           <td>{{ item.modelo }}</td>
           <td>{{ item.color }}</td>
@@ -31,10 +31,36 @@
         </tr>
       </tbody>
     </table>
+    <div class="row justify-content-between" v-if="propiedades.length !== 0">
+      <a
+        class="col-4 link-primary"
+        v-for="moto in propiedades"
+        v-bind:key="moto.modelo"
+        @click="calcularCompetidores(moto)"
+        >Mostrar modelos competidores de {{ moto.modelo }}
+      </a>
+
+      <div class="row justify-content-center">
+        <div class="card" style="width: 18rem">
+          <div class="text-center" v-if="competidores.length !== 0">
+            <p>Los competidores de la moto seleccionada son</p>
+          </div>
+          <ul class="list-group list-group-light">
+            <li
+              class="list-group-item col align-self-center"
+              v-for="comp in competidores"
+              v-bind:key="comp"
+            >
+              {{ comp }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
   
-  <script>
+<script>
 import cartaComparador from "@/components/cartaComparador.vue";
 import { ref, watch } from "vue";
 import axios from "axios";
@@ -46,13 +72,13 @@ export default {
     const motos = [ref(""), ref("")];
     const propiedades = ref([]);
     const muestraTabla = ref(false);
+    const competidores = ref([]);
+    const todosModelos = ref([]);
 
     watch([...motos], (modelos) => {
       Promise.all(
         modelos.map(async (modelo) => {
-          const { data: infoModelo } = await axios.get(
-           `motos/${modelo}`
-          );
+          const { data: infoModelo } = await axios.get(`motos/${modelo}`);
           return infoModelo;
         })
       )
@@ -68,7 +94,23 @@ export default {
       propiedades,
       muestraTabla,
       motos,
+      competidores,
+      todosModelos,
     };
+  },
+  methods: {
+    calcularCompetidores(moto) {
+      this.competidores = [];
+      axios.get("motos/modelos").then((resp) => {
+        this.todosModelos = resp.data;
+        for (let i = 0; i < this.todosModelos.length; i++) {
+          //Filtro por mismo tipo de moto
+          if (moto.tipo == this.todosModelos[i].tipo && moto.modelo != this.todosModelos[i].modelo) {
+            this.competidores.push(this.todosModelos[i].modelo);
+          }
+        }
+      });
+    },
   },
 };
 </script>
