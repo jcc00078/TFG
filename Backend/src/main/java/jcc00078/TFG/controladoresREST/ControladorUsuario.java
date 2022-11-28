@@ -1,16 +1,13 @@
 package jcc00078.TFG.controladoresREST;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
 import jcc00078.TFG.controladoresREST.dto.UsuarioDTO;
 import jcc00078.TFG.entidades.Usuario;
 import jcc00078.TFG.repositorios.UsuarioRepositorio;
-import jcc00078.TFG.seguridad.UserDetailsImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,7 +27,6 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("usuarios")
 @CrossOrigin
-//@AllArgsConstructor
 
 public class ControladorUsuario {
 
@@ -58,10 +54,14 @@ public class ControladorUsuario {
     }
 
     @GetMapping("{dni}/motos")
-    public List<MotocicletaDTO> listarMotosUsuario(@PathVariable String dni, @AuthenticationPrincipal UserDetailsImp usuarioLogueado) {
+    public List<MotocicletaDTO> listarMotosUsuario(@PathVariable String dni, @AuthenticationPrincipal String usuarioLogueado) {
         Usuario usuario = usuarioRepositorio.findOneByDni(dni)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario con" + dni + " no existe"));
-        System.out.println("Usuario logueado: " + usuarioLogueado);
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario con " + dni + " no existe"));
+        if(!usuario.getDni_usuario().equals(usuarioLogueado)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El dni " + usuario.getDni_usuario() + " no puede acceder a las motos que tiene el dni " + usuarioLogueado);
+        }
+        //System.out.println("Usuario logueado: " + usuarioLogueado);
         return usuario.getMotos().stream().map((moto) -> moto.toDTO()).collect(Collectors.toUnmodifiableList());
     }
+    
 }
