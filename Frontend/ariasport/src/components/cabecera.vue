@@ -45,7 +45,7 @@
         <router-link to="/">
           <MDBBtn
             v-if="store.username"
-            color="warning"
+            color="danger"
             class="text-white"
             @click="logout()"
           >

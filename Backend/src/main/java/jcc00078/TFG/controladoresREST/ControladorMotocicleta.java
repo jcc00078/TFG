@@ -83,9 +83,4 @@ public class ControladorMotocicleta {
         }
         motocicletaRepositorio.save(m);
     }
-
-    @PostMapping("convertImagen")
-    public String generateBase64(@RequestParam MultipartFile imagen) throws IOException {
-        return Base64.getEncoder().encodeToString(imagen.getBytes());
-    }
 }
