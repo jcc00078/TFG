@@ -1,5 +1,7 @@
 package jcc00078.TFG.controladoresREST.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 /**
  *
  * @author juanc
@@ -12,10 +14,12 @@ public class MotocicletaDTO{
     private String tipo;
     private float precio;
     private String dni_usuario;
+    private MultipartFile imagenFile;
+    private String imagenData;
  
 
 
-    public MotocicletaDTO(String num_bastidor, String marca, String modelo, String color, String tipo, float precio, String dni) {
+    public MotocicletaDTO(String num_bastidor, String marca, String modelo, String color, String tipo, float precio, String dni, String imagenData) {
         this.numBastidor=num_bastidor;
         this.marca = marca;
         this.modelo = modelo;
@@ -23,6 +27,7 @@ public class MotocicletaDTO{
         this.tipo = tipo;
         this.precio = precio;
         this.dni_usuario=dni;
+        this.imagenData=imagenData;
     }
 
     /**
@@ -122,6 +127,34 @@ public class MotocicletaDTO{
     public MotocicletaDTO setDni_usuario(String dni_usuario) {
         this.dni_usuario = dni_usuario;
         return this;
+    }
+
+    /**
+     * @return the imagenFile
+     */
+    public MultipartFile getImagenFile() {
+        return imagenFile;
+    }
+
+    /**
+     * @param imagenFile the imagenFile to set
+     */
+    public void setImagenFile(MultipartFile imagenFile) {
+        this.imagenFile = imagenFile;
+    }
+
+    /**
+     * @return the imagenData
+     */
+    public String getImagenData() {
+        return imagenData;
+    }
+
+    /**
+     * @param imagenData the imagenData to set
+     */
+    public void setImagenData(String imagenData) {
+        this.imagenData = imagenData;
     }
 
 }

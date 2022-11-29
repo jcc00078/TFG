@@ -4,6 +4,7 @@ export const useMotoStore = defineStore("motocicleta", {
     return {
       marcas: [],
       modelos: {},
+      datosModelo: {},
     };
   },
   actions: {
@@ -13,6 +14,9 @@ export const useMotoStore = defineStore("motocicleta", {
     setModelo(marca, modelos) {
       this.modelos[marca] = modelos;
     },
+    setDatosModelo(modelo, datos){
+      this.datosModelo[modelo]=datos;
+    }
   },
 });
 export default useMotoStore;

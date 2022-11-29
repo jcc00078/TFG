@@ -12,15 +12,11 @@
       <MDBCardBody>
         <MDBCardTitle>Tus motocicletas</MDBCardTitle>
         <MDBCardText>
-          <div class="row">
-            <a
-              class="col-4 link-primary"
-              v-for="moto in motosUsuario"
-              v-bind:key="moto"
-              @click="consultarMotosUsuario()"
-            >
-              {{ moto.modelo }}
-            </a>
+          <div class="row-6 bg-image hover-zoom hover-overlay" v-for="moto in motosUsuario" v-bind:key="moto">
+            <img class="col-6" :src="`data:image/png;base64,${moto.imagenData}`"/>
+            <router-link to="/mantenimiento/historial">
+              <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+            </router-link>
           </div>
         </MDBCardText>
         <!-- <form v-if="bastidorCorrecto"> -->

@@ -1,7 +1,7 @@
 <template>
   <div class="card" :class="{ desactivado }">
-    <img src="../assets/logoComparador.png" class="card-img-top" alt="..." />
-
+    <img :src="`data:image/png;base64,${datosModelo[motoSeleccionada]?.imagenData}`" v-if="datosModelo[motoSeleccionada]?.imagenData" class="card-img-top" alt="..." />
+    <img src="../assets/logoComparador.png" v-else/>
     <div class="card-body">
       <h5 class="card-title">
         {{ this.titulo }} {{ ": " + motoSeleccionada }}
@@ -70,13 +70,11 @@ export default {
       }
     });
     const store = useMotoStore();
-    const { marcas, modelos } = storeToRefs(store);
+    const { marcas, modelos, datosModelo } = storeToRefs(store);
 
     if (!props.desactivado) {
       onMounted(async () => {
-        const { data: arrayMarcas } = await axios.get(
-          "motos/marcas"
-        );
+        const { data: arrayMarcas } = await axios.get("motos/marcas");
 
         store.setMarcas(arrayMarcas);
 
@@ -85,6 +83,14 @@ export default {
             `motos/${marca}/modelos`
           );
           store.setModelo(marca, arrayModelos);
+         
+         
+          arrayModelos.forEach(async (modelo) => {
+            const { data: datosModelo } = await axios.get(
+              `motos/${modelo}`
+            );
+            store.setDatosModelo(modelo, datosModelo);
+          });
         });
       });
     }
@@ -93,6 +99,7 @@ export default {
       seleccion,
       marcas,
       modelos,
+      datosModelo,
     };
   },
 

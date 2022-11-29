@@ -1,5 +1,7 @@
 package jcc00078.TFG.controladoresREST;
 
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
@@ -8,14 +10,18 @@ import jcc00078.TFG.repositorios.MotocicletaRepositorio;
 import jcc00078.TFG.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
@@ -26,6 +32,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("motos")
 @CrossOrigin
 public class ControladorMotocicleta {
+
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
 
@@ -34,7 +41,7 @@ public class ControladorMotocicleta {
 
     @GetMapping("{marca}/modelos")
     public List<String> listarModelos(@PathVariable String marca) {
-        return  motocicletaRepositorio.findDistinctModeloByMarca(marca);
+        return motocicletaRepositorio.findDistinctModeloByMarca(marca);
     }
 
     @GetMapping("{modelo}")
@@ -51,22 +58,34 @@ public class ControladorMotocicleta {
 
     @GetMapping("modelos")
     public List<MotocicletaDTO> listarDatosTodosModelos() {
-        List<Motocicleta> motos= motocicletaRepositorio.findAllByDistinctModelo();
-        return motos.stream().map((moto)->moto.toDTO().setDni_usuario(null)).collect(Collectors.toUnmodifiableList());
+        List<Motocicleta> motos = motocicletaRepositorio.findAllByDistinctModelo();
+        return motos.stream().map((moto) -> moto.toDTO().setDni_usuario(null)).collect(Collectors.toUnmodifiableList());
     }
-    
-    @PostMapping
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void crearMotocicleta(@RequestBody MotocicletaDTO moto){
+    public void crearMotocicleta(@ModelAttribute MotocicletaDTO moto) throws IOException {
         Motocicleta m = new Motocicleta();
         m.fromDTO(moto);
-        if(motocicletaRepositorio.existsByNumBastidor(m.getNumBastidor())||motocicletaRepositorio.existsByModelo(m.getModelo())){
+        if (motocicletaRepositorio.existsByNumBastidor(m.getNumBastidor()) || motocicletaRepositorio.existsByModelo(m.getModelo())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Motocicleta ya registrada anteriormente");
         }
-        if(moto.getDni_usuario()!=null){
+        if (moto.getDni_usuario() != null) {
             m.setCliente(usuarioRepositorio.findOneByDni(moto.getDni_usuario())
-                    .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado")));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado")));
+        }
+        if (moto.getImagenFile() != null && !moto.getImagenFile().isEmpty()) {
+            if (!moto.getImagenFile().getContentType().contains("png")) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La imagen no tiene formato png");
+            }
+            String imagenConvertida = Base64.getEncoder().encodeToString(moto.getImagenFile().getBytes());
+            m.setImagen(imagenConvertida);
         }
         motocicletaRepositorio.save(m);
+    }
+
+    @PostMapping("convertImagen")
+    public String generateBase64(@RequestParam MultipartFile imagen) throws IOException {
+        return Base64.getEncoder().encodeToString(imagen.getBytes());
     }
 }

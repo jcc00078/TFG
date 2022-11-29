@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -41,6 +42,9 @@ public class Motocicleta implements Serializable {
 
     //@Positive
     private float precio;
+    
+    @Lob
+    private String imagen;
 
     /**
      * Cliente que posee la moto
@@ -61,7 +65,7 @@ public class Motocicleta implements Serializable {
 
     public MotocicletaDTO toDTO() {
         MotocicletaDTO motoDTO = new MotocicletaDTO(getNumBastidor(), getMarca(), getModelo(), getColor(), 
-                getTipo(), getPrecio(), cliente!=null? cliente.getDni_usuario(): null);
+                getTipo(), getPrecio(), cliente!=null? cliente.getDni_usuario(): null, getImagen());
         return motoDTO;
     }
 
@@ -198,5 +202,19 @@ public class Motocicleta implements Serializable {
         this.color = moto.getColor();
         this.tipo = moto.getTipo();
         this.precio = moto.getPrecio();
+    }
+
+    /**
+     * @return the imagen
+     */
+    public String getImagen() {
+        return imagen;
+    }
+
+    /**
+     * @param imagen the imagen to set
+     */
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
 }
