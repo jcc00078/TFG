@@ -47,7 +47,7 @@
           </div>
           <div class="row">
             <div class="d-grid col-4 mx-auto">
-              <button class="btn btn-primary center my-5" type="submit" @click="registro()">
+              <button class="btn btn-primary center my-5" type="submit" to="/iniciarSesion" @click="registro()">
                 Registrarme
               </button>
             </div>

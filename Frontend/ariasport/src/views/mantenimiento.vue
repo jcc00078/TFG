@@ -1,73 +1,112 @@
 <template>
-<div class="container my-5">
-    <div class="alert alert-danger border-color-red" border-color="red" role="alert" v-show="form1LoginCheck !=''">
-      {{this.form1LoginCheck}}
-  </div>
+  <div class="container my-5">
+    <!-- <div
+      class="alert alert-danger border-color-red"
+      border-color="red"
+      role="alert"
+      v-show="form1LoginCheck != ''"
+    >
+      {{ this.form1LoginCheck }}
+    </div> -->
     <MDBCard class="shadow-4-strong w-responsive mx-auto" text="center">
       <MDBCardBody>
-        <MDBCardTitle>Historial de motocicleta</MDBCardTitle>
-  <form v-if="bastidorCorrecto">
-    <!-- Nº bastidor input -->
-    <MDBInput
+        <MDBCardTitle>Tus motocicletas</MDBCardTitle>
+        <MDBCardText>
+          <div class="row">
+            <a
+              class="col-4 link-primary"
+              v-for="moto in motosUsuario"
+              v-bind:key="moto"
+              @click="consultarMotosUsuario()"
+            >
+              {{ moto.modelo }}
+            </a>
+          </div>
+        </MDBCardText>
+        <!-- <form v-if="bastidorCorrecto"> -->
+        <!-- Nº bastidor input -->
+        <!-- <MDBInput
       type="email"
       label="Nº de bastidor"
       id="form1Bastidor"
       v-model="form1Bastidor"
       wrapperClass="mb-4"
-    />
-    <!-- Submit button -->
-    <MDBBtn id="buscar" color="info" block @click="comprobarBastidor()"> Buscar </MDBBtn>
-    <!-- <cabecera bastidorCorrecto></cabecera> -->
-  </form>
-</MDBCardBody>
-</MDBCard>
+    /> -->
+        <!-- Submit button -->
+        <!-- <MDBBtn id="buscar" color="info" block @click="comprobarBastidor()"> Buscar </MDBBtn> -->
+        <!-- <cabecera bastidorCorrecto></cabecera> -->
+        <!-- </form> -->
+      </MDBCardBody>
+    </MDBCard>
   </div>
-  </template>
+</template>
 
 <script>
-import router from "@/router";
+//import router from "@/router";
+import { useAuthStore } from "@/store/autenticar";
+import axios from "axios";
 import {
-//   MDBRow,
-//   MDBCol,
-  MDBInput,
-//   MDBCheckbox,
-  MDBBtn,
-MDBCard,
-MDBCardBody,
-MDBCardTitle
+  //   MDBRow,
+  //   MDBCol,
+  // MDBInput,
+  //   MDBCheckbox,
+  //MDBBtn,
+  MDBCard,
+  MDBCardText,
+  MDBCardBody,
+  MDBCardTitle,
 } from "mdb-vue-ui-kit";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 export default {
   components: {
     // MDBRow,
     // MDBCol,
-    MDBInput,
+    // MDBInput,
     // MDBCheckbox,
-    MDBBtn,
+    // MDBBtn,
+    MDBCardText,
     MDBCard,
     MDBCardBody,
-    MDBCardTitle
-},
+    MDBCardTitle,
+  },
   setup() {
     const form1Bastidor = ref("");
     const form1LoginCheck = ref("");
     const bastidorCorrecto = ref("false");
+    const motosUsuario = ref([]);
+    const store = useAuthStore();
+
+    onMounted(async () => {
+      const { data: arrayMotos } = await axios.get(
+        `usuarios/${store.username}/motos`,
+        {
+          headers: {
+            Authorization: `Bearer ${store.jwt}`,
+          },
+        }
+      );
+      motosUsuario.value = arrayMotos;
+      console.log(motosUsuario.value);
+    });
 
     return {
       form1Bastidor,
       form1LoginCheck,
       bastidorCorrecto,
+      motosUsuario,
+      store,
     };
   },
   methods: {
-    comprobarBastidor(){
-      if(this.form1Bastidor =="a"){
-         this.bastidorCorrecto=true;
-          router.push("/mantenimiento/historial");
-      } else
-          this.form1LoginCheck = "Error, nº de bastidor no encontrado. Introduce nº de bastidor de nuevo"
-    }
+    // comprobarBastidor() {
+    //   if (this.form1Bastidor == "a") {
+    //     this.bastidorCorrecto = true;
+    //     router.push("/mantenimiento/historial");
+    //   } else
+    //     this.form1LoginCheck =
+    //       "Error, nº de bastidor no encontrado. Introduce nº de bastidor de nuevo";
+    // },
   },
 };
 </script>

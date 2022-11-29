@@ -16,6 +16,7 @@
         <MDBNavbarItem to="/">Recomendador </MDBNavbarItem>
         <MDBNavbarItem>
           <!-- Navbar dropdown -->
+         
           <MDBDropdown class="nav-item" v-model="dropdown1">
             <MDBDropdownToggle
               tag="a"
@@ -24,10 +25,10 @@
               >Servicios</MDBDropdownToggle
             >
             <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
-              <MDBDropdownItem to="/mantenimiento" :disabled="!store.username"
+              <MDBDropdownItem to="/mantenimiento"  :disabled="!store.username"
                 >Consultar Mantenimiento</MDBDropdownItem
               >
-              <MDBDropdownItem href="#" :disabled="!store.username"
+              <MDBDropdownItem to="/" :disabled="!store.username"
                 >Pedir cita</MDBDropdownItem
               >
             </MDBDropdownMenu>
