@@ -2,12 +2,13 @@ package jcc00078.TFG.controladoresREST;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import jcc00078.TFG.controladoresREST.dto.CitaDTO;
+import jcc00078.TFG.controladoresREST.dto.RevisionDTO;
 import jcc00078.TFG.entidades.Cita;
 import jcc00078.TFG.entidades.Motocicleta;
+import jcc00078.TFG.entidades.Revision;
 import jcc00078.TFG.repositorios.CitaRepositorio;
 import jcc00078.TFG.repositorios.MotocicletaRepositorio;
-import jcc00078.TFG.repositorios.UsuarioRepositorio;
+import jcc00078.TFG.repositorios.RevisionRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,22 +26,36 @@ import org.springframework.web.server.ResponseStatusException;
  *
  * @author juanc
  */
-@RestController
-@RequestMapping("citas")
-@CrossOrigin
-public class ControladorCita {
 
+@RestController
+@RequestMapping("revisiones")
+@CrossOrigin
+public class ControladorRevision {
     @Autowired
     private CitaRepositorio citaRepositorio;
-
     @Autowired
+    private RevisionRepositorio revisionRepositorio;
+    @Autowired 
     private MotocicletaRepositorio motocicletaRepositorio;
-
-    @Autowired
-    private UsuarioRepositorio usuarioRepositorio;
-
+    
+   @PostMapping
+   @ResponseStatus(HttpStatus.CREATED)
+   public void anotarRevision(@RequestBody RevisionDTO revision) {
+    Revision r = new Revision();
+    r.fromDTO(revision);
+    if(revision.getIdCita() != null) {
+        r.setCita(citaRepositorio.findById(revision.getIdCita())
+        .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada")));
+    }
+    if (revision.getNumBastidor()!= null){
+            r.setMoto(motocicletaRepositorio.findById(revision.getNumBastidor())
+            .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Moto no encontrada")));
+        }
+    revisionRepositorio.save(r);
+   }
+   
     @GetMapping("{numBastidor}")
-    public List<CitaDTO> getCitas(@PathVariable String numBastidor, @AuthenticationPrincipal String usuarioLogueado) {
+    public List<RevisionDTO> getRevisiones(@PathVariable String numBastidor, @AuthenticationPrincipal String usuarioLogueado) {
         Motocicleta moto = motocicletaRepositorio.findById(numBastidor)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El número de bastidor no se ha encontrado"));
         if (moto.getCliente() == null) {
@@ -49,24 +64,6 @@ public class ControladorCita {
         if (!moto.getCliente().getDni_usuario().equals(usuarioLogueado)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El dni " + moto.getCliente().getDni_usuario() + " no puede acceder a las citas que tiene el dni " + usuarioLogueado);
         }
-        return citaRepositorio.findAllByMoto(moto).stream().map(Cita::toDTO).collect(Collectors.toUnmodifiableList());
+        return revisionRepositorio.findAllByMoto(moto).stream().map(Revision::toDTO).collect(Collectors.toUnmodifiableList());
     }
-
-    @PostMapping()
-    @ResponseStatus(HttpStatus.CREATED)
-    public void crearCita(@RequestBody CitaDTO cita) {
-        Cita c = new Cita();
-        c.fromDTO(cita);
-        if (cita.getDni_usuario() != null) {
-            c.setCliente(usuarioRepositorio.findOneByDni(cita.getDni_usuario())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado")));
-        }
-        if (cita.getNumBastidor()!= null){
-            c.setMoto(motocicletaRepositorio.findById(cita.getNumBastidor())
-            .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Moto no encontrada")));
-        }
-        citaRepositorio.save(c);
-    }
-    
-    
 }

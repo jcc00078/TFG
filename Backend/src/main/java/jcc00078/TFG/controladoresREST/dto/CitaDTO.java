@@ -12,14 +12,14 @@ public class CitaDTO {
     private LocalDateTime horario;
     private String dni_usuario;
     private String numBastidor;
-    private int codRevision;
+    //private Integer codRevision;
 
-    public CitaDTO(Long id, LocalDateTime horario, String dni_usuario, String numBastidor, int codRevision) {
+    public CitaDTO(Long id, LocalDateTime horario, String dni_usuario, String numBastidor/*, Integer codRevision*/) {
         this.id = id;
         this.horario = horario;
         this.dni_usuario = dni_usuario;
         this.numBastidor = numBastidor;
-        this.codRevision = codRevision;
+//        this.codRevision = codRevision;
     }
 
     /**

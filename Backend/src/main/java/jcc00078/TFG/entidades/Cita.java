@@ -3,6 +3,8 @@ package jcc00078.TFG.entidades;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -18,6 +20,7 @@ import jcc00078.TFG.controladoresREST.dto.CitaDTO;
 public class Cita implements Serializable {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
 
     private LocalDateTime horario;
@@ -41,7 +44,7 @@ public class Cita implements Serializable {
     private Revision revision;
 
     public CitaDTO toDTO() {
-        CitaDTO citaDTO = new CitaDTO(getId(), getHorario(), cliente != null ? cliente.getDni_usuario() : null, moto != null ? moto.getNumBastidor() : null, revision != null ? revision.getCod_revision() : null);
+        CitaDTO citaDTO = new CitaDTO(getId(), getHorario(), cliente != null ? cliente.getDni_usuario() : null, moto != null ? moto.getNumBastidor() : null/*, revision != null ? revision.getCod_revision() : null*/);
         return citaDTO;
     }
     

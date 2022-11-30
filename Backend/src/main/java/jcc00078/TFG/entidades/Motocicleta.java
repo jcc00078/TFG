@@ -58,7 +58,15 @@ public class Motocicleta implements Serializable {
      */
     @OneToMany(mappedBy = "moto")
     private List<Cita> citas;
-
+    
+    
+  /**
+     * Revisiones  asociadas a una motocicleta
+     */
+    @OneToMany(mappedBy = "moto")
+    private List<Revision> revisiones;
+    
+    
     @ManyToMany
     @JoinTable(name = "pieza_motocicleta", joinColumns = @JoinColumn(name = "cod_pieza"), inverseJoinColumns = @JoinColumn(name = "num_bastidor"))
     private List<Pieza> piezas;
@@ -216,5 +224,19 @@ public class Motocicleta implements Serializable {
      */
     public void setImagen(String imagen) {
         this.imagen = imagen;
+    }
+
+    /**
+     * @return the revisiones
+     */
+    public List<Revision> getRevisiones() {
+        return revisiones;
+    }
+
+    /**
+     * @param revisiones the revisiones to set
+     */
+    public void setRevisiones(List<Revision> revisiones) {
+        this.revisiones = revisiones;
     }
 }

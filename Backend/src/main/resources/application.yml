@@ -4,7 +4,8 @@ spring.dataSource.username: ariasport
 spring.dataSource.password: secret
 
 #Configuración JPA
-spring.jpa.hibernate.ddl-auto: none 
+spring.jpa.hibernate.ddl-auto: update 
+#spring.jpa.hibernate.ddl-auto: none
 #spring.jpa.hibernate.ddl-auto: create
 
 #Puerto que utilizo

@@ -5,6 +5,7 @@ import comparador from '@/views/comparador';
 import mantenimiento from '@/views/mantenimiento';
 import historial from '@/views/historial';
 import registroUsuario from '@/views/registroUsuario'
+// import cita from '@/views/cita'
 
 import { createRouter, createWebHashHistory } from "vue-router";
 
@@ -35,7 +36,7 @@ const routes = [
       component: mantenimiento
     },
     {
-      path:"/mantenimiento/historial",
+      path:"/mantenimiento/historial/:numBastidor",
       name:"historial",
       component: historial
     },
@@ -43,7 +44,12 @@ const routes = [
       path:"/registrarme",
       name:"registrarme",
       component: registroUsuario
-    }
+    },
+    // {
+    //   path:"/citas",
+    //   name:"cita",
+    //   component: cita
+    // }
   ];
 
   const router = createRouter({
@@ -52,12 +58,5 @@ const routes = [
   });
   export default router;
 
-        /*
-        {
-         path: '/about',
-         name: 'about',
-         component: () => import('@/views/About.vue')
-        }
-        */
     
 

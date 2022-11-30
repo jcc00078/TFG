@@ -1,37 +1,17 @@
 <template>
   <div class="container my-5">
-    <!-- <div
-      class="alert alert-danger border-color-red"
-      border-color="red"
-      role="alert"
-      v-show="form1LoginCheck != ''"
-    >
-      {{ this.form1LoginCheck }}
-    </div> -->
+
     <MDBCard class="shadow-4-strong w-responsive mx-auto" text="center">
       <MDBCardBody>
         <MDBCardTitle>Tus motocicletas</MDBCardTitle>
         <MDBCardText>
           <div class="row-6 bg-image hover-zoom hover-overlay" v-for="moto in motosUsuario" v-bind:key="moto">
             <img class="col-6" :src="`data:image/png;base64,${moto.imagenData}`"/>
-            <router-link to="/mantenimiento/historial">
+            <router-link :to="`/mantenimiento/historial/${moto.numBastidor}`">
               <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
             </router-link>
           </div>
         </MDBCardText>
-        <!-- <form v-if="bastidorCorrecto"> -->
-        <!-- Nº bastidor input -->
-        <!-- <MDBInput
-      type="email"
-      label="Nº de bastidor"
-      id="form1Bastidor"
-      v-model="form1Bastidor"
-      wrapperClass="mb-4"
-    /> -->
-        <!-- Submit button -->
-        <!-- <MDBBtn id="buscar" color="info" block @click="comprobarBastidor()"> Buscar </MDBBtn> -->
-        <!-- <cabecera bastidorCorrecto></cabecera> -->
-        <!-- </form> -->
       </MDBCardBody>
     </MDBCard>
   </div>
@@ -72,6 +52,7 @@ export default {
     const bastidorCorrecto = ref("false");
     const motosUsuario = ref([]);
     const store = useAuthStore();
+  
 
     onMounted(async () => {
       const { data: arrayMotos } = await axios.get(
@@ -84,6 +65,7 @@ export default {
       );
       motosUsuario.value = arrayMotos;
       console.log(motosUsuario.value);
+      console.log("MOTO SELECCIONADA: "+ this.motoSeleccionada);
     });
 
     return {

@@ -28,7 +28,7 @@
               <MDBDropdownItem to="/mantenimiento"  :disabled="!store.username"
                 >Consultar Mantenimiento</MDBDropdownItem
               >
-              <MDBDropdownItem to="/" :disabled="!store.username"
+              <MDBDropdownItem to="/citas" :disabled="!store.username"
                 >Pedir cita</MDBDropdownItem
               >
             </MDBDropdownMenu>

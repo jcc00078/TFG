@@ -26,7 +26,7 @@
           <th scope="row">{{ item.marca }}</th>
           <td>{{ item.modelo }}</td>
           <td>{{ item.color }}</td>
-          <td>{{ item.precio }} euros</td>
+          <td>{{ item.precio }} €</td>
           <td>{{ item.tipo }}</td>
         </tr>
       </tbody>
