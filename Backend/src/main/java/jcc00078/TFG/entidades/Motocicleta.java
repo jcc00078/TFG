@@ -1,5 +1,6 @@
 package jcc00078.TFG.entidades;
 
+import com.sun.istack.NotNull;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
@@ -45,6 +46,12 @@ public class Motocicleta implements Serializable {
     
     @Lob
     private String imagen;
+    
+    private int cilindrada;
+    
+    private boolean offRoad;
+    @NotNull
+    private String carnetCompatible;
 
     /**
      * Cliente que posee la moto
@@ -73,10 +80,21 @@ public class Motocicleta implements Serializable {
 
     public MotocicletaDTO toDTO() {
         MotocicletaDTO motoDTO = new MotocicletaDTO(getNumBastidor(), getMarca(), getModelo(), getColor(), 
-                getTipo(), getPrecio(), cliente!=null? cliente.getDni_usuario(): null, getImagen());
+                getTipo(), getPrecio(), cliente!=null? cliente.getDni_usuario(): null, getImagen(), getCilindrada(), isOffRoad(),getCarnetCompatible());
         return motoDTO;
     }
-
+    
+    public void fromDTO(MotocicletaDTO moto) {
+        this.marca = moto.getMarca();
+        this.modelo = moto.getModelo();
+        this.numBastidor = moto.getNumBastidor();
+        this.color = moto.getColor();
+        this.tipo = moto.getTipo();
+        this.precio = moto.getPrecio();
+        this.cilindrada=moto.getCilindrada();
+        this.offRoad=moto.isOffRoad();
+        this.carnetCompatible=moto.getCarnetCompatible();
+    }
     /**
      * @return the numBastidor
      */
@@ -203,14 +221,6 @@ public class Motocicleta implements Serializable {
         this.piezas = piezas;
     }
 
-    public void fromDTO(MotocicletaDTO moto) {
-        this.marca = moto.getMarca();
-        this.modelo = moto.getModelo();
-        this.numBastidor = moto.getNumBastidor();
-        this.color = moto.getColor();
-        this.tipo = moto.getTipo();
-        this.precio = moto.getPrecio();
-    }
 
     /**
      * @return the imagen
@@ -238,5 +248,47 @@ public class Motocicleta implements Serializable {
      */
     public void setRevisiones(List<Revision> revisiones) {
         this.revisiones = revisiones;
+    }
+
+    /**
+     * @return the cilindrada
+     */
+    public int getCilindrada() {
+        return cilindrada;
+    }
+
+    /**
+     * @param cilindrada the cilindrada to set
+     */
+    public void setCilindrada(int cilindrada) {
+        this.cilindrada = cilindrada;
+    }
+
+    /**
+     * @return the offRoad
+     */
+    public boolean isOffRoad() {
+        return offRoad;
+    }
+
+    /**
+     * @param offRoad the offRoad to set
+     */
+    public void setOffRoad(boolean offRoad) {
+        this.offRoad = offRoad;
+    }
+
+    /**
+     * @return the carnetCompatible
+     */
+    public String getCarnetCompatible() {
+        return carnetCompatible;
+    }
+
+    /**
+     * @param carnetCompatible the carnetCompatible to set
+     */
+    public void setCarnetCompatible(String carnetCompatible) {
+        this.carnetCompatible = carnetCompatible;
     }
 }

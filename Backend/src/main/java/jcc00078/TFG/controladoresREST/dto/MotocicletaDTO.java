@@ -6,7 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author juanc
  */
-public class MotocicletaDTO{
+public class MotocicletaDTO {
+
     private String numBastidor;
     private String marca;
     private String modelo;
@@ -16,18 +17,22 @@ public class MotocicletaDTO{
     private String dni_usuario;
     private MultipartFile imagenFile;
     private String imagenData;
- 
+    private int cilindrada;
+    private boolean offRoad;
+    private String carnetCompatible;
 
-
-    public MotocicletaDTO(String num_bastidor, String marca, String modelo, String color, String tipo, float precio, String dni, String imagenData) {
-        this.numBastidor=num_bastidor;
+    public MotocicletaDTO(String num_bastidor, String marca, String modelo, String color, String tipo, float precio, String dni, String imagenData, int cilindrada, boolean offRoad, String carnetCompatible) {
+        this.numBastidor = num_bastidor;
         this.marca = marca;
         this.modelo = modelo;
         this.color = color;
         this.tipo = tipo;
         this.precio = precio;
-        this.dni_usuario=dni;
-        this.imagenData=imagenData;
+        this.dni_usuario = dni;
+        this.imagenData = imagenData;
+        this.cilindrada = cilindrada;
+        this.offRoad = offRoad;
+        this.carnetCompatible = carnetCompatible;
     }
 
     /**
@@ -155,6 +160,48 @@ public class MotocicletaDTO{
      */
     public void setImagenData(String imagenData) {
         this.imagenData = imagenData;
+    }
+
+    /**
+     * @return the cilindrada
+     */
+    public int getCilindrada() {
+        return cilindrada;
+    }
+
+    /**
+     * @param cilindrada the cilindrada to set
+     */
+    public void setCilindrada(int cilindrada) {
+        this.cilindrada = cilindrada;
+    }
+
+    /**
+     * @return the offRoad
+     */
+    public boolean isOffRoad() {
+        return offRoad;
+    }
+
+    /**
+     * @param offRoad the offRoad to set
+     */
+    public void setOffRoad(boolean offRoad) {
+        this.offRoad = offRoad;
+    }
+
+    /**
+     * @return the carnetCompatible
+     */
+    public String getCarnetCompatible() {
+        return carnetCompatible;
+    }
+
+    /**
+     * @param carnetCompatible the carnetCompatible to set
+     */
+    public void setCarnetCompatible(String carnetCompatible) {
+        this.carnetCompatible = carnetCompatible;
     }
 
 }

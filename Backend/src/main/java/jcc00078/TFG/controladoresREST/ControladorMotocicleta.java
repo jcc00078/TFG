@@ -57,8 +57,8 @@ public class ControladorMotocicleta {
     }
 
     @GetMapping("modelos")
-    public List<MotocicletaDTO> listarDatosTodosModelos() {
-        List<Motocicleta> motos = motocicletaRepositorio.findAllByDistinctModelo();
+    public List<MotocicletaDTO> listarDatosTodosModelos(@RequestParam(defaultValue = "0") int cilindradaMin, @RequestParam(defaultValue = "4000") int cilindradaMax, @RequestParam(required = false) Boolean offRoad, @RequestParam(required = false) String carnetCompatible, @RequestParam(required = false) String tipo) {   
+        List<Motocicleta> motos = motocicletaRepositorio.findAllByDistinctModelo(cilindradaMin,cilindradaMax,offRoad,carnetCompatible,tipo);
         return motos.stream().map((moto) -> moto.toDTO().setDni_usuario(null)).collect(Collectors.toUnmodifiableList());
     }
 
@@ -83,4 +83,7 @@ public class ControladorMotocicleta {
         }
         motocicletaRepositorio.save(m);
     }
+    
+
+
 }

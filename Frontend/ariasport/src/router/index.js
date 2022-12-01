@@ -5,6 +5,7 @@ import comparador from '@/views/comparador';
 import mantenimiento from '@/views/mantenimiento';
 import historial from '@/views/historial';
 import registroUsuario from '@/views/registroUsuario'
+import recomendador from '@/views/recomendador'
 // import cita from '@/views/cita'
 
 import { createRouter, createWebHashHistory } from "vue-router";
@@ -45,6 +46,11 @@ const routes = [
       name:"registrarme",
       component: registroUsuario
     },
+    {
+      path:"/recomendador",
+      name:"recomendador",
+      component: recomendador
+    }
     // {
     //   path:"/citas",
     //   name:"cita",

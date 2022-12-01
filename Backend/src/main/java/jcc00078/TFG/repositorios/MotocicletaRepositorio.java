@@ -32,7 +32,15 @@ public interface MotocicletaRepositorio extends JpaRepository<Motocicleta, Strin
 
     @Query("SELECT DISTINCT m.modelo FROM Motocicleta m WHERE m.marca = (:marca)")
     List<String> findDistinctModeloByMarca(@Param("marca") String marca);
-    
-    @Query("SELECT m FROM Motocicleta m")
-    List<Motocicleta> findAllByDistinctModelo();
+
+    @Query("SELECT m FROM Motocicleta m WHERE (:offRoad IS null OR m.offRoad = (:offRoad)) "
+            + "AND (:carnetCompatible IS null OR m.carnetCompatible = (:carnetCompatible)) "
+            + "AND m.cilindrada BETWEEN :cilindradaMin AND :cilindradaMax "
+            + "AND (:tipo IS null OR m.tipo = (:tipo))"
+    )
+    List<Motocicleta> findAllByDistinctModelo(@Param("cilindradaMin") int cilindradaMin, @Param("cilindradaMax") int cilindradaMax,
+            @Param("offRoad") Boolean offRoad,
+            @Param("carnetCompatible") String carnetCompatible,
+            @Param("tipo") String tipo);
+
 }
