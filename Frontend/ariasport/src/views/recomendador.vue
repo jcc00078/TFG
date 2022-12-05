@@ -37,6 +37,7 @@
               color="secondary"
             >
               Cilindrada
+              <i class="fas fa-cogs mx-1"></i>
             </MDBDropdownToggle>
             <MDBDropdownMenu transparent aria-labelledby="dropdownMenuButton">
               <MDBDropdownItem>
@@ -120,6 +121,17 @@
       </MDBCard>
     </div>
   </div>
+  <MDBBtn
+    v-if="isFiltrado"
+    title="Reiniciar filtros"
+    @click="reiniciarFiltros()"
+    outline="danger"
+    style="padding: 0cm; position: fixed; bottom: 0"
+    class="text-center-white m-2"
+    floating
+  >
+    <i class="fas fa-redo text"></i>
+  </MDBBtn>
 </template>
 
 <script>
@@ -133,6 +145,7 @@ import {
   MDBDropdownToggle,
   MDBDropdownMenu,
   MDBDropdownItem,
+  MDBBtn,
   //MDBRange
 } from "mdb-vue-ui-kit";
 import { onMounted, ref, watch } from "vue";
@@ -150,16 +163,19 @@ export default {
     MDBCardBody,
     MDBCardTitle,
     MDBCardText,
+    MDBBtn,
     //MDBRange
   },
   setup() {
     const minRange = useDebouncedRef(0, 400);
-    const maxRange = useDebouncedRef(2000, 400);
+    const maxRange = useDebouncedRef(2500, 400);
     const dropdownCilindrada = ref(false);
     const dropdownOnOffRoad = ref(false);
     const dropdownCarnet = ref(false);
     const dropdownTipo = ref(false);
     const motos = ref([]);
+    const isFiltrado = ref(false);
+
     onMounted(async () => {
       const { data: arrayTodosModelos } = await axios.get(`motos/modelos`);
       motos.value = arrayTodosModelos;
@@ -170,6 +186,7 @@ export default {
         params: { cilindradaMin: newMinRange, cilindradaMax: newMaxRange },
       });
       motos.value = arrayMotos;
+      isFiltrado.value = true;
     });
 
     // onMounted(async () => {
@@ -194,7 +211,14 @@ export default {
       dropdownOnOffRoad,
       dropdownCarnet,
       dropdownTipo,
+      isFiltrado,
     };
+  },
+  methods: {
+    reiniciarFiltros() {
+      this.minRange = 0;
+      this.maxRange = 2500;
+    },
   },
 };
 </script>
