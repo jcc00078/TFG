@@ -5,7 +5,7 @@
         type="number"
         :min="minPosible"
         :max="maxPosible"
-        :value="minVal"
+        :value="minActual"
         disabled
       />
     </div>
@@ -13,8 +13,8 @@
       <div
         class="progress"
         :style="{
-          left: (minVal / maxPosible) * 100 + '%',
-          right: 100 - (maxVal / maxPosible) * 100 + '%',
+          left: (minActual / maxPosible) * 100 + '%',
+          right: 100 - (maxActual / maxPosible) * 100 + '%',
         }"
       ></div>
       <input
@@ -22,7 +22,7 @@
         class="range-min"
         :min="minPosible"
         :max="maxPosible"
-        :value="minVal"
+        :value="minActual"
         @input="updateMinRange($event)"
       />
       <input
@@ -30,7 +30,7 @@
         class="range-max"
         :min="minPosible"
         :max="maxPosible"
-        :value="maxVal"
+        :value="maxActual"
         @input="updateMaxRange($event)"
       />
     </div>
@@ -39,7 +39,7 @@
         type="number"
         :min="minPosible"
         :max="maxPosible"
-        :value="maxVal"
+        :value="maxActual"
         disabled
       />
     </div>
@@ -108,13 +108,10 @@
   border-radius: 50px;
 }
 </style>
-<!-- 
-Parecido a como hice en cartaComparador y Comparador.
-Hacer 2 variables props con el minValor que se escoge y el maxValor que se escoge.
-Luego hacer emits de estos valores(update) ya k cambian dinamicamente segun movamos el slider.
-Para hacer esto ponemos en el campo input del valor minimo :value="minValor"  -->
 
 <script>
+import {ref} from "vue";
+
 export default {
   props: {
     minVal: Number,
@@ -122,6 +119,15 @@ export default {
     maxPosible: Number,
     minPosible: Number,
   },
+  setup(props) {
+    const minActual= ref(props.minVal);
+    const maxActual = ref(props.maxVal);
+ 
+  return {
+    minActual,maxActual
+  };
+},
+
   emits: ["update:minVal", "update:maxVal"],
   methods: {
     updateMinRange(event) {
@@ -130,6 +136,7 @@ export default {
         event.target.value = this.maxVal - gap;
         return;
       }
+      this.minActual=parseInt(event.target.value);
       this.$emit("update:minVal", parseInt(event.target.value));
     },
 
@@ -139,31 +146,9 @@ export default {
         event.target.value = this.minVal + gap;
         return;
       }
+      this.maxActual=parseInt(event.target.value);
       this.$emit("update:maxVal", parseInt(event.target.value));
     },
   },
 };
-
-// const range = document.querySelectorAll('.range-slider input'),
-// progress = document.querySelector('.range-slider .progress');
-// let gap = 1000;
-// const inputValue = document.querySelectorAll('.numberVal input');
-// range.forEach(input => {
-//   input.addEventListener('input', e => {
-//     let minrange = parseInt(range[0].value),
-//     maxrange = parseInt(range[1].value);
-//     if (maxrange - minrange < gap) {
-//       if (e.target.className === "range-min") {
-//         range[0].value = maxrange - gap;
-//       } else {
-//         range[1].value = minrange + gap;
-//       }
-//     } else {
-//       progress.style.left = (minrange / range[0].max) * 100 + '%';
-//       progress.style.right = 100 - (maxrange / range[1].max) * 100 + '%';
-//       inputValue[0].value = minrange;
-//       inputValue[1].value = maxrange;
-//     }
-//   });
-// });
 </script>

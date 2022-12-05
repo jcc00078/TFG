@@ -31,9 +31,9 @@
       </div>
       <div class="row text-center">
         <div class="col-3">
-          <MDBDropdown v-model="dropdown1">
+          <MDBDropdown v-model="dropdownCilindrada">
             <MDBDropdownToggle
-              @click="dropdown1 = !dropdown1"
+              @click="dropdownCilindrada = !dropdownCilindrada"
               color="secondary"
             >
               Cilindrada
@@ -44,16 +44,16 @@
                   v-model:minVal="minRange"
                   v-model:maxVal="maxRange"
                   :minPosible="0"
-                  :maxPosible="4000"
+                  :maxPosible="2500"
                 />
               </MDBDropdownItem>
             </MDBDropdownMenu>
           </MDBDropdown>
         </div>
         <div class="col-3">
-          <MDBDropdown v-model="dropdown2">
+          <MDBDropdown v-model="dropdownOnOffRoad">
             <MDBDropdownToggle
-              @click="dropdown2 = !dropdown2"
+              @click="dropdownOnOffRoad = !dropdownOnOffRoad"
               color="secondary"
             >
               On/Off
@@ -66,9 +66,9 @@
           </MDBDropdown>
         </div>
         <div class="col-3">
-          <MDBDropdown v-model="dropdown3">
+          <MDBDropdown v-model="dropdownCarnet">
             <MDBDropdownToggle
-              @click="dropdown3 = !dropdown3"
+              @click="dropdownCarnet = !dropdownCarnet"
               color="secondary"
             >
               Carnet compatible
@@ -83,9 +83,9 @@
           </MDBDropdown>
         </div>
         <div class="col-3">
-          <MDBDropdown v-model="dropdown4">
+          <MDBDropdown v-model="dropdownTipo">
             <MDBDropdownToggle
-              @click="dropdown4 = !dropdown4"
+              @click="dropdownTipo = !dropdownTipo"
               color="secondary"
             >
               Tipo de moto
@@ -107,6 +107,16 @@
           <MDBCardTitle>Modelos recomendados</MDBCardTitle>
           <MDBCardText> Elige 2 motocicletas para compararlas </MDBCardText>
         </MDBCardBody>
+        <div
+          class="row-6 bg-image hover-zoom hover-overlay"
+          v-for="moto in motos"
+          v-bind:key="moto"
+        >
+          <img
+            class="col-6"
+            :src="`data:image/png;base64,${moto.imagenData}`"
+          />
+        </div>
       </MDBCard>
     </div>
   </div>
@@ -125,8 +135,9 @@ import {
   MDBDropdownItem,
   //MDBRange
 } from "mdb-vue-ui-kit";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import axios from "axios";
+import { useDebouncedRef } from "@/composables/useDebouncedRef.js";
 
 export default {
   components: {
@@ -142,21 +153,27 @@ export default {
     //MDBRange
   },
   setup() {
-    const minRange = ref(0);
-    const maxRange = ref(4000);
+    const minRange = useDebouncedRef(0, 400);
+    const maxRange = useDebouncedRef(2000, 400);
+    const dropdownCilindrada = ref(false);
+    const dropdownOnOffRoad = ref(false);
+    const dropdownCarnet = ref(false);
+    const dropdownTipo = ref(false);
+    const motos = ref([]);
     onMounted(async () => {
       const { data: arrayTodosModelos } = await axios.get(`motos/modelos`);
-      console.log(arrayTodosModelos);
+      motos.value = arrayTodosModelos;
     });
 
-    const range3 = ref(2.5);
-    const dropdown1 = ref(false);
-    const dropdown2 = ref(false);
-    const dropdown3 = ref(false);
-    const dropdown4 = ref(false);
+    watch([minRange, maxRange], async ([newMinRange, newMaxRange]) => {
+      const { data: arrayMotos } = await axios.get("motos/modelos", {
+        params: { cilindradaMin: newMinRange, cilindradaMax: newMaxRange },
+      });
+      motos.value = arrayMotos;
+    });
 
     // onMounted(async () => {
-    //   const { data: arrayMotos } = await axios.get(
+    //   const { data: motos } = await axios.get(
     //     `usuarios/${store.username}/motos`,
     //     {
     //       headers: {
@@ -164,7 +181,7 @@ export default {
     //       },
     //     }
     //   );
-    //   motosUsuario.value = arrayMotos;
+    //   motosUsuario.value = motos;
     //   console.log(motosUsuario.value);
     //   console.log("MOTO SELECCIONADA: "+ this.motoSeleccionada);
     // });
@@ -172,11 +189,11 @@ export default {
     return {
       minRange,
       maxRange,
-      range3,
-      dropdown1,
-      dropdown2,
-      dropdown3,
-      dropdown4,
+      motos,
+      dropdownCilindrada,
+      dropdownOnOffRoad,
+      dropdownCarnet,
+      dropdownTipo,
     };
   },
 };
