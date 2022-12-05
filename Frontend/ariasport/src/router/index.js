@@ -6,6 +6,8 @@ import mantenimiento from '@/views/mantenimiento';
 import historial from '@/views/historial';
 import registroUsuario from '@/views/registroUsuario'
 import recomendador from '@/views/recomendador'
+import sliderRecomendador from '@/components/sliderRecomendador'
+
 // import cita from '@/views/cita'
 
 import { createRouter, createWebHashHistory } from "vue-router";
@@ -50,7 +52,12 @@ const routes = [
       path:"/recomendador",
       name:"recomendador",
       component: recomendador
-    }
+    },
+    {
+      path:"/slider",
+      name:"slider",
+      component: sliderRecomendador
+    },
     // {
     //   path:"/citas",
     //   name:"cita",

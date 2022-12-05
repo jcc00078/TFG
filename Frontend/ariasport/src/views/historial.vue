@@ -14,14 +14,22 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in revisionesUsuario" v-bind:key="item.codRevision">
-                <th scope="row">{{item.codRevision}}</th>
-                <td>{{item.kilometros}}</td>
-                <td>{{item.fecha}}</td>
-                <td>{{item.precio}} €</td>
+              <tr
+                v-for="item in revisionesUsuario"
+                v-bind:key="item.codRevision"
+              >
+                <th scope="row">{{ item.codRevision }}</th>
+                <td>{{ item.kilometros }}</td>
+                <td>{{ item.fecha }}</td>
+                <td>{{ item.precio }} €</td>
               </tr>
             </tbody>
           </table>
+          <div class="row">
+            <div class="d-flex justify-content-center">
+              <MDBBtn color="primary" @click="mostrarProxRev()">Mostrar próxima revisión </MDBBtn>
+            </div>
+          </div>
         </MDBCardText>
       </MDBCardBody>
     </MDBCard>
@@ -38,7 +46,7 @@ import {
   //   MDBCol,
   // MDBInput,
   //   MDBCheckbox,
-  //MDBBtn,
+  MDBBtn,
   MDBCard,
   MDBCardText,
   MDBCardBody,
@@ -55,7 +63,7 @@ export default {
     // MDBCol,
     // MDBInput,
     // MDBCheckbox,
-    // MDBBtn,
+    MDBBtn,
     MDBCardText,
     MDBCard,
     MDBCardBody,
@@ -68,7 +76,6 @@ export default {
     const revisionesUsuario = ref([]);
     const store = useAuthStore();
     const route = useRoute();
-
 
     onMounted(async () => {
       const numBastidor = route.params.numBastidor;
@@ -93,5 +100,10 @@ export default {
       store,
     };
   },
+  methods: {
+    mostrarProxRev() {
+
+    }
+  }
 };
 </script>

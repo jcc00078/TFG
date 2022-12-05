@@ -38,19 +38,15 @@
             >
               Cilindrada
             </MDBDropdownToggle>
-            <MDBDropdownMenu dark aria-labelledby="dropdownMenuButton">
-              <!-- <MDBDropdownItem to="/recomendador"> -->
-                <!-- 0-250cc -->
-<!-- <input type="range" class="form-range" min="0" max="5" id="customRange2"> -->
-<MDBRange v-model="range3" :min="0" :max="1500" :step="50" />
-
-              <!-- </MDBDropdownItem> -->
-              <!-- <MDBDropdownItem divider /> -->
-              <!-- <MDBDropdownItem to="/recomendador">250-500cc</MDBDropdownItem>
-              <MDBDropdownItem divider />
-              <MDBDropdownItem to="/recomendador">500-750cc</MDBDropdownItem>
-              <MDBDropdownItem divider />
-              <MDBDropdownItem to="/recomendador">Más de 750cc</MDBDropdownItem> -->
+            <MDBDropdownMenu transparent aria-labelledby="dropdownMenuButton">
+              <MDBDropdownItem>
+                <slider-recomendador
+                  v-model:minVal="minRange"
+                  v-model:maxVal="maxRange"
+                  :minPosible="0"
+                  :maxPosible="4000"
+                />
+              </MDBDropdownItem>
             </MDBDropdownMenu>
           </MDBDropdown>
         </div>
@@ -109,9 +105,7 @@
       <MDBCard>
         <MDBCardBody>
           <MDBCardTitle>Modelos recomendados</MDBCardTitle>
-          <MDBCardText>
-            Elige 2 motocicletas para compararlas
-          </MDBCardText>
+          <MDBCardText> Elige 2 motocicletas para compararlas </MDBCardText>
         </MDBCardBody>
       </MDBCard>
     </div>
@@ -119,6 +113,7 @@
 </template>
 
 <script>
+import sliderRecomendador from "@/components/sliderRecomendador.vue";
 import {
   MDBCard,
   MDBCardBody,
@@ -128,11 +123,14 @@ import {
   MDBDropdownToggle,
   MDBDropdownMenu,
   MDBDropdownItem,
-  MDBRange 
+  //MDBRange
 } from "mdb-vue-ui-kit";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import axios from "axios";
+
 export default {
   components: {
+    sliderRecomendador,
     MDBDropdown,
     MDBDropdownToggle,
     MDBDropdownMenu,
@@ -141,9 +139,16 @@ export default {
     MDBCardBody,
     MDBCardTitle,
     MDBCardText,
-    MDBRange 
+    //MDBRange
   },
   setup() {
+    const minRange = ref(0);
+    const maxRange = ref(4000);
+    onMounted(async () => {
+      const { data: arrayTodosModelos } = await axios.get(`motos/modelos`);
+      console.log(arrayTodosModelos);
+    });
+
     const range3 = ref(2.5);
     const dropdown1 = ref(false);
     const dropdown2 = ref(false);
@@ -165,6 +170,8 @@ export default {
     // });
 
     return {
+      minRange,
+      maxRange,
       range3,
       dropdown1,
       dropdown2,
