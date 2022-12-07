@@ -55,7 +55,8 @@
   width: 600px;
   height: 80px;
   background: #9c9c9c;
-  border-radius: 20px;
+  border-radius: 40px;
+  
 }
 .container input[type="number"] {
   width: 50px;
@@ -91,8 +92,8 @@
 .container .range-slider input[type="range"] {
   position: absolute;
   top: -8px;
-  left: -5px;
-  width: 101%;
+  left: -4px;
+  width: 102%;
   -webkit-appearance: none;
   pointer-events: none;
   background: none;

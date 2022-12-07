@@ -39,7 +39,11 @@
               Cilindrada
               <i class="fas fa-cogs mx-1"></i>
             </MDBDropdownToggle>
-            <MDBDropdownMenu transparent aria-labelledby="dropdownMenuButton">
+            <MDBDropdownMenu
+              class="my-2"
+              style="padding: 0cm"
+              aria-labelledby="dropdownMenuButton"
+            >
               <MDBDropdownItem>
                 <slider-recomendador
                   v-model:minVal="minRange"
@@ -56,14 +60,18 @@
             <MDBDropdownToggle
               @click="dropdownOnOffRoad = !dropdownOnOffRoad"
               color="secondary"
+              class=""
             >
               On/Off
+              <i class="fas fa-road mx-1"></i>
             </MDBDropdownToggle>
-            <MDBDropdownMenu dark aria-labelledby="dropdownMenuButton">
-              <MDBDropdownItem to="/recomendador">On-road</MDBDropdownItem>
-              <MDBDropdownItem divider />
-              <MDBDropdownItem to="/recomendador">Off-road</MDBDropdownItem>
-            </MDBDropdownMenu>
+            <selector-unico-recomendador
+              :seleccionables="[
+                { texto: 'onRoad', valor: false },
+                { texto: 'offRoad', valor: true },
+              ]"
+              v-model:seleccionado="onOffRoad"
+            />
           </MDBDropdown>
         </div>
         <div class="col-3">
@@ -73,14 +81,17 @@
               color="secondary"
             >
               Carnet compatible
+              <i class="far fa-id-card mx-1"></i>
             </MDBDropdownToggle>
-            <MDBDropdownMenu dark aria-labelledby="dropdownMenuButton">
-              <MDBDropdownItem to="/recomendador">AM</MDBDropdownItem>
-              <MDBDropdownItem divider />
-              <MDBDropdownItem to="/recomendador">A2</MDBDropdownItem>
-              <MDBDropdownItem divider />
-              <MDBDropdownItem to="/recomendador">A</MDBDropdownItem>
-            </MDBDropdownMenu>
+
+            <selector-unico-recomendador
+              :seleccionables="[
+                { texto: 'AM', valor: 'AM' },
+                { texto: 'A2', valor: 'A2' },
+                {texto: 'A', valor: 'A'}
+              ]"
+              v-model:seleccionado="carnet"
+            />
           </MDBDropdown>
         </div>
         <div class="col-3">
@@ -90,14 +101,16 @@
               color="secondary"
             >
               Tipo de moto
+              <i class="fas fa-motorcycle mx-1"></i>
             </MDBDropdownToggle>
-            <MDBDropdownMenu dark aria-labelledby="dropdownMenuButton">
-              <MDBDropdownItem to="/recomendador">Naked</MDBDropdownItem>
-              <MDBDropdownItem divider />
-              <MDBDropdownItem to="/recomendador">Deportiva</MDBDropdownItem>
-              <MDBDropdownItem divider />
-              <MDBDropdownItem to="/recomendador">Scooter</MDBDropdownItem>
-            </MDBDropdownMenu>
+            <selector-unico-recomendador
+              :seleccionables="[
+                { texto: 'Naked', valor: 'Naked' },
+                { texto: 'Deportiva', valor: 'Deportiva' },
+                {texto: 'Scooter', valor: 'Scooter'}
+              ]"
+              v-model:seleccionado="tipoMoto"
+            />
           </MDBDropdown>
         </div>
       </div>
@@ -121,21 +134,30 @@
       </MDBCard>
     </div>
   </div>
-  <MDBBtn
-    v-if="isFiltrado"
-    title="Reiniciar filtros"
-    @click="reiniciarFiltros()"
-    outline="danger"
-    style="padding: 0cm; position: fixed; bottom: 0"
-    class="text-center-white m-2"
-    floating
+
+  <MDBTooltip
+    v-model="tooltip1"
+    direction="top"
+    style="padding: 0cm; position: fixed; bottom: 1.75cm"
   >
-    <i class="fas fa-redo text"></i>
-  </MDBBtn>
+    <template #reference>
+      <MDBBtn
+        @click="reiniciarFiltros()"
+        outline="danger"
+        style="padding: 0cm; position: fixed; bottom: 0"
+        class="text-center-white m-2"
+        floating
+      >
+        <i class="fas fa-redo text"></i>
+      </MDBBtn>
+    </template>
+    <template #tip> Reiniciar filtros </template>
+  </MDBTooltip>
 </template>
 
 <script>
 import sliderRecomendador from "@/components/sliderRecomendador.vue";
+import selectorUnicoRecomendador from "@/components/selectorUnicoRecomendador.vue";
 import {
   MDBCard,
   MDBCardBody,
@@ -146,6 +168,7 @@ import {
   MDBDropdownMenu,
   MDBDropdownItem,
   MDBBtn,
+  MDBTooltip,
   //MDBRange
 } from "mdb-vue-ui-kit";
 import { onMounted, ref, watch } from "vue";
@@ -164,30 +187,43 @@ export default {
     MDBCardTitle,
     MDBCardText,
     MDBBtn,
+    MDBTooltip,
+    selectorUnicoRecomendador
     //MDBRange
   },
   setup() {
     const minRange = useDebouncedRef(0, 400);
     const maxRange = useDebouncedRef(2500, 400);
+    const onOffRoad = ref(null);
+    const carnet = ref(null);
+    const tipoMoto = ref(null);
     const dropdownCilindrada = ref(false);
     const dropdownOnOffRoad = ref(false);
     const dropdownCarnet = ref(false);
     const dropdownTipo = ref(false);
     const motos = ref([]);
-    const isFiltrado = ref(false);
+    const tooltip1 = ref(false);
 
     onMounted(async () => {
       const { data: arrayTodosModelos } = await axios.get(`motos/modelos`);
       motos.value = arrayTodosModelos;
     });
 
-    watch([minRange, maxRange], async ([newMinRange, newMaxRange]) => {
-      const { data: arrayMotos } = await axios.get("motos/modelos", {
-        params: { cilindradaMin: newMinRange, cilindradaMax: newMaxRange },
-      });
-      motos.value = arrayMotos;
-      isFiltrado.value = true;
-    });
+    watch(
+      [minRange, maxRange, onOffRoad, carnet, tipoMoto],
+      async ([newMinRange, newMaxRange, newOnOffRoad,newCarnet,newTipoMoto]) => {
+        const { data: arrayMotos } = await axios.get("motos/modelos", {
+          params: {
+            cilindradaMin: newMinRange,
+            cilindradaMax: newMaxRange,
+            offRoad: newOnOffRoad,
+            carnetCompatible: newCarnet,
+            tipo:newTipoMoto,
+          },
+        });
+        motos.value = arrayMotos;
+      }
+    );
 
     // onMounted(async () => {
     //   const { data: motos } = await axios.get(
@@ -206,18 +242,25 @@ export default {
     return {
       minRange,
       maxRange,
+      onOffRoad,
+      carnet,
+      tipoMoto,
       motos,
       dropdownCilindrada,
       dropdownOnOffRoad,
       dropdownCarnet,
       dropdownTipo,
-      isFiltrado,
+      tooltip1,
     };
   },
   methods: {
     reiniciarFiltros() {
       this.minRange = 0;
       this.maxRange = 2500;
+      this.onOffRoad= null;
+      this.carnet= null;
+      this.tipoMoto = null;
+
     },
   },
 };
