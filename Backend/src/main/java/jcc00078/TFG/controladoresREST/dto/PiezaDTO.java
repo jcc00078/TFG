@@ -1,13 +1,13 @@
 package jcc00078.TFG.controladoresREST.dto;
 
 import java.util.Set;
-import jcc00078.TFG.entidades.PiezaMotocicleta;
 
 /**
  *
  * @author juanc
  */
 public class PiezaDTO {
+
     private int cod;
     private String nombre;
     private float precio;
@@ -91,5 +91,5 @@ public class PiezaDTO {
     public void setCompatibles(Set<String> compatibles) {
         this.compatibles = compatibles;
     }
-    
+
 }

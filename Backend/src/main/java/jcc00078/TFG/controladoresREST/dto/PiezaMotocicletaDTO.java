@@ -1,65 +1,78 @@
 package jcc00078.TFG.controladoresREST.dto;
 
-import javax.persistence.Lob;
-import jcc00078.TFG.entidades.Motocicleta;
-import jcc00078.TFG.entidades.Pieza;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
  * @author juanc
  */
 public class PiezaMotocicletaDTO {
-        private Motocicleta moto;
-        private Pieza pieza;
-        @Lob
-        private String imagen;
 
-    public PiezaMotocicletaDTO(Motocicleta moto, Pieza pieza, String imagen) {
-        this.moto = moto;
-        this.pieza = pieza;
-        this.imagen = imagen;
+    private String numBastidor;
+    private int codPieza;
+    private MultipartFile imagenFile;
+    private String imagenData;
+
+    public PiezaMotocicletaDTO(String numBastidor, int codPieza, String imagenData) {
+        this.numBastidor = numBastidor;
+        this.codPieza = codPieza;
+        this.imagenData = imagenData;
     }
 
     /**
-     * @return the moto
+     * @return the numBastidor
      */
-    public Motocicleta getMoto() {
-        return moto;
+    public String getNumBastidor() {
+        return numBastidor;
     }
 
     /**
-     * @param moto the moto to set
+     * @param numBastidor the numBastidor to set
      */
-    public void setMoto(Motocicleta moto) {
-        this.moto = moto;
+    public void setNumBastidor(String numBastidor) {
+        this.numBastidor = numBastidor;
     }
 
     /**
-     * @return the pieza
+     * @return the codPieza
      */
-    public Pieza getPieza() {
-        return pieza;
+    public int getCodPieza() {
+        return codPieza;
     }
 
     /**
-     * @param pieza the pieza to set
+     * @param codPieza the codPieza to set
      */
-    public void setPieza(Pieza pieza) {
-        this.pieza = pieza;
+    public void setCodPieza(int codPieza) {
+        this.codPieza = codPieza;
     }
 
     /**
-     * @return the imagen
+     * @return the imagenFile
      */
-    public String getImagen() {
-        return imagen;
+    public MultipartFile getImagenFile() {
+        return imagenFile;
     }
 
     /**
-     * @param imagen the imagen to set
+     * @param imagenFile the imagenFile to set
      */
-    public void setImagen(String imagen) {
-        this.imagen = imagen;
+    public void setImagenFile(MultipartFile imagenFile) {
+        this.imagenFile = imagenFile;
     }
-        
+
+    /**
+     * @return the imagenData
+     */
+    public String getImagenData() {
+        return imagenData;
+    }
+
+    /**
+     * @param imagenData the imagenData to set
+     */
+    public void setImagenData(String imagenData) {
+        this.imagenData = imagenData;
+    }
+
 }

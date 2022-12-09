@@ -1,6 +1,5 @@
 package jcc00078.TFG.controladoresREST;
 
-import java.io.IOException;
 import jcc00078.TFG.controladoresREST.dto.PiezaDTO;
 import jcc00078.TFG.entidades.Pieza;
 import jcc00078.TFG.repositorios.PiezaRepositorio;
@@ -28,7 +27,7 @@ public class ControladorPieza {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void crearPieza(@RequestBody PiezaDTO pieza){
+    public void crearPieza(@RequestBody PiezaDTO pieza) {
         Pieza p = new Pieza();
         p.fromDTO(pieza);
         if (piezaRepositorio.existsById(p.getCod())) {

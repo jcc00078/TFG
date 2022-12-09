@@ -1,12 +1,11 @@
 package jcc00078.TFG.entidades;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
+import javax.persistence.OneToMany;
 import jcc00078.TFG.controladoresREST.dto.PiezaDTO;
 //import javax.validation.constraints.Positive;
 //import javax.validation.constraints.Size;
@@ -32,10 +31,10 @@ public class Pieza implements Serializable {
 
     //@Size(min = 1, max = 10)
     private String fabricante;
-
+    @ElementCollection(targetClass=String.class)
     private Set<String> compatibles;
 
-    @ManyToMany(mappedBy = "piezas")
+    @OneToMany(mappedBy = "pieza")
     private Set<PiezaMotocicleta> piezasMoto;
 
     public Pieza() {
