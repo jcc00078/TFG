@@ -3,6 +3,7 @@ package jcc00078.TFG.entidades;
 import com.sun.istack.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -74,9 +75,8 @@ public class Motocicleta implements Serializable {
     private List<Revision> revisiones;
     
     
-    @ManyToMany
-    @JoinTable(name = "pieza_motocicleta", joinColumns = @JoinColumn(name = "cod_pieza"), inverseJoinColumns = @JoinColumn(name = "num_bastidor"))
-    private List<Pieza> piezas;
+    @OneToMany(mappedBy = "moto")
+    private Set<PiezaMotocicleta> piezasMoto;
 
     public MotocicletaDTO toDTO() {
         MotocicletaDTO motoDTO = new MotocicletaDTO(getNumBastidor(), getMarca(), getModelo(), getColor(), 
@@ -208,21 +208,6 @@ public class Motocicleta implements Serializable {
     }
 
     /**
-     * @return the piezas
-     */
-    public List<Pieza> getPiezas() {
-        return piezas;
-    }
-
-    /**
-     * @param piezas the piezas to set
-     */
-    public void setPiezas(List<Pieza> piezas) {
-        this.piezas = piezas;
-    }
-
-
-    /**
      * @return the imagen
      */
     public String getImagen() {
@@ -290,5 +275,19 @@ public class Motocicleta implements Serializable {
      */
     public void setCarnetCompatible(String carnetCompatible) {
         this.carnetCompatible = carnetCompatible;
+    }
+
+    /**
+     * @return the piezasMoto
+     */
+    public Set<PiezaMotocicleta> getPiezasMoto() {
+        return piezasMoto;
+    }
+
+    /**
+     * @param piezasMoto the piezasMoto to set
+     */
+    public void setPiezasMoto(Set<PiezaMotocicleta> piezasMoto) {
+        this.piezasMoto = piezasMoto;
     }
 }

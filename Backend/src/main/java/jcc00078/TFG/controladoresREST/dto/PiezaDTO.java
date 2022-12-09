@@ -1,61 +1,25 @@
-package jcc00078.TFG.entidades;
+package jcc00078.TFG.controladoresREST.dto;
 
-import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
-import jcc00078.TFG.controladoresREST.dto.PiezaDTO;
-//import javax.validation.constraints.Positive;
-//import javax.validation.constraints.Size;
+import jcc00078.TFG.entidades.PiezaMotocicleta;
 
 /**
- * Entidad Pieza
  *
  * @author juanc
  */
-@Entity
-public class Pieza implements Serializable {
-
-    @Id
-    // @Size(min = 10, max = 10)
+public class PiezaDTO {
     private int cod;
-
-    // @Size(min = 1, max = 20)
     private String nombre;
-
-    //  @Size(min = 1, max = 5)
-    //@Positive
     private float precio;
-
-    //@Size(min = 1, max = 10)
     private String fabricante;
-
     private Set<String> compatibles;
 
-    @ManyToMany(mappedBy = "piezas")
-    private Set<PiezaMotocicleta> piezasMoto;
-
-    public Pieza() {
-    }
-
-    public Pieza(int cod, String nombre, float precio, String fabricante, Set<String> compatibles, Set<PiezaMotocicleta> piezasMoto) {
+    public PiezaDTO(int cod, String nombre, float precio, String fabricante, Set<String> compatibles) {
         this.cod = cod;
         this.nombre = nombre;
         this.precio = precio;
         this.fabricante = fabricante;
         this.compatibles = compatibles;
-        this.piezasMoto = piezasMoto;
-    }
-
-    public void fromDTO(PiezaDTO pieza) {
-        this.cod = pieza.getCod();
-        this.nombre = pieza.getNombre();
-        this.precio = pieza.getPrecio();
-        this.fabricante = pieza.getFabricante();
-        this.compatibles = pieza.getCompatibles();
     }
 
     /**
@@ -127,19 +91,5 @@ public class Pieza implements Serializable {
     public void setCompatibles(Set<String> compatibles) {
         this.compatibles = compatibles;
     }
-
-    /**
-     * @return the piezasMoto
-     */
-    public Set<PiezaMotocicleta> getPiezasMoto() {
-        return piezasMoto;
-    }
-
-    /**
-     * @param piezasMoto the piezasMoto to set
-     */
-    public void setPiezasMoto(Set<PiezaMotocicleta> piezasMoto) {
-        this.piezasMoto = piezasMoto;
-    }
-
+    
 }
