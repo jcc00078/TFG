@@ -3,12 +3,16 @@ package jcc00078.TFG.controladoresREST;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
+import jcc00078.TFG.controladoresREST.dto.PiezaDTO;
+import jcc00078.TFG.controladoresREST.dto.GrupoPiezasDTO;
 import jcc00078.TFG.controladoresREST.dto.PiezaMotocicletaDTO;
+import jcc00078.TFG.entidades.GrupoPiezas;
 import jcc00078.TFG.entidades.Motocicleta;
 import jcc00078.TFG.entidades.Pieza;
-import jcc00078.TFG.entidades.PiezaMotocicleta;
+import jcc00078.TFG.repositorios.GrupoPiezasRepositorio;
 import jcc00078.TFG.repositorios.MotocicletaRepositorio;
 import jcc00078.TFG.repositorios.PiezaRepositorio;
 import jcc00078.TFG.repositorios.UsuarioRepositorio;
@@ -44,6 +48,8 @@ public class ControladorMotocicleta {
 
     @Autowired
     private PiezaRepositorio piezaRepositorio;
+    @Autowired
+    private GrupoPiezasRepositorio grupoPiezasRepositorio;
 
     @GetMapping("{marca}/modelos")
     public List<String> listarModelos(@PathVariable String marca) {
@@ -53,7 +59,7 @@ public class ControladorMotocicleta {
     @GetMapping("{modelo}")
     public MotocicletaDTO getModelo(@PathVariable String modelo) throws Exception {
         return motocicletaRepositorio.findOneByModelo(modelo)
-                .orElseThrow(() -> new Exception("El modelo " + modelo + " no existe"))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El modelo " + modelo + " no existe"))
                 .toDTO();
     }
 
@@ -90,31 +96,75 @@ public class ControladorMotocicleta {
         motocicletaRepositorio.save(m);
     }
 
+    @GetMapping("{modelo}/piezas")
+    public List<PiezaDTO> getPiezas(@PathVariable String modelo) {
+        return motocicletaRepositorio.findOneByModelo(modelo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El modelo " + modelo + " no existe"))
+                .getAccesoriosMoto()
+                .stream()
+                .map(Pieza::toDTO)
+                .collect(Collectors.toUnmodifiableList());
+
+    }
+
     @PutMapping(path = "{modelo}/piezas", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void asignarPieza(@ModelAttribute PiezaMotocicletaDTO piezaMoto, @PathVariable String modelo) throws IOException {
-        PiezaMotocicleta pm = new PiezaMotocicleta();
-        pm.fromDTO(piezaMoto);
-        Pieza p = piezaRepositorio.findById(piezaMoto.getCodPieza())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe ninguna pieza con el código  " + piezaMoto.getCodPieza()));
+    public void modificarPiezas(@ModelAttribute PiezaMotocicletaDTO pm, @PathVariable String modelo) {
+        Pieza p = piezaRepositorio.findById(pm.getCodPieza())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe ninguna pieza con el código  " + pm.getCodPieza()));
         Motocicleta m = motocicletaRepositorio.findOneByModelo(modelo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe ninguna moto con el modelo  " + modelo));
-        if (!m.getNumBastidor().equals(piezaMoto.getNumBastidor())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "La motocicleta con el nº de bastidor " + piezaMoto.getNumBastidor() + " no es del modelo " + modelo);
+        if (!m.getNumBastidor().equals(pm.getNumBastidor())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "La motocicleta con el nº de bastidor " + pm.getNumBastidor() + " no es del modelo " + modelo);
         }
         if (!p.getCompatibles().contains(modelo)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La pieza con el codigo" + p.getCod() + "no es compatible con el modelo " + modelo);
         }
+        if (!m.getAccesoriosMoto().add(p)) {
+            throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "La pieza con código" + p.getCod() + " ya existía ");
 
-        if (piezaMoto.getImagenFile() != null && !piezaMoto.getImagenFile().isEmpty()) {
-            if (!piezaMoto.getImagenFile().getContentType().contains("png")) {
+        }
+        motocicletaRepositorio.save(m);
+    }
+
+    @GetMapping("{modelo}/grupos")
+    public List<GrupoPiezasDTO> getGruposPiezas(@PathVariable String modelo) {
+        return motocicletaRepositorio.findOneByModelo(modelo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe ninguna moto con el modelo  " + modelo))
+                .getGrupoMoto().stream()
+                .map(GrupoPiezas::toDTO)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    @PostMapping(path = "{modelo}/grupos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public void crearGrupoPiezas(@ModelAttribute GrupoPiezasDTO grupo, @PathVariable String modelo) throws IOException {
+        GrupoPiezas gp = new GrupoPiezas();
+        gp.fromDTO(grupo);
+        Motocicleta m = motocicletaRepositorio.findOneByModelo(modelo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe ninguna moto con el modelo  " + modelo));
+        if (!m.getNumBastidor().equals(grupo.getNumBastidor())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "La motocicleta con el nº de bastidor " + grupo.getNumBastidor() + " no es del modelo " + modelo);
+        }
+        if (grupo.getCodPiezas().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El grupo de piezas no puede estar vacío, se necesita incluir al menos una pieza");
+
+        }
+        if (!m.getAccesoriosMoto().stream().map(Pieza::getCod).allMatch(grupo.getCodPiezas()::contains)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La motocicleta " + modelo + " no tiene como accesorio todas esas piezas");
+        }
+
+        if (grupo.getImagenFile() != null && !grupo.getImagenFile().isEmpty()) {
+            if (!grupo.getImagenFile().getContentType().contains("png")) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La imagen no tiene formato png");
             }
-            String imagenConvertida = Base64.getEncoder().encodeToString(piezaMoto.getImagenFile().getBytes());
-            pm.setImagen(imagenConvertida);
+            String imagenConvertida = Base64.getEncoder().encodeToString(grupo.getImagenFile().getBytes());
+            gp.setImagen(imagenConvertida);
         }
-        pm.setMoto(m);
-        pm.setPieza(p);
-        m.getPiezasMoto().add(pm);
-        motocicletaRepositorio.save(m);
+        Set<Pieza> piezas = piezaRepositorio.findAllById(grupo.getCodPiezas()).stream().collect(Collectors.toUnmodifiableSet());
+        gp.setMoto(m);
+        gp.setPiezas(piezas);
+        //m.getGrupoMoto().add(gp);
+        grupoPiezasRepositorio.save(gp);
+        //motocicletaRepositorio.save(m);
     }
 }

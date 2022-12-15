@@ -75,12 +75,17 @@ public class Motocicleta implements Serializable {
     private List<Revision> revisiones;
     
     
-    @OneToMany(mappedBy = "moto")
-    private Set<PiezaMotocicleta> piezasMoto;
+    @ManyToMany(mappedBy = "motos")
+    private Set<Pieza> accesorios;
 
+    @OneToMany(mappedBy="moto")
+    private Set<GrupoPiezas> grupoMoto;
+    
+    
     public MotocicletaDTO toDTO() {
         MotocicletaDTO motoDTO = new MotocicletaDTO(getNumBastidor(), getMarca(), getModelo(), getColor(), 
-                getTipo(), getPrecio(), cliente!=null? cliente.getDni_usuario(): null, getImagen(), getCilindrada(), isOffRoad(),getCarnetCompatible());
+                getTipo(), getPrecio(), cliente!=null? cliente.getDni_usuario(): null, 
+                getImagen(), getCilindrada(), isOffRoad(),getCarnetCompatible());
         return motoDTO;
     }
     
@@ -278,16 +283,30 @@ public class Motocicleta implements Serializable {
     }
 
     /**
-     * @return the piezasMoto
+     * @return the accesorios
      */
-    public Set<PiezaMotocicleta> getPiezasMoto() {
-        return piezasMoto;
+    public Set<Pieza> getAccesoriosMoto() {
+        return accesorios;
     }
 
     /**
-     * @param piezasMoto the piezasMoto to set
+     * @param accesoriosMoto the accesorios to set
      */
-    public void setPiezasMoto(Set<PiezaMotocicleta> piezasMoto) {
-        this.piezasMoto = piezasMoto;
+    public void setAccesoriosMoto(Set<Pieza> accesoriosMoto) {
+        this.accesorios = accesoriosMoto;
+    }
+
+    /**
+     * @return the grupoMoto
+     */
+    public Set<GrupoPiezas> getGrupoMoto() {
+        return grupoMoto;
+    }
+
+    /**
+     * @param grupoMoto the grupoMoto to set
+     */
+    public void setGrupoMoto(Set<GrupoPiezas> grupoMoto) {
+        this.grupoMoto = grupoMoto;
     }
 }

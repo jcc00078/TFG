@@ -10,13 +10,11 @@ public class PiezaMotocicletaDTO {
 
     private String numBastidor;
     private int codPieza;
-    private MultipartFile imagenFile;
-    private String imagenData;
 
-    public PiezaMotocicletaDTO(String numBastidor, int codPieza, String imagenData) {
+
+    public PiezaMotocicletaDTO(String numBastidor, int codPieza) {
         this.numBastidor = numBastidor;
         this.codPieza = codPieza;
-        this.imagenData = imagenData;
     }
 
     /**
@@ -46,33 +44,4 @@ public class PiezaMotocicletaDTO {
     public void setCodPieza(int codPieza) {
         this.codPieza = codPieza;
     }
-
-    /**
-     * @return the imagenFile
-     */
-    public MultipartFile getImagenFile() {
-        return imagenFile;
-    }
-
-    /**
-     * @param imagenFile the imagenFile to set
-     */
-    public void setImagenFile(MultipartFile imagenFile) {
-        this.imagenFile = imagenFile;
-    }
-
-    /**
-     * @return the imagenData
-     */
-    public String getImagenData() {
-        return imagenData;
-    }
-
-    /**
-     * @param imagenData the imagenData to set
-     */
-    public void setImagenData(String imagenData) {
-        this.imagenData = imagenData;
-    }
-
 }

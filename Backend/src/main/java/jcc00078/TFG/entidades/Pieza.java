@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import jcc00078.TFG.controladoresREST.dto.PiezaDTO;
 //import javax.validation.constraints.Positive;
@@ -31,24 +32,33 @@ public class Pieza implements Serializable {
 
     //@Size(min = 1, max = 10)
     private String fabricante;
+    
     @ElementCollection(targetClass=String.class)
     private Set<String> compatibles;
 
-    @OneToMany(mappedBy = "pieza")
-    private Set<PiezaMotocicleta> piezasMoto;
+    @ManyToMany
+    private Set<Motocicleta> motos;
 
+    @ManyToMany(mappedBy="piezas")
+    private Set<GrupoPiezas> grupoPiezas;
+    
     public Pieza() {
     }
 
-    public Pieza(int cod, String nombre, float precio, String fabricante, Set<String> compatibles, Set<PiezaMotocicleta> piezasMoto) {
+    public Pieza(int cod, String nombre, float precio, String fabricante, Set<String> compatibles, Set<Motocicleta> motos) {
         this.cod = cod;
         this.nombre = nombre;
         this.precio = precio;
         this.fabricante = fabricante;
         this.compatibles = compatibles;
-        this.piezasMoto = piezasMoto;
+        this.motos = motos;
     }
 
+    public PiezaDTO toDTO(){
+        PiezaDTO piezaDTO = new PiezaDTO(getCod(), getNombre(), getPrecio(), getFabricante(), getCompatibles());
+        return piezaDTO;
+    }
+            
     public void fromDTO(PiezaDTO pieza) {
         this.cod = pieza.getCod();
         this.nombre = pieza.getNombre();
@@ -128,17 +138,17 @@ public class Pieza implements Serializable {
     }
 
     /**
-     * @return the piezasMoto
+     * @return the motos
      */
-    public Set<PiezaMotocicleta> getPiezasMoto() {
-        return piezasMoto;
+    public Set<Motocicleta> getMotos() {
+        return motos;
     }
 
     /**
-     * @param piezasMoto the piezasMoto to set
+     * @param motos the motos to set
      */
-    public void setPiezasMoto(Set<PiezaMotocicleta> piezasMoto) {
-        this.piezasMoto = piezasMoto;
+    public void setMotos(Set<Motocicleta> motos) {
+        this.motos = motos;
     }
 
 }
