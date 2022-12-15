@@ -117,10 +117,10 @@ public class ControladorMotocicleta {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "La motocicleta con el nº de bastidor " + pm.getNumBastidor() + " no es del modelo " + modelo);
         }
         if (!p.getCompatibles().contains(modelo)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La pieza con el codigo" + p.getCod() + "no es compatible con el modelo " + modelo);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La pieza con el codigo " + p.getCod() + " no es compatible con el modelo " + modelo);
         }
         if (!p.getMotos().add(m)) {
-            throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "La pieza con código" + p.getCod() + " ya existía ");
+            throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "La pieza con código " + p.getCod() + " ya existía ");
         }
         piezaRepositorio.save(p);
     }
@@ -148,7 +148,8 @@ public class ControladorMotocicleta {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El grupo de piezas no puede estar vacío, se necesita incluir al menos una pieza");
 
         }
-        if (!m.getAccesoriosMoto().stream().map(Pieza::getCod).allMatch(grupo.getCodPiezas()::contains)) {
+        Set<Pieza> piezas = piezaRepositorio.findAllById(grupo.getCodPiezas()).stream().collect(Collectors.toUnmodifiableSet());
+        if (!m.getAccesoriosMoto().containsAll(piezas)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La motocicleta " + modelo + " no tiene como accesorio todas esas piezas");
         }
 
@@ -159,7 +160,6 @@ public class ControladorMotocicleta {
             String imagenConvertida = Base64.getEncoder().encodeToString(grupo.getImagenFile().getBytes());
             gp.setImagen(imagenConvertida);
         }
-        Set<Pieza> piezas = piezaRepositorio.findAllById(grupo.getCodPiezas()).stream().collect(Collectors.toUnmodifiableSet());
         gp.setMoto(m);
         gp.setPiezas(piezas);
         grupoPiezasRepositorio.save(gp);
