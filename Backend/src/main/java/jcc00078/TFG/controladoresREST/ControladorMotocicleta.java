@@ -119,11 +119,10 @@ public class ControladorMotocicleta {
         if (!p.getCompatibles().contains(modelo)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La pieza con el codigo" + p.getCod() + "no es compatible con el modelo " + modelo);
         }
-        if (!m.getAccesoriosMoto().add(p)) {
+        if (!p.getMotos().add(m)) {
             throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "La pieza con código" + p.getCod() + " ya existía ");
-
         }
-        motocicletaRepositorio.save(m);
+        piezaRepositorio.save(p);
     }
 
     @GetMapping("{modelo}/grupos")
@@ -163,8 +162,6 @@ public class ControladorMotocicleta {
         Set<Pieza> piezas = piezaRepositorio.findAllById(grupo.getCodPiezas()).stream().collect(Collectors.toUnmodifiableSet());
         gp.setMoto(m);
         gp.setPiezas(piezas);
-        //m.getGrupoMoto().add(gp);
         grupoPiezasRepositorio.save(gp);
-        //motocicletaRepositorio.save(m);
     }
 }
