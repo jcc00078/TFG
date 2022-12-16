@@ -1,6 +1,7 @@
 package jcc00078.TFG.entidades;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Entity;
@@ -107,5 +108,32 @@ public class GrupoPiezas implements Serializable {
     public void setImagen(String imagen) {
         this.imagen = imagen;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 71 * hash + Objects.hashCode(this.moto);
+        hash = 71 * hash + Objects.hashCode(this.piezas);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final GrupoPiezas other = (GrupoPiezas) obj;
+        if (!Objects.equals(this.moto, other.moto)) {
+            return false;
+        }
+        return Objects.equals(this.piezas, other.piezas);
+    }
+
 
 }

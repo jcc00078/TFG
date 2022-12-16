@@ -2,6 +2,7 @@ package jcc00078.TFG.controladoresREST;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -148,9 +149,15 @@ public class ControladorMotocicleta {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El grupo de piezas no puede estar vacío, se necesita incluir al menos una pieza");
 
         }
+
         Set<Pieza> piezas = piezaRepositorio.findAllById(grupo.getCodPiezas()).stream().collect(Collectors.toUnmodifiableSet());
         if (!m.getAccesoriosMoto().containsAll(piezas)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La motocicleta " + modelo + " no tiene como accesorio todas esas piezas");
+        }
+        gp.setMoto(m);
+        gp.setPiezas(piezas);
+        if (m.getGrupoMoto().contains(gp)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El grupo de piezas que se intenta insertar ya se ha insertado anteriormente");
         }
 
         if (grupo.getImagenFile() != null && !grupo.getImagenFile().isEmpty()) {
@@ -160,8 +167,7 @@ public class ControladorMotocicleta {
             String imagenConvertida = Base64.getEncoder().encodeToString(grupo.getImagenFile().getBytes());
             gp.setImagen(imagenConvertida);
         }
-        gp.setMoto(m);
-        gp.setPiezas(piezas);
+
         grupoPiezasRepositorio.save(gp);
     }
 }
