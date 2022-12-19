@@ -8,18 +8,18 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author juanc
  */
-public class GrupoPiezasDTO {
+public class GrupoAccesoriosDTO {
 
     private Long id;
     private String numBastidor;
-    private List<Integer> codPiezas;
+    private List<Integer> codAccesorios;
     private MultipartFile imagenFile;
     private String imagenData;
     
-    public GrupoPiezasDTO(Long id, String numBastidor, List<Integer> codPiezas, String imagen) {
+    public GrupoAccesoriosDTO(Long id, String numBastidor, List<Integer> codAccesorios, String imagen) {
         this.id = id;
         this.numBastidor = numBastidor;
-        this.codPiezas = codPiezas;
+        this.codAccesorios = codAccesorios;
         this.imagenData = imagen;
     }
 
@@ -52,17 +52,17 @@ public class GrupoPiezasDTO {
     }
 
     /**
-     * @return the codPiezas
+     * @return the codAccesorios
      */
-    public List<Integer> getCodPiezas() {
-        return codPiezas;
+    public List<Integer> getCodAccesorios() {
+        return codAccesorios;
     }
 
     /**
-     * @param codPiezas the codPiezas to set
+     * @param codAccesorios the codAccesorios to set
      */
-    public void setCodPiezas(List<Integer> codPiezas) {
-        this.codPiezas = codPiezas;
+    public void setCodAccesorios(List<Integer> codAccesorios) {
+        this.codAccesorios = codAccesorios;
     }
 
     /**

@@ -4,15 +4,19 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import jcc00078.TFG.controladoresREST.dto.GrupoPiezasDTO;
+import javax.persistence.Table;
+import jcc00078.TFG.controladoresREST.dto.GrupoAccesoriosDTO;
 import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
 
 /**
@@ -20,7 +24,7 @@ import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
  * @author juanc
  */
 @Entity
-public class GrupoPiezas implements Serializable {
+public class GrupoAccesorios implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,28 +32,30 @@ public class GrupoPiezas implements Serializable {
     @ManyToOne
     private Motocicleta moto;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Pieza> piezas;
+    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    private Set<Accesorio> accesorios;
 
     @Lob
     private String imagen;
 
-    public GrupoPiezas() {
+    public GrupoAccesorios() {
     }
 
-    public GrupoPiezas(Long id, Motocicleta moto, Set<Pieza> piezas, String imagen) {
+    public GrupoAccesorios(Long id, Motocicleta moto, Set<Accesorio> accesorios, String imagen) {
         this.id = id;
         this.moto = moto;
-        this.piezas = piezas;
+        this.accesorios = accesorios;
         this.imagen = imagen;
     }
-    public void fromDTO(GrupoPiezasDTO grupo) {
+
+    public void fromDTO(GrupoAccesoriosDTO grupo) {
         this.id = grupo.getId();
         this.imagen = grupo.getImagenData();
     }
-    public GrupoPiezasDTO toDTO() {
-        GrupoPiezasDTO grupoPiezasDTO = new GrupoPiezasDTO(getId(), getMoto().getNumBastidor(),
-                getPiezas().stream().map(Pieza::getCod).collect(Collectors.toUnmodifiableList()), getImagen());
+
+    public GrupoAccesoriosDTO toDTO() {
+        GrupoAccesoriosDTO grupoPiezasDTO = new GrupoAccesoriosDTO(getId(), getMoto().getNumBastidor(),
+                getAccesorios().stream().map(Accesorio::getCod).collect(Collectors.toUnmodifiableList()), getImagen());
         return grupoPiezasDTO;
     }
 
@@ -82,17 +88,17 @@ public class GrupoPiezas implements Serializable {
     }
 
     /**
-     * @return the piezas
+     * @return the accesorios
      */
-    public Set<Pieza> getPiezas() {
-        return piezas;
+    public Set<Accesorio> getAccesorios() {
+        return accesorios;
     }
 
     /**
-     * @param piezas the piezas to set
+     * @param accesorios the accesorios to set
      */
-    public void setPiezas(Set<Pieza> piezas) {
-        this.piezas = piezas;
+    public void setAccesorios(Set<Accesorio> accesorios) {
+        this.accesorios = accesorios;
     }
 
     /**
@@ -113,7 +119,7 @@ public class GrupoPiezas implements Serializable {
     public int hashCode() {
         int hash = 3;
         hash = 71 * hash + Objects.hashCode(this.moto);
-        hash = 71 * hash + Objects.hashCode(this.piezas);
+        hash = 71 * hash + Objects.hashCode(this.accesorios);
         return hash;
     }
 
@@ -128,12 +134,11 @@ public class GrupoPiezas implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final GrupoPiezas other = (GrupoPiezas) obj;
+        final GrupoAccesorios other = (GrupoAccesorios) obj;
         if (!Objects.equals(this.moto, other.moto)) {
             return false;
         }
-        return Objects.equals(this.piezas, other.piezas);
+        return Objects.equals(this.accesorios, other.accesorios);
     }
-
 
 }

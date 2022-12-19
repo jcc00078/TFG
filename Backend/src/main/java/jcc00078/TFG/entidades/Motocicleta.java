@@ -76,10 +76,10 @@ public class Motocicleta implements Serializable {
     
     
     @ManyToMany(mappedBy = "motos")
-    private Set<Pieza> accesorios;
+    private Set<Accesorio> accesorios;
 
     @OneToMany(mappedBy="moto")
-    private Set<GrupoPiezas> grupoMoto;
+    private Set<GrupoAccesorios> grupoMoto;
     
     
     public MotocicletaDTO toDTO() {
@@ -285,28 +285,28 @@ public class Motocicleta implements Serializable {
     /**
      * @return the accesorios
      */
-    public Set<Pieza> getAccesoriosMoto() {
+    public Set<Accesorio> getAccesoriosMoto() {
         return accesorios;
     }
 
     /**
      * @param accesoriosMoto the accesorios to set
      */
-    public void setAccesoriosMoto(Set<Pieza> accesoriosMoto) {
+    public void setAccesoriosMoto(Set<Accesorio> accesoriosMoto) {
         this.accesorios = accesoriosMoto;
     }
 
     /**
      * @return the grupoMoto
      */
-    public Set<GrupoPiezas> getGrupoMoto() {
+    public Set<GrupoAccesorios> getGrupoMoto() {
         return grupoMoto;
     }
 
     /**
      * @param grupoMoto the grupoMoto to set
      */
-    public void setGrupoMoto(Set<GrupoPiezas> grupoMoto) {
+    public void setGrupoMoto(Set<GrupoAccesorios> grupoMoto) {
         this.grupoMoto = grupoMoto;
     }
 }

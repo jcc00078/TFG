@@ -5,19 +5,21 @@ import java.util.Set;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import jcc00078.TFG.controladoresREST.dto.PiezaDTO;
+import jcc00078.TFG.controladoresREST.dto.AccesorioDTO;
 //import javax.validation.constraints.Positive;
 //import javax.validation.constraints.Size;
-
 /**
- * Entidad Pieza
+ * Entidad Accesorio
  *
  * @author juanc
  */
 @Entity
-public class Pieza implements Serializable {
+public class Accesorio implements Serializable {
 
     @Id
     // @Size(min = 10, max = 10)
@@ -32,34 +34,41 @@ public class Pieza implements Serializable {
 
     //@Size(min = 1, max = 10)
     private String fabricante;
-    
-    @ElementCollection(targetClass=String.class)
+
+    @Lob
+    private String imagen;
+
+    @ElementCollection(targetClass = String.class)
     private Set<String> compatibles;
 
     @ManyToMany
+//    @JoinTable(name = "pieza_moto", //Con @JoinTable especificamos el nombre de la tabla de unión que se utilizará para almacenar la relación
+//            joinColumns = @JoinColumn(name = "pieza_cod"), // Columnas de la tabla de unión que se utilizarán para enlazar las entidades
+//            inverseJoinColumns = @JoinColumn(name = "moto_numBastidor")) 
     private Set<Motocicleta> motos;
 
-    @ManyToMany(mappedBy="piezas")
-    private Set<GrupoPiezas> grupoPiezas;
-    
-    public Pieza() {
+    @ManyToMany(mappedBy = "accesorios")
+    private Set<GrupoAccesorios> grupoAccesorios;
+
+    public Accesorio() {
     }
 
-    public Pieza(int cod, String nombre, float precio, String fabricante, Set<String> compatibles, Set<Motocicleta> motos) {
+    public Accesorio(int cod, String nombre, float precio, String fabricante, String imagen, Set<String> compatibles, Set<Motocicleta> motos) {
         this.cod = cod;
         this.nombre = nombre;
         this.precio = precio;
         this.fabricante = fabricante;
+        this.imagen = imagen;
         this.compatibles = compatibles;
         this.motos = motos;
     }
 
-    public PiezaDTO toDTO(){
-        PiezaDTO piezaDTO = new PiezaDTO(getCod(), getNombre(), getPrecio(), getFabricante(), getCompatibles());
+    public AccesorioDTO toDTO() {
+        AccesorioDTO piezaDTO = new AccesorioDTO(getCod(), getNombre(), getPrecio(), getFabricante(), getImagen(), getCompatibles());
         return piezaDTO;
     }
-            
-    public void fromDTO(PiezaDTO pieza) {
+
+    public void fromDTO(AccesorioDTO pieza) {
         this.cod = pieza.getCod();
         this.nombre = pieza.getNombre();
         this.precio = pieza.getPrecio();
@@ -149,6 +158,20 @@ public class Pieza implements Serializable {
      */
     public void setMotos(Set<Motocicleta> motos) {
         this.motos = motos;
+    }
+
+    /**
+     * @return the imagen
+     */
+    public String getImagen() {
+        return imagen;
+    }
+
+    /**
+     * @param imagen the imagen to set
+     */
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
 
 }

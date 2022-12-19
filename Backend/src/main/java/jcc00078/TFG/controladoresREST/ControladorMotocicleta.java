@@ -7,15 +7,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
-import jcc00078.TFG.controladoresREST.dto.PiezaDTO;
-import jcc00078.TFG.controladoresREST.dto.GrupoPiezasDTO;
-import jcc00078.TFG.controladoresREST.dto.PiezaMotocicletaDTO;
-import jcc00078.TFG.entidades.GrupoPiezas;
+import jcc00078.TFG.controladoresREST.dto.AccesorioDTO;
+import jcc00078.TFG.controladoresREST.dto.GrupoAccesoriosDTO;
+import jcc00078.TFG.controladoresREST.dto.AccesorioMotocicletaDTO;
+import jcc00078.TFG.entidades.GrupoAccesorios;
 import jcc00078.TFG.entidades.Motocicleta;
-import jcc00078.TFG.entidades.Pieza;
-import jcc00078.TFG.repositorios.GrupoPiezasRepositorio;
+import jcc00078.TFG.entidades.Accesorio;
 import jcc00078.TFG.repositorios.MotocicletaRepositorio;
-import jcc00078.TFG.repositorios.PiezaRepositorio;
 import jcc00078.TFG.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import jcc00078.TFG.repositorios.AccesorioRepositorio;
+import jcc00078.TFG.repositorios.GrupoAccesoriosRepositorio;
 
 /**
  *
@@ -48,9 +48,9 @@ public class ControladorMotocicleta {
     private MotocicletaRepositorio motocicletaRepositorio;
 
     @Autowired
-    private PiezaRepositorio piezaRepositorio;
+    private AccesorioRepositorio accesorioRepositorio;
     @Autowired
-    private GrupoPiezasRepositorio grupoPiezasRepositorio;
+    private GrupoAccesoriosRepositorio grupoAccesoriosRepositorio;
 
     @GetMapping("{marca}/modelos")
     public List<String> listarModelos(@PathVariable String marca) {
@@ -97,67 +97,68 @@ public class ControladorMotocicleta {
         motocicletaRepositorio.save(m);
     }
 
-    @GetMapping("{modelo}/piezas")
-    public List<PiezaDTO> getPiezas(@PathVariable String modelo) {
+    @GetMapping("{modelo}/accesorios")
+    public List<AccesorioDTO> getAccesorios(@PathVariable String modelo) {
         return motocicletaRepositorio.findOneByModelo(modelo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El modelo " + modelo + " no existe"))
                 .getAccesoriosMoto()
                 .stream()
-                .map(Pieza::toDTO)
+                .map(Accesorio::toDTO)
                 .collect(Collectors.toUnmodifiableList());
 
     }
 
-    @PutMapping(path = "{modelo}/piezas", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void modificarPiezas(@ModelAttribute PiezaMotocicletaDTO pm, @PathVariable String modelo) {
-        Pieza p = piezaRepositorio.findById(pm.getCodPieza())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe ninguna pieza con el código  " + pm.getCodPieza()));
+    @PutMapping(path = "{modelo}/accesorios", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void modificarAccesorios(@ModelAttribute AccesorioMotocicletaDTO pm, @PathVariable String modelo) {
+        Accesorio p = accesorioRepositorio.findById(pm.getCodAccesorio())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe ninguna accesorio con el código  " + pm.getCodAccesorio()));
         Motocicleta m = motocicletaRepositorio.findOneByModelo(modelo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe ninguna moto con el modelo  " + modelo));
+         if (!p.getCompatibles().contains(modelo)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El accesorio con el codigo " + p.getCod() + " no es compatible con el modelo " + modelo);
+        }
         if (!m.getNumBastidor().equals(pm.getNumBastidor())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "La motocicleta con el nº de bastidor " + pm.getNumBastidor() + " no es del modelo " + modelo);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "La motocicleta con el nº de bastidor " + pm.getNumBastidor() + " no coincide con el modelo " + modelo);
         }
-        if (!p.getCompatibles().contains(modelo)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La pieza con el codigo " + p.getCod() + " no es compatible con el modelo " + modelo);
-        }
+     
         if (!p.getMotos().add(m)) {
-            throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "La pieza con código " + p.getCod() + " ya existía ");
+            throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "El accesorio con código " + p.getCod() + " ya existía ");
         }
-        piezaRepositorio.save(p);
+        accesorioRepositorio.save(p);
     }
 
     @GetMapping("{modelo}/grupos")
-    public List<GrupoPiezasDTO> getGruposPiezas(@PathVariable String modelo) {
+    public List<GrupoAccesoriosDTO> getGruposAccesorios(@PathVariable String modelo) {
         return motocicletaRepositorio.findOneByModelo(modelo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe ninguna moto con el modelo  " + modelo))
                 .getGrupoMoto().stream()
-                .map(GrupoPiezas::toDTO)
+                .map(GrupoAccesorios::toDTO)
                 .collect(Collectors.toUnmodifiableList());
     }
 
     @PostMapping(path = "{modelo}/grupos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void crearGrupoPiezas(@ModelAttribute GrupoPiezasDTO grupo, @PathVariable String modelo) throws IOException {
-        GrupoPiezas gp = new GrupoPiezas();
+    public void crearGrupoAccesorios(@ModelAttribute GrupoAccesoriosDTO grupo, @PathVariable String modelo) throws IOException {
+        GrupoAccesorios gp = new GrupoAccesorios();
         gp.fromDTO(grupo);
         Motocicleta m = motocicletaRepositorio.findOneByModelo(modelo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe ninguna moto con el modelo  " + modelo));
         if (!m.getNumBastidor().equals(grupo.getNumBastidor())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "La motocicleta con el nº de bastidor " + grupo.getNumBastidor() + " no es del modelo " + modelo);
         }
-        if (grupo.getCodPiezas().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El grupo de piezas no puede estar vacío, se necesita incluir al menos una pieza");
+        if (grupo.getCodAccesorios().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El grupo de accesorios no puede estar vacío, se necesita incluir al menos un accesorio");
 
         }
 
-        Set<Pieza> piezas = piezaRepositorio.findAllById(grupo.getCodPiezas()).stream().collect(Collectors.toUnmodifiableSet());
-        if (!m.getAccesoriosMoto().containsAll(piezas)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La motocicleta " + modelo + " no tiene como accesorio todas esas piezas");
+        Set<Accesorio> accesorios = accesorioRepositorio.findAllById(grupo.getCodAccesorios()).stream().collect(Collectors.toUnmodifiableSet());
+        if (!m.getAccesoriosMoto().containsAll(accesorios)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La motocicleta " + modelo + " es incompatible con algún accesorio");
         }
         gp.setMoto(m);
-        gp.setPiezas(piezas);
+        gp.setAccesorios(accesorios);
         if (m.getGrupoMoto().contains(gp)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El grupo de piezas que se intenta insertar ya se ha insertado anteriormente");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El grupo de accesorios que se intenta insertar ya se ha insertado anteriormente");
         }
 
         if (grupo.getImagenFile() != null && !grupo.getImagenFile().isEmpty()) {
@@ -168,6 +169,6 @@ public class ControladorMotocicleta {
             gp.setImagen(imagenConvertida);
         }
 
-        grupoPiezasRepositorio.save(gp);
+        grupoAccesoriosRepositorio.save(gp);
     }
 }

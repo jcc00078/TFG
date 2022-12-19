@@ -1,20 +1,18 @@
 package jcc00078.TFG.controladoresREST.dto;
 
-import org.springframework.web.multipart.MultipartFile;
-
 /**
  *
  * @author juanc
  */
-public class PiezaMotocicletaDTO {
+public class AccesorioMotocicletaDTO {
 
     private String numBastidor;
-    private int codPieza;
+    private int codAccesorio;
 
 
-    public PiezaMotocicletaDTO(String numBastidor, int codPieza) {
+    public AccesorioMotocicletaDTO(String numBastidor, int codAccesorio) {
         this.numBastidor = numBastidor;
-        this.codPieza = codPieza;
+        this.codAccesorio = codAccesorio;
     }
 
     /**
@@ -32,16 +30,16 @@ public class PiezaMotocicletaDTO {
     }
 
     /**
-     * @return the codPieza
+     * @return the codAccesorio
      */
-    public int getCodPieza() {
-        return codPieza;
+    public int getCodAccesorio() {
+        return codAccesorio;
     }
 
     /**
-     * @param codPieza the codPieza to set
+     * @param codAccesorio the codAccesorio to set
      */
-    public void setCodPieza(int codPieza) {
-        this.codPieza = codPieza;
+    public void setCodAccesorio(int codAccesorio) {
+        this.codAccesorio = codAccesorio;
     }
 }

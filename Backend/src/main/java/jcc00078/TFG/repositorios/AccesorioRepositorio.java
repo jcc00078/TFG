@@ -1,7 +1,7 @@
 package jcc00078.TFG.repositorios;
 
 import java.util.Optional;
-import jcc00078.TFG.entidades.Pieza;
+import jcc00078.TFG.entidades.Accesorio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface PiezaRepositorio extends JpaRepository<Pieza, Integer>{
-      Optional<Pieza> findById(int id);
+public interface AccesorioRepositorio extends JpaRepository<Accesorio, Integer>{
+      Optional<Accesorio> findById(int id);
       
 }

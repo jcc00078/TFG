@@ -1,25 +1,30 @@
 package jcc00078.TFG.controladoresREST.dto;
 
 import java.util.Set;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
  * @author juanc
  */
-public class PiezaDTO {
+public class AccesorioDTO {
 
     private int cod;
     private String nombre;
     private float precio;
     private String fabricante;
+    private MultipartFile imagenFile;
+    private String imagenData;
     private Set<String> compatibles;
 
-    public PiezaDTO(int cod, String nombre, float precio, String fabricante, Set<String> compatibles) {
+    public AccesorioDTO(int cod, String nombre, float precio, String fabricante, String imagen, Set<String> compatibles) {
         this.cod = cod;
         this.nombre = nombre;
         this.precio = precio;
         this.fabricante = fabricante;
+        this.imagenData = imagen;
         this.compatibles = compatibles;
+
     }
 
     /**
@@ -90,6 +95,34 @@ public class PiezaDTO {
      */
     public void setCompatibles(Set<String> compatibles) {
         this.compatibles = compatibles;
+    }
+
+    /**
+     * @return the imagenFile
+     */
+    public MultipartFile getImagenFile() {
+        return imagenFile;
+    }
+
+    /**
+     * @param imagenFile the imagenFile to set
+     */
+    public void setImagenFile(MultipartFile imagenFile) {
+        this.imagenFile = imagenFile;
+    }
+
+    /**
+     * @return the imagenData
+     */
+    public String getImagenData() {
+        return imagenData;
+    }
+
+    /**
+     * @param imagenData the imagenData to set
+     */
+    public void setImagenData(String imagenData) {
+        this.imagenData = imagenData;
     }
 
 }
