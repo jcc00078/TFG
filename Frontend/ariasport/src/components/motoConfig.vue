@@ -2,7 +2,7 @@
   <div class="container vh-100">
     <div class="row">
       <div class="col align-self-center">
-        <lista-foto-moto class="mt-5" :imagenData="moto.imagenData" />
+        <lista-foto-moto class="mt-5" :imagenData="fotoMoto" />
       </div>
       <div class="col-4 m-4 d-flex align-items-end justify-content-end">
         <MDBCard class="m-5" style="width: 18rem">
@@ -100,8 +100,6 @@ export default {
     const presupuesto = ref([]);
     onMounted(async () => {
       const modelo = route.params.modelo;
-      console.log(modelo);
-
       const { data: datosMoto } = await axios.get(`motos/${modelo}`);
       moto.value = datosMoto;
       const { data: datosGAccesoriosMoto } = await axios.get(
@@ -127,11 +125,12 @@ export default {
   },
   methods: {
     elegirAccesorio(accesorio) {
-      const { nombre, precio } = accesorio;
+      const { nombre, precio, cod } = accesorio;
       if (!this.presupuesto.some((accesorio) => accesorio.nombre === nombre)) {
         this.presupuesto.push({
           nombre,
           precio,
+          cod,
         });
       }
     },
@@ -140,6 +139,15 @@ export default {
     totalPrecio(){
       return this.presupuesto.reduce((precioAcc, accesorio) => precioAcc + accesorio.precio, 0)
     } 
+    ,
+    fotoMoto(){
+      const seleccionados=this.presupuesto.filter(item=>item.cod);
+      if(seleccionados.length==0){
+      return this.moto.imagenData;
+      } 
+      const grupos=this.grupoAccesorios.filter(grupo=>grupo.codAccesorios.length===seleccionados.length);
+      return grupos.find(grupo=>grupo.codAccesorios===seleccionados)?.imagenData;
+    }
   },
 };
 </script>
