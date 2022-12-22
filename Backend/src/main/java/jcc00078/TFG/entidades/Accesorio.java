@@ -37,7 +37,7 @@ public class Accesorio implements Serializable {
 
     @Lob
     private String imagen;
-
+    //Modelos de motocicletas para los que es compatible este accesorio
     @ElementCollection(targetClass = String.class)
     private Set<String> compatibles;
 

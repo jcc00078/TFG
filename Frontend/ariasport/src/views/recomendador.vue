@@ -144,7 +144,7 @@
       <MDBBtn
         @click="reiniciarFiltros()"
         outline="danger"
-        style="padding: 0cm; position: fixed; bottom: 0"
+        style="padding: 0cm; position: fixed;"
         class="text-center-white m-2"
         floating
       >
@@ -224,20 +224,6 @@ export default {
         motos.value = arrayMotos;
       }
     );
-
-    // onMounted(async () => {
-    //   const { data: motos } = await axios.get(
-    //     `usuarios/${store.username}/motos`,
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${store.jwt}`,
-    //       },
-    //     }
-    //   );
-    //   motosUsuario.value = motos;
-    //   console.log(motosUsuario.value);
-    //   console.log("MOTO SELECCIONADA: "+ this.motoSeleccionada);
-    // });
 
     return {
       minRange,

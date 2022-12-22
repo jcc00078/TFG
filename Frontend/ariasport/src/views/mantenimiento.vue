@@ -64,8 +64,6 @@ export default {
         }
       );
       motosUsuario.value = arrayMotos;
-      console.log(motosUsuario.value);
-      console.log("MOTO SELECCIONADA: "+ this.motoSeleccionada);
     });
 
     return {

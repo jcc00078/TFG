@@ -1,78 +1,61 @@
 <template>
-    <div class = "mx-auto mt-4">
-    <h2 v-if="!opcionElegida" class="text-center mb-4">Escoge una marca</h2>
-    <h2 v-if="opcionElegida" class="text-center mb-4">Escoge una motocicleta</h2>
+  <div class="container">
+    <div class="row my-5 text-center bg-light" style="height: 400px">
+      <MDBCard>
+        <MDBCardBody>
+          <MDBCardTitle>Configura una motocicleta</MDBCardTitle>
+          <MDBCardText> Elige una motocicleta para configurarla </MDBCardText>
+        </MDBCardBody>
+        <div class="row">
+          <lista-foto-moto
+            v-for="moto in motos"
+            v-bind:key="moto"
+            :imagenData="moto.imagenData"
+            :redirectLink="`/configurador/${moto.modelo}`"
+          />
+        </div>
+      </MDBCard>
+    </div>
   </div>
-  <MDBRow :cols="['1', 'md-4']" class="g-0" >
-    <MDBCol v-if="!opcionElegida">
-      <MDBCard>
-        <img src="../assets/logoSuzuki.jpg" class="img-fluid" top alt="logo suzuki"/>
-        <MDBCardBody class="text-center">
-          <MDBBtn id="Suzuki" color="success" @click="opcion()" rounded>
-            Elegir
-          </MDBBtn>
-        </MDBCardBody>
-      </MDBCard>
-    </MDBCol>
-    <MDBCol v-if="!opcionElegida">
-      <MDBCard>
-        <img src="../assets/logoKawasaki.jpg" class="img-fluid" top alt="logo kawasaki"/>
-        <MDBCardBody class="text-center">
-          <MDBBtn id="Kawasaki" color="success" rounded @click="opcion()">
-            Elegir
-          </MDBBtn>
-        </MDBCardBody>
-      </MDBCard>
-    </MDBCol>
-    <MDBCol>
-      <MDBCard v-if="!opcionElegida">
-        <img src="../assets/logoHonda.jpg" class="img-fluid" top alt="logo honda"/>
-        <MDBCardBody class="text-center">
-          <MDBBtn id="Honda" color="success" rounded @click="opcion()">
-            Elegir
-          </MDBBtn>
-        </MDBCardBody>
-      </MDBCard>
-    </MDBCol>
-    <MDBCol>
-      <MDBCard v-if="!opcionElegida">
-        <img src="../assets/logoTriumph.png" class="img-fluid" top alt="logo triumph"/>
-        <MDBCardBody class="text-center">
-          <MDBBtn id="Triumph" color="success" rounded @click="opcion()">
-            Elegir
-          </MDBBtn>
-        </MDBCardBody>
-      </MDBCard>
-    </MDBCol>
-  </MDBRow>
-
 </template>
+
 <script>
 //import router from "@/router";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import axios from "axios";
+import listaFotoMoto from "@/components/listaFotoMoto.vue";
 
-  import { MDBCol, MDBRow, MDBCard, MDBCardBody, MDBBtn } from "mdb-vue-ui-kit";
-  export default {
-    components: {
-    MDBCol,
-    MDBRow,
+import {
+  MDBCard,
+  MDBCardBody,
+  MDBCardTitle,
+  MDBCardText,
+} from "mdb-vue-ui-kit";
+export default {
+  components: {
     MDBCard,
     MDBCardBody,
-    MDBBtn
-},
-setup(){
-  const opcionElegida=ref(false);
-  return {
-    opcionElegida
-  };
-},
-methods: {
-  opcion() {
-      this.opcionElegida=true;
+    MDBCardTitle,
+    MDBCardText,
+    listaFotoMoto,
+  },
+  setup() {
+    const opcionElegida = ref(false);
+    const motos = ref([]);
+    onMounted(async () => {
+      const { data: arrayTodosModelos } = await axios.get(`motos/modelos`);
+      motos.value = arrayTodosModelos;
+    });
+    return {
+      opcionElegida,
+      motos,
+    };
+  },
+  methods: {
+    opcion() {
+      this.opcionElegida = true;
       //router.push("/configurador-"+this.opcionElegida)
-  }
-}
-
-  }
-
+    },
+  },
+};
 </script>

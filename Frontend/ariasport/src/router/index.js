@@ -7,6 +7,9 @@ import historial from '@/views/historial';
 import registroUsuario from '@/views/registroUsuario'
 import recomendador from '@/views/recomendador'
 import sliderRecomendador from '@/components/sliderRecomendador'
+import motoConfig from '@/components/motoConfig'
+
+
 
 // import cita from '@/views/cita'
 
@@ -57,6 +60,11 @@ const routes = [
       path:"/slider",
       name:"slider",
       component: sliderRecomendador
+    },
+    {
+      path:"/configurador/:modelo",
+      name:"motoConfig",
+      component: motoConfig
     },
     // {
     //   path:"/citas",

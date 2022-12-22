@@ -79,7 +79,6 @@ export default {
 
     onMounted(async () => {
       const numBastidor = route.params.numBastidor;
-      console.log(numBastidor);
       const { data: arrayRevisiones } = await axios.get(
         `revisiones/${numBastidor}`,
         {
@@ -89,7 +88,6 @@ export default {
         }
       );
       revisionesUsuario.value = arrayRevisiones;
-      console.log(revisionesUsuario.value);
     });
 
     return {
