@@ -56,7 +56,7 @@
       <div class="row">
         <lista-foto-piezas
           class="col-4 mt-4"
-          v-for="accesorio in accesorios"
+          v-for="accesorio in accesorios.sort((a, b) => a.cod - b.cod)"
           v-bind:key="accesorio.cod"
           :imagenData="accesorio.imagenData"
           @click="elegirAccesorio(accesorio)"
@@ -134,20 +134,32 @@ export default {
         });
       }
     },
+    mismosAccesorios(arr1, arr2) {
+      return arr1.every((element) => arr2.includes(element));
+    },
   },
   computed: {
-    totalPrecio(){
-      return this.presupuesto.reduce((precioAcc, accesorio) => precioAcc + accesorio.precio, 0)
-    } 
-    ,
-    fotoMoto(){
-      const seleccionados=this.presupuesto.filter(item=>item.cod);
-      if(seleccionados.length==0){
-      return this.moto.imagenData;
-      } 
-      const grupos=this.grupoAccesorios.filter(grupo=>grupo.codAccesorios.length===seleccionados.length);
-      return grupos.find(grupo=>grupo.codAccesorios===seleccionados)?.imagenData;
-    }
+    totalPrecio() {
+      return this.presupuesto.reduce(
+        (precioAcc, accesorio) => precioAcc + accesorio.precio,
+        0
+      );
+    },
+    fotoMoto() {
+      const seleccionados = this.presupuesto
+        .filter((item) => item.cod)
+        .map((item) => item.cod);
+      if (seleccionados.length == 0) {
+        return this.moto.imagenData;
+      }
+      const grupos = this.grupoAccesorios.filter(
+        (grupo) => grupo.codAccesorios.length === seleccionados.length
+      );
+
+      return grupos.find((grupo) =>
+        this.mismosAccesorios(seleccionados, grupo.codAccesorios)
+      )?.imagenData;
+    },
   },
 };
 </script>
