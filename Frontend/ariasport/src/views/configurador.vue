@@ -40,22 +40,14 @@ export default {
     listaFotoMoto,
   },
   setup() {
-    const opcionElegida = ref(false);
     const motos = ref([]);
     onMounted(async () => {
       const { data: arrayTodosModelos } = await axios.get(`motos/modelos`);
       motos.value = arrayTodosModelos;
     });
     return {
-      opcionElegida,
       motos,
     };
-  },
-  methods: {
-    opcion() {
-      this.opcionElegida = true;
-      //router.push("/configurador-"+this.opcionElegida)
-    },
   },
 };
 </script>

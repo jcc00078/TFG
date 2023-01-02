@@ -11,13 +11,22 @@
             <ul class="list-group">
               <li
                 class="list-group-item"
-                v-for="item in presupuesto"
+                v-for= "(item,index) in presupuesto"
                 v-bind:key="item.nombre"
               >
                 {{ item.nombre }} {{ item.precio }} €
+                <MDBBtn v-if="index > 0"
+                  class="m-2"
+                  outline="danger"
+                  style="border-width: 0px; padding: 0cm; height: auto; "
+                >
+                  <i class="fas fa-backspace"></i>
+                </MDBBtn>
               </li>
             </ul>
-            <span>Precio total: {{ totalPrecio }} € </span>
+            <div class="m-3 text-end" style="font-size: large">
+              <span>Precio total: {{ totalPrecio }} € </span>
+            </div>
             <div class="col my-4 text-center">
               <MDBBtn tag="a" href="#!" color="primary"
                 >Imprimir presupuesto</MDBBtn
@@ -38,6 +47,7 @@
             "
           >
             <MDBBtn
+              @click="muestraAccesorio()"
               class="m-2"
               outline="success"
               style="border-width: 4px;height: 40px; width: 50px padding: 0cm;"
@@ -53,7 +63,7 @@
           </h2>
         </div>
       </div>
-      <div class="row">
+      <div class="row" v-if="mostrarAccesorio">
         <lista-foto-piezas
           class="col-4 mt-4"
           v-for="accesorio in accesorios.sort((a, b) => a.cod - b.cod)"
@@ -98,6 +108,8 @@ export default {
     const accesorios = ref([]);
     const grupoAccesorios = ref([]);
     const presupuesto = ref([]);
+    const mostrarAccesorio = ref(false);
+
     onMounted(async () => {
       const modelo = route.params.modelo;
       const { data: datosMoto } = await axios.get(`motos/${modelo}`);
@@ -115,12 +127,19 @@ export default {
         precio: datosMoto.precio,
       });
     });
+
+    function muestraAccesorio() {
+      mostrarAccesorio.value = !mostrarAccesorio.value;
+    }
+
     return {
       route,
       moto,
       accesorios,
       grupoAccesorios,
       presupuesto,
+      mostrarAccesorio,
+      muestraAccesorio,
     };
   },
   methods: {
@@ -134,6 +153,7 @@ export default {
         });
       }
     },
+
     mismosAccesorios(arr1, arr2) {
       return arr1.every((element) => arr2.includes(element));
     },

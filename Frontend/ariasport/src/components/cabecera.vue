@@ -37,6 +37,9 @@
         <MDBNavbarItem v-if="!store.username" to="/" disabled>
           Usuario anónimo
         </MDBNavbarItem>
+        <MDBNavbarItem v-if="store.username" to="/" disabled>
+          Bienvenido {{store.username}}
+        </MDBNavbarItem>
       </MDBNavbarNav>
       <router-link to="/inicioSesion">
         <MDBBtn v-if="!store.username" color="primary" class="text-white">
