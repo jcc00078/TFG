@@ -11,14 +11,17 @@
             <ul class="list-group">
               <li
                 class="list-group-item"
-                v-for= "(item,index) in presupuesto"
+                v-for="(item, index) in presupuesto"
                 v-bind:key="item.nombre"
               >
                 {{ item.nombre }} {{ item.precio }} €
-                <MDBBtn v-if="index > 0"
+
+                <MDBBtn
+                  @click="eliminarAccesorio(item)"
+                  v-if="index > 0"
                   class="m-2"
                   outline="danger"
-                  style="border-width: 0px; padding: 0cm; height: auto; "
+                  style="border-width: 0px; padding: 0cm; height: auto"
                 >
                   <i class="fas fa-backspace"></i>
                 </MDBBtn>
@@ -157,29 +160,37 @@ export default {
     mismosAccesorios(arr1, arr2) {
       return arr1.every((element) => arr2.includes(element));
     },
-  },
-  computed: {
-    totalPrecio() {
-      return this.presupuesto.reduce(
-        (precioAcc, accesorio) => precioAcc + accesorio.precio,
-        0
-      );
-    },
-    fotoMoto() {
-      const seleccionados = this.presupuesto
-        .filter((item) => item.cod)
-        .map((item) => item.cod);
-      if (seleccionados.length == 0) {
-        return this.moto.imagenData;
-      }
-      const grupos = this.grupoAccesorios.filter(
-        (grupo) => grupo.codAccesorios.length === seleccionados.length
-      );
 
-      return grupos.find((grupo) =>
-        this.mismosAccesorios(seleccionados, grupo.codAccesorios)
-      )?.imagenData;
+    eliminarAccesorio(accesorio) {
+      for (let i = 0; i < this.presupuesto.length; i++) {
+        if(this.presupuesto[i].nombre===accesorio.nombre){
+          this.presupuesto.splice(i,1);
+        }
+}
     },
   },
-};
+    computed: {
+      totalPrecio() {
+        return this.presupuesto.reduce(
+          (precioAcc, accesorio) => precioAcc + accesorio.precio,
+          0
+        );
+      },
+      fotoMoto() {
+        const seleccionados = this.presupuesto
+          .filter((item) => item.cod)
+          .map((item) => item.cod);
+        if (seleccionados.length == 0) {
+          return this.moto.imagenData;
+        }
+        const grupos = this.grupoAccesorios.filter(
+          (grupo) => grupo.codAccesorios.length === seleccionados.length
+        );
+
+        return grupos.find((grupo) =>
+          this.mismosAccesorios(seleccionados, grupo.codAccesorios)
+        )?.imagenData;
+      },
+    },
+  };
 </script>
