@@ -7,7 +7,7 @@
           <MDBCardText> Elige una motocicleta para configurarla </MDBCardText>
         </MDBCardBody>
         <div class="row">
-          <lista-foto-moto
+          <foto-moto class="justify-content-center"
             v-for="moto in motos"
             v-bind:key="moto"
             :imagenData="moto.imagenData"
@@ -23,7 +23,7 @@
 //import router from "@/router";
 import { onMounted, ref } from "vue";
 import axios from "axios";
-import listaFotoMoto from "@/components/listaFotoMoto.vue";
+import fotoMoto from "@/components/fotoMoto.vue";
 
 import {
   MDBCard,
@@ -37,7 +37,7 @@ export default {
     MDBCardBody,
     MDBCardTitle,
     MDBCardText,
-    listaFotoMoto,
+    fotoMoto,
   },
   setup() {
     const motos = ref([]);

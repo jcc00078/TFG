@@ -1,6 +1,6 @@
 <template>
   <div
-    class="row-6 d-flex justify-content-center"
+    class="row-6 d-flex"
     :class="redirectLink ? 'bg-image hover-zoom hover-overlay' : ''"
   >
     <img class="col-6" :src="imagenSrc" />

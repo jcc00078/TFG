@@ -1,5 +1,5 @@
 <template> <!--Template general donde voy a cargar la cabecera y las distintas rutas-->
- <div id="app" class="vh-100">
+ <div id="app" class="h-100 w-100">
     <cabecera/>
     <router-view></router-view>
    <!-- <piepagina/> -->
@@ -18,3 +18,7 @@ export default {
   }
 }
 </script>
+
+<style>
+
+</style>

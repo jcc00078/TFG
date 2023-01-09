@@ -1,11 +1,11 @@
 <template>
-  <div class="container vh-100">
+  <div class="container-fluid">
     <div class="row">
       <div class="col align-self-center">
-        <lista-foto-moto class="mt-5" :imagenData="fotoMoto" />
+        <foto-moto class="mt-5 justify-content-end" :imagenData="fotoMoto" />
       </div>
-      <div class="col-4 m-4 d-flex align-items-end justify-content-end">
-        <MDBCard class="m-5" style="width: 18rem">
+      <div class="col align-self-center d-flex justify-content-end">
+        <MDBCard class="m-5 w-50">
           <MDBCardBody>
             <MDBCardTitle class="text-center">Presupuesto</MDBCardTitle>
             <ul class="list-group">
@@ -16,10 +16,10 @@
               >
                 {{ item.nombre }} {{ item.precio }} €
 
-                <MDBBtn
+                <MDBBtn 
                   @click="eliminarAccesorio(item)"
                   v-if="index > 0"
-                  class="m-2"
+                  class="m-2 d-print-none"
                   outline="danger"
                   style="border-width: 0px; padding: 0cm; height: auto"
                 >
@@ -30,8 +30,8 @@
             <div class="m-3 text-end" style="font-size: large">
               <span>Precio total: {{ totalPrecio }} € </span>
             </div>
-            <div class="col my-4 text-center">
-              <MDBBtn tag="a" href="#!" color="primary"
+            <div class="d-print-none col my-4 text-center d-flex justify-content-center">
+              <MDBBtn @click="impPag" color="primary" 
                 >Imprimir presupuesto</MDBBtn
               >
             </div>
@@ -39,17 +39,17 @@
         </MDBCard>
       </div>
     </div>
-    <div class="row my-3" style="background-color: transparent">
+    <div class="d-print-none row my-2" style="background-color: transparent;">
       <div class="my-5 col" style="position: relative">
         <div class="my-5 border bg-light" style="position: relative">
           <h2
-            class="d-flex align-items-center m-0"
+            class="d-flex align-items-center m-0 "
             style="
               font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman',
                 serif;
             "
           >
-            <MDBBtn
+            <MDBBtn 
               @click="muestraAccesorio()"
               class="m-2"
               outline="success"
@@ -68,7 +68,7 @@
       </div>
       <div class="row" v-if="mostrarAccesorio">
         <lista-foto-piezas
-          class="col-4 mt-4"
+          class="col-3 "
           v-for="accesorio in accesorios.sort((a, b) => a.cod - b.cod)"
           v-bind:key="accesorio.cod"
           :imagenData="accesorio.imagenData"
@@ -90,7 +90,7 @@ import {
 import axios from "axios";
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import listaFotoMoto from "@/components/listaFotoMoto.vue";
+import fotoMoto from "@/components/fotoMoto.vue";
 import listaFotoPiezas from "@/components/listaFotoPiezas.vue";
 
 export default {
@@ -99,7 +99,7 @@ export default {
     MDBCardBody,
     MDBCardTitle,
     MDBBtn,
-    listaFotoMoto,
+    fotoMoto,
     listaFotoPiezas,
   },
   directives: {
@@ -167,6 +167,10 @@ export default {
           this.presupuesto.splice(i,1);
         }
 }
+    },
+    impPag(){
+      window.print();
+
     },
   },
     computed: {

@@ -1,5 +1,5 @@
 <template>
-  <MDBNavbar class="justify-content-end" expand="lg" light bg="light" container>
+  <MDBNavbar class="d-print-none justify-content-end"  expand="lg" light bg="light" container>
     <MDBNavbarBrand router-link to="/">
       <!-- <img src="../assets/logo.png"> -->
       LOGO
