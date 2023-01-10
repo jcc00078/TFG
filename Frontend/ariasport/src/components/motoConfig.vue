@@ -5,7 +5,7 @@
         <foto-moto class="mt-5 justify-content-end" :imagenData="fotoMoto" />
       </div>
       <div class="col align-self-center d-flex justify-content-end">
-        <MDBCard class="m-5 w-50">
+        <MDBCard class="m-5 w-50 bg-light">
           <MDBCardBody>
             <MDBCardTitle class="text-center">Presupuesto</MDBCardTitle>
             <ul class="list-group">
@@ -41,7 +41,7 @@
     </div>
     <div class="d-print-none row my-2" style="background-color: transparent;">
       <div class="my-5 col" style="position: relative">
-        <div class="my-5 border bg-light" style="position: relative">
+        <div class="my-5 border bg-success bg-gradient text-white" style="position: relative">
           <h2
             class="d-flex align-items-center m-0 "
             style="
@@ -52,7 +52,7 @@
             <MDBBtn 
               @click="muestraAccesorio()"
               class="m-2"
-              outline="success"
+              outline="dark"
               style="border-width: 4px;height: 40px; width: 50px padding: 0cm;"
               floating
             >
@@ -66,9 +66,9 @@
           </h2>
         </div>
       </div>
-      <div class="row" v-if="mostrarAccesorio">
+      <div class="row" style="margin: 0;" v-if="mostrarAccesorio">
         <lista-foto-piezas
-          class="col-3 "
+          class="col-3"
           v-for="accesorio in accesorios.sort((a, b) => a.cod - b.cod)"
           v-bind:key="accesorio.cod"
           :imagenData="accesorio.imagenData"
