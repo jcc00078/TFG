@@ -13,6 +13,7 @@ import jcc00078.TFG.controladoresREST.dto.AccesorioMotocicletaDTO;
 import jcc00078.TFG.entidades.GrupoAccesorios;
 import jcc00078.TFG.entidades.Motocicleta;
 import jcc00078.TFG.entidades.Accesorio;
+import jcc00078.TFG.entidades.Marca;
 import jcc00078.TFG.repositorios.MotocicletaRepositorio;
 import jcc00078.TFG.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import jcc00078.TFG.repositorios.AccesorioRepositorio;
 import jcc00078.TFG.repositorios.GrupoAccesoriosRepositorio;
+import jcc00078.TFG.repositorios.MarcaRepositorio;
 
 /**
  *
@@ -49,8 +51,12 @@ public class ControladorMotocicleta {
 
     @Autowired
     private AccesorioRepositorio accesorioRepositorio;
+
     @Autowired
     private GrupoAccesoriosRepositorio grupoAccesoriosRepositorio;
+
+    @Autowired
+    private MarcaRepositorio marcaRepositorio;
 
     @GetMapping("{marca}/modelos")
     public List<String> listarModelos(@PathVariable String marca) {
@@ -66,13 +72,24 @@ public class ControladorMotocicleta {
 
     @GetMapping("marcas")
     public List<String> listarMarcas() {
-        return motocicletaRepositorio.findAllByDistinctMarca();
+        return marcaRepositorio.findAll()
+                .stream()
+                .map(Marca::getNombre)
+                .collect(Collectors.toUnmodifiableList());
     }
 
+    /**
+     * Función que sirve para listar los datos de todos los modelos de motocicletas
+     * @return 
+     * @note Cuando se listan los modelos de motos no muestro el dueño (por motivos de privacidad)
+     */
     @GetMapping("modelos")
     public List<MotocicletaDTO> listarDatosTodosModelos(@RequestParam(defaultValue = "0") int cilindradaMin, @RequestParam(defaultValue = "4000") int cilindradaMax, @RequestParam(required = false) Boolean offRoad, @RequestParam(required = false) String carnetCompatible, @RequestParam(required = false) String tipo) {
-        List<Motocicleta> motos = motocicletaRepositorio.findAllByDistinctModelo(cilindradaMin, cilindradaMax, offRoad, carnetCompatible, tipo);
-        return motos.stream().map((moto) -> moto.toDTO().setDni_usuario(null)).collect(Collectors.toUnmodifiableList());
+        List<Motocicleta> motos = motocicletaRepositorio.findAllWithFilter(cilindradaMin, cilindradaMax, offRoad, carnetCompatible, tipo);
+        return motos
+                .stream()
+                .map((moto) -> moto.toDTO().setDni_usuario(null))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -94,6 +111,9 @@ public class ControladorMotocicleta {
             String imagenConvertida = Base64.getEncoder().encodeToString(moto.getImagenFile().getBytes());
             m.setImagen(imagenConvertida);
         }
+        Marca marca = marcaRepositorio.findById(moto.getMarca())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Marca no encontrada"));
+        m.setMarca(marca);
         motocicletaRepositorio.save(m);
     }
 
@@ -114,13 +134,13 @@ public class ControladorMotocicleta {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe ninguna accesorio con el código  " + pm.getCodAccesorio()));
         Motocicleta m = motocicletaRepositorio.findOneByModelo(modelo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe ninguna moto con el modelo  " + modelo));
-         if (!p.getCompatibles().contains(modelo)) {
+        if (!p.getCompatibles().contains(modelo)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El accesorio con el codigo " + p.getCod() + " no es compatible con el modelo " + modelo);
         }
         if (!m.getNumBastidor().equals(pm.getNumBastidor())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "La motocicleta con el nº de bastidor " + pm.getNumBastidor() + " no coincide con el modelo " + modelo);
         }
-     
+
         if (!p.getMotos().add(m)) {
             throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "El accesorio con código " + p.getCod() + " ya existía ");
         }

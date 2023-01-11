@@ -5,6 +5,7 @@ spring.dataSource.password: secret
 
 #Configuración JPA
 spring.jpa.hibernate.ddl-auto: update 
+#spring.jpa.hibernate.ddl-auto: drop-and-create
 #spring.jpa.hibernate.ddl-auto: none
 #spring.jpa.hibernate.ddl-auto: create
 

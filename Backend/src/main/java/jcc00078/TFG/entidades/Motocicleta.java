@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -31,7 +32,8 @@ public class Motocicleta implements Serializable {
     private String numBastidor;
 
     //  @Size(min = 1, max = 15)
-    private String marca;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Marca marca;
 
     // @Size(min = 1, max = 30)
     private String modelo;
@@ -83,14 +85,13 @@ public class Motocicleta implements Serializable {
     
     
     public MotocicletaDTO toDTO() {
-        MotocicletaDTO motoDTO = new MotocicletaDTO(getNumBastidor(), getMarca(), getModelo(), getColor(), 
-                getTipo(), getPrecio(), cliente!=null? cliente.getDni_usuario(): null, 
+        MotocicletaDTO motoDTO = new MotocicletaDTO(getNumBastidor(), getMarca().getNombre(), getModelo(), getColor(), 
+                getTipo(), getPrecio(), cliente!=null? cliente.getDni_usuario(): null,
                 getImagen(), getCilindrada(), isOffRoad(),getCarnetCompatible());
         return motoDTO;
     }
     
     public void fromDTO(MotocicletaDTO moto) {
-        this.marca = moto.getMarca();
         this.modelo = moto.getModelo();
         this.numBastidor = moto.getNumBastidor();
         this.color = moto.getColor();
@@ -117,14 +118,14 @@ public class Motocicleta implements Serializable {
     /**
      * @return the marca
      */
-    public String getMarca() {
+    public Marca getMarca() {
         return marca;
     }
 
     /**
      * @param marca the marca to set
      */
-    public void setMarca(String marca) {
+    public void setMarca(Marca marca) {
         this.marca = marca;
     }
 
