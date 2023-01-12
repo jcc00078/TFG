@@ -38,7 +38,7 @@
       </MDBCardBody>
     </MDBCard>
     <MDBCard
-      v-if="ultimoKilometraje"
+      v-if="kilometrosMantenimiento"
       class="shadow-4-strong mx-auto mt-5"
       style="width: 250px; background-color: lightslategray"
       text="start"
@@ -65,13 +65,16 @@
           <MDBInput
             class="text-center"
             type="number"
-            v-model="ultimoKilometraje"
+            v-model="kilometrosMantenimiento.kilometrajeRevision"
             readonly
           >
           </MDBInput>
         </MDBCardText>
       </MDBCardBody>
     </MDBCard>
+    <MDBCardHeader v-if="kilometrosMantenimiento" bg="transparent">
+      Tabla de mantenimiento de {{listaKmMarca.nombre}}
+    </MDBCardHeader>
   </div>
 </template>
   
@@ -117,13 +120,14 @@ export default {
     const revisionesUsuario = ref([]);
     const store = useAuthStore();
     const route = useRoute();
-    const kilometros = ref(10000);
-    const ultimoKilometraje = ref(null);
+    const kilometrosMantenimiento = ref("");
     const tooltip1 = ref(false);
     const proximaFecha = ref(null);
-
+    const numBast=ref("");
+    const listaKmMarca=ref([]);
     onMounted(async () => {
       const numBastidor = route.params.numBastidor;
+      numBast.value=numBastidor;
       const { data: arrayRevisiones } = await axios.get(
         `revisiones/${numBastidor}`,
         {
@@ -141,10 +145,11 @@ export default {
       bastidorCorrecto,
       revisionesUsuario,
       store,
-      kilometros,
-      ultimoKilometraje,
+      kilometrosMantenimiento,
       tooltip1,
       proximaFecha,
+      numBast,
+      listaKmMarca
     };
   },
   methods: {
@@ -157,13 +162,17 @@ export default {
       const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
       const anio = fecha.getFullYear();
       this.proximaFecha = `${anio}-${mes}-${dia}`;
-      console.log(this.proximaFecha);
 
-      this.ultimoKilometraje =
-        this.revisionesUsuario[this.revisionesUsuario.length - 1].kilometros;
-        
-        
+      const ultimoKilometraje = this.revisionesUsuario[this.revisionesUsuario.length - 1].kilometros;
 
+      axios.get(`motos/${this.numBast}/marca`).then((resp) => {
+        this.listaKmMarca = resp.data;
+        this.kilometrosMantenimiento = this.listaKmMarca.kilometrajeRevisiones.reduce(
+          (kmAcumulador, kmActual) => kmActual.kilometrajeRevision > ultimoKilometraje && kmActual.kilometrajeRevision < kmAcumulador.kilometrajeRevision ? kmActual : kmAcumulador, 
+          this.listaKmMarca.kilometrajeRevisiones[this.listaKmMarca.kilometrajeRevisiones.length-1] //Este parámetro del reduce se utiliza para dar el valor inicial del acumulador(kmAcumulador) antes de comenzar la iteración sobre el array. Empieza kmAcumulador en ultimo valor de la lista de km de mantenimiento
+          //Math.max(...this.listaKmMarca)
+        );
+      });
     },
   },
 };

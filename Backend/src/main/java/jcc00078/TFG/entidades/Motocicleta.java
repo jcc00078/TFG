@@ -310,4 +310,8 @@ public class Motocicleta implements Serializable {
     public void setGrupoMoto(Set<GrupoAccesorios> grupoMoto) {
         this.grupoMoto = grupoMoto;
     }
+    
+     public List<Mantenimiento> getKilometrajeRevisiones() {
+        return marca.getKilometrajeRevisiones();
+    }
 }

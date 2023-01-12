@@ -10,9 +10,11 @@ import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
 import jcc00078.TFG.controladoresREST.dto.AccesorioDTO;
 import jcc00078.TFG.controladoresREST.dto.GrupoAccesoriosDTO;
 import jcc00078.TFG.controladoresREST.dto.AccesorioMotocicletaDTO;
+import jcc00078.TFG.controladoresREST.dto.MarcaDTO;
 import jcc00078.TFG.entidades.GrupoAccesorios;
 import jcc00078.TFG.entidades.Motocicleta;
 import jcc00078.TFG.entidades.Accesorio;
+import jcc00078.TFG.entidades.Mantenimiento;
 import jcc00078.TFG.entidades.Marca;
 import jcc00078.TFG.repositorios.MotocicletaRepositorio;
 import jcc00078.TFG.repositorios.UsuarioRepositorio;
@@ -78,10 +80,21 @@ public class ControladorMotocicleta {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    @GetMapping("{numBastidor}/marca")
+    public MarcaDTO listarKmMantenimientoMarca(@PathVariable String numBastidor) {
+        return motocicletaRepositorio.findById(numBastidor)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El numero de bastidor " + numBastidor + " no existe"))
+                .getMarca()
+                .toDTO();
+    }
+
     /**
-     * Función que sirve para listar los datos de todos los modelos de motocicletas
-     * @return 
-     * @note Cuando se listan los modelos de motos no muestro el dueño (por motivos de privacidad)
+     * Función que sirve para listar los datos de todos los modelos de
+     * motocicletas
+     *
+     * @return
+     * @note Cuando se listan los modelos de motos no muestro el dueño (por
+     * motivos de privacidad)
      */
     @GetMapping("modelos")
     public List<MotocicletaDTO> listarDatosTodosModelos(@RequestParam(defaultValue = "0") int cilindradaMin, @RequestParam(defaultValue = "4000") int cilindradaMax, @RequestParam(required = false) Boolean offRoad, @RequestParam(required = false) String carnetCompatible, @RequestParam(required = false) String tipo) {

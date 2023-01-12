@@ -1,6 +1,7 @@
 package jcc00078.TFG.controladoresREST.dto;
 
 import java.util.List;
+import jcc00078.TFG.entidades.Mantenimiento;
 
 /**
  *
@@ -9,16 +10,13 @@ import java.util.List;
 public class MarcaDTO {
     
   private String nombre;
-  private List<Integer> kilometrajeRevisiones;
+  private List<Mantenimiento> kilometrajeRevisiones;
 
-    public MarcaDTO(String nombre, List<Integer> kilometrajeRevisiones) {
+    public MarcaDTO(String nombre, List<Mantenimiento> kilometrajeRevisiones) {
         this.nombre = nombre;
         this.kilometrajeRevisiones = kilometrajeRevisiones;
     }
 
-    public MarcaDTO(String nombre) {
-        this.nombre = nombre;
-    }
 
     /**
      * @return the nombre
@@ -37,14 +35,14 @@ public class MarcaDTO {
     /**
      * @return the kilometrajeRevisiones
      */
-    public List<Integer> getKilometrajeRevisiones() {
+    public List<Mantenimiento> getKilometrajeRevisiones() {
         return kilometrajeRevisiones;
     }
 
     /**
      * @param kilometrajeRevisiones the kilometrajeRevisiones to set
      */
-    public void setKilometrajeRevisiones(List<Integer> kilometrajeRevisiones) {
+    public void setKilometrajeRevisiones(List<Mantenimiento> kilometrajeRevisiones) {
         this.kilometrajeRevisiones = kilometrajeRevisiones;
     }
   

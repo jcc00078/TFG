@@ -33,6 +33,8 @@ public class Revision implements Serializable {
     private int kilometros;
 
     private LocalDateTime fecha;
+    
+    private String mensaje;
 
     @OneToOne(mappedBy = "revision")
     private Cita cita;
