@@ -56,17 +56,12 @@
           <strong>Kilómetros</strong>
           <MDBTooltip v-model="tooltip1" direction="right" tag="a">
             <template #reference>
-              <router-link
-                style="color: black; margin-left: 5px"
-                :to="route.path"
-                replace
-              >
                 <i
                   @click="muestraTMantenimiento()"
                   class="far fa-question-circle"
+                  style="color: black; margin-left: 5px; cursor: pointer;"
                 >
                 </i>
-              </router-link>
             </template>
             <template #tip> Ver tabla de mantenimientos </template>
           </MDBTooltip>
