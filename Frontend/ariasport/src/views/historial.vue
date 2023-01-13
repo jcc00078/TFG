@@ -56,8 +56,16 @@
           <strong>Kilómetros</strong>
           <MDBTooltip v-model="tooltip1" direction="right" tag="a">
             <template #reference>
-              <router-link style="color: black; margin-left: 5px" to="/faq">
-                <i class="far fa-question-circle"> </i>
+              <router-link
+                style="color: black; margin-left: 5px"
+                :to="route.path"
+                replace
+              >
+                <i
+                  @click="muestraTMantenimiento()"
+                  class="far fa-question-circle"
+                >
+                </i>
               </router-link>
             </template>
             <template #tip> Ver tabla de mantenimientos </template>
@@ -72,9 +80,23 @@
         </MDBCardText>
       </MDBCardBody>
     </MDBCard>
-    <MDBCardHeader v-if="kilometrosMantenimiento" bg="transparent">
-      Tabla de mantenimiento de {{listaKmMarca.nombre}}
-    </MDBCardHeader>
+
+    <MDBCard v-show="mostrarTablaM" v-if="datosMarca" text="body" bg="info" class="m-5">
+      <MDBCardHeader class="text-center">
+        <h4>Tabla de mantenimiento de {{ datosMarca.nombre }}</h4>
+      </MDBCardHeader>
+      <MDBCardBody>
+        <MDBCardTitle>Trabajos que se realizan en las distintas revisiones</MDBCardTitle>
+        <MDBCardText>
+          <ul class="list-group">
+              <li class="list-group-item" v-for="revision in datosMarca.kilometrajeRevisiones" :key="revision.kilometrajeRevision" >
+                <p :class="[revision.kilometrajeRevision == kilometrosMantenimiento.kilometrajeRevision? 'fw-bold' : '']"> {{ revision.kilometrajeRevision }} Kilometros -->  {{ revision.descripcion }}</p>
+            </li>
+          </ul>
+        </MDBCardText>
+      </MDBCardBody>
+    </MDBCard>
+    
   </div>
 </template>
   
@@ -123,11 +145,13 @@ export default {
     const kilometrosMantenimiento = ref("");
     const tooltip1 = ref(false);
     const proximaFecha = ref(null);
-    const numBast=ref("");
-    const listaKmMarca=ref([]);
+    const numBast = ref("");
+    const datosMarca = ref([]);
+    const mostrarTablaM = ref(false);
+
     onMounted(async () => {
       const numBastidor = route.params.numBastidor;
-      numBast.value=numBastidor;
+      numBast.value = numBastidor;
       const { data: arrayRevisiones } = await axios.get(
         `revisiones/${numBastidor}`,
         {
@@ -138,18 +162,23 @@ export default {
       );
       revisionesUsuario.value = arrayRevisiones;
     });
-
+    function muestraTMantenimiento() {
+      mostrarTablaM.value = !mostrarTablaM.value;
+    }
     return {
       form1Bastidor,
       form1LoginCheck,
       bastidorCorrecto,
       revisionesUsuario,
       store,
+      route,
       kilometrosMantenimiento,
       tooltip1,
       proximaFecha,
       numBast,
-      listaKmMarca
+      datosMarca,
+      mostrarTablaM,
+      muestraTMantenimiento,
     };
   },
   methods: {
@@ -163,15 +192,23 @@ export default {
       const anio = fecha.getFullYear();
       this.proximaFecha = `${anio}-${mes}-${dia}`;
 
-      const ultimoKilometraje = this.revisionesUsuario[this.revisionesUsuario.length - 1].kilometros;
+      const ultimoKilometraje =
+        this.revisionesUsuario[this.revisionesUsuario.length - 1].kilometros;
 
       axios.get(`motos/${this.numBast}/marca`).then((resp) => {
-        this.listaKmMarca = resp.data;
-        this.kilometrosMantenimiento = this.listaKmMarca.kilometrajeRevisiones.reduce(
-          (kmAcumulador, kmActual) => kmActual.kilometrajeRevision > ultimoKilometraje && kmActual.kilometrajeRevision < kmAcumulador.kilometrajeRevision ? kmActual : kmAcumulador, 
-          this.listaKmMarca.kilometrajeRevisiones[this.listaKmMarca.kilometrajeRevisiones.length-1] //Este parámetro del reduce se utiliza para dar el valor inicial del acumulador(kmAcumulador) antes de comenzar la iteración sobre el array. Empieza kmAcumulador en ultimo valor de la lista de km de mantenimiento
-          //Math.max(...this.listaKmMarca)
-        );
+        this.datosMarca = resp.data;
+        this.kilometrosMantenimiento =
+          this.datosMarca.kilometrajeRevisiones.reduce(
+            (kmAcumulador, kmActual) =>
+              kmActual.kilometrajeRevision > ultimoKilometraje &&
+              kmActual.kilometrajeRevision < kmAcumulador.kilometrajeRevision
+                ? kmActual
+                : kmAcumulador,
+            this.datosMarca.kilometrajeRevisiones[
+              this.datosMarca.kilometrajeRevisiones.length - 1
+            ] //Este parámetro del reduce se utiliza para dar el valor inicial del acumulador(kmAcumulador) antes de comenzar la iteración sobre el array. Empieza kmAcumulador en ultimo valor de la lista de km de mantenimiento
+            //Math.max(...this.datosMarca)
+          );
       });
     },
   },
