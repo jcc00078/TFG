@@ -2,6 +2,7 @@ package jcc00078.TFG.entidades;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -27,7 +28,7 @@ public class Marca implements Serializable {
 
     @OneToMany
     private List<Motocicleta> motos;
-    
+
     public MarcaDTO toDTO() {
         MarcaDTO marcaDTO = new MarcaDTO(getNombre(), getKilometrajeRevisiones());
         return marcaDTO;
@@ -64,6 +65,21 @@ public class Marca implements Serializable {
      */
     public void setKilometrajeRevisiones(List<Mantenimiento> kilometrajeRevisiones) {
         this.kilometrajeRevisiones = kilometrajeRevisiones;
+    }
+/**
+ * Función para añadir kilometraje de revisiones para una marca
+ * @param kilometrajeRevisiones 
+ * @note Se reemplaza si tiene el mismo kilometraje, si no entonces lo añade y lo ordena
+ */
+    public void addKilometrajeRevisiones(List<Mantenimiento> kilometrajeRevisiones) {
+        kilometrajeRevisiones.addAll(this.kilometrajeRevisiones);
+        this.kilometrajeRevisiones
+                = kilometrajeRevisiones
+                        .stream()
+                        .distinct()
+                        .sorted()
+                        .collect(Collectors.toList());
+
     }
 
 }

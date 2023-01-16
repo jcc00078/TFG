@@ -81,7 +81,7 @@ public class ControladorMotocicleta {
     }
 
     @GetMapping("{numBastidor}/marca")
-    public MarcaDTO listarKmMantenimientoMarca(@PathVariable String numBastidor) {
+    public MarcaDTO listarDatosMarca(@PathVariable String numBastidor) {
         return motocicletaRepositorio.findById(numBastidor)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El numero de bastidor " + numBastidor + " no existe"))
                 .getMarca()

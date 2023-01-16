@@ -56,7 +56,7 @@ public class ControladorMarca {
         if(!nombreMarca.equals(marca.getNombre())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No coinciden los nombres de las marcas");
         }
-        m.setKilometrajeRevisiones(marca.getKilometrajeRevisiones());
+        m.addKilometrajeRevisiones(marca.getKilometrajeRevisiones());
         marcaRepositorio.save(m);
     }
 
