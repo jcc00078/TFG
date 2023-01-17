@@ -1,6 +1,9 @@
 package jcc00078.TFG.controladoresREST.dto;
 
 import java.time.LocalDateTime;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotBlank;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  *
@@ -9,8 +12,12 @@ import java.time.LocalDateTime;
 public class CitaDTO {
 
     private Long id;
+    @FutureOrPresent
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime horario;
+   @NotBlank
     private String dni_usuario;
+   @NotBlank
     private String numBastidor;
     //private Integer codRevision;
 

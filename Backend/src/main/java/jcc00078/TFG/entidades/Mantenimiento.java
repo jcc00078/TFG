@@ -9,12 +9,11 @@ import javax.persistence.Embeddable;
  * @author juanc
  */
 @Embeddable
-public class Mantenimiento implements Serializable,Comparable<Mantenimiento> {
-
+public class Mantenimiento implements Serializable, Comparable<Mantenimiento> {
 
     private String descripcion;
     private Integer kilometrajeRevision;
-    
+
     /**
      * @return the descripcion
      */
@@ -28,7 +27,7 @@ public class Mantenimiento implements Serializable,Comparable<Mantenimiento> {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
-    
+
     /**
      * @return the kilometrajeRevision
      */
@@ -70,7 +69,4 @@ public class Mantenimiento implements Serializable,Comparable<Mantenimiento> {
         return hash;
     }
 
- 
-    
-    
 }

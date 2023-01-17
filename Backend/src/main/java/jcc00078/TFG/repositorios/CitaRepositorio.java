@@ -1,5 +1,7 @@
 package jcc00078.TFG.repositorios;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import jcc00078.TFG.entidades.Cita;
@@ -15,4 +17,5 @@ import org.springframework.stereotype.Repository;
 public interface CitaRepositorio extends JpaRepository<Cita, Long> {
 
     List<Cita> findAllByMoto(Motocicleta moto);
+    List<Cita> findByHorarioBetween(LocalDateTime inicio, LocalDateTime fin);
 }

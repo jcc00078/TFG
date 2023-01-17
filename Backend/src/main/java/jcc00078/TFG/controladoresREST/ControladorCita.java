@@ -1,7 +1,16 @@
 package jcc00078.TFG.controladoresREST;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.PastOrPresent;
 import jcc00078.TFG.controladoresREST.dto.CitaDTO;
 import jcc00078.TFG.entidades.Cita;
 import jcc00078.TFG.entidades.Motocicleta;
@@ -9,14 +18,18 @@ import jcc00078.TFG.repositorios.CitaRepositorio;
 import jcc00078.TFG.repositorios.MotocicletaRepositorio;
 import jcc00078.TFG.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,6 +38,7 @@ import org.springframework.web.server.ResponseStatusException;
  *
  * @author juanc
  */
+@Validated
 @RestController
 @RequestMapping("citas")
 @CrossOrigin
@@ -54,19 +68,50 @@ public class ControladorCita {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public void crearCita(@RequestBody CitaDTO cita) {
+    public void crearCita(@Valid @RequestBody CitaDTO cita) {
+        cita.setHorario(cita.getHorario().truncatedTo(ChronoUnit.MINUTES));
+        List<LocalDateTime> disponibles = calcularCitasDisponibles(cita.getHorario().toLocalDate());
+        if (!disponibles.contains(cita.getHorario())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La hora debe estar en el horario disponible");
+        }
+
         Cita c = new Cita();
         c.fromDTO(cita);
-        if (cita.getDni_usuario() != null) {
-            c.setCliente(usuarioRepositorio.findOneByDni(cita.getDni_usuario())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado")));
+
+        c.setCliente(usuarioRepositorio.findOneByDni(cita.getDni_usuario())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado")));
+
+        Motocicleta m = motocicletaRepositorio.findById(cita.getNumBastidor())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Moto no encontrada"));
+        if (m.getCliente() == null || !m.getCliente().getDni_usuario().equals(cita.getDni_usuario())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "No puedes crear una cita para una moto que no es tuya");
         }
-        if (cita.getNumBastidor()!= null){
-            c.setMoto(motocicletaRepositorio.findById(cita.getNumBastidor())
-            .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Moto no encontrada")));
-        }
+        c.setMoto(m);
         citaRepositorio.save(c);
     }
-    
-    
+
+    @GetMapping()
+    public List<LocalDateTime> citasDisponibles(@FutureOrPresent @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+        return calcularCitasDisponibles(fecha);
+    }
+
+    private List<LocalDateTime> calcularCitasDisponibles(LocalDate fecha) {
+        LocalDateTime horaInicial = fecha.atTime(9, 0);
+        LocalDateTime horaFinal = fecha.atTime(18, 0);
+        List<LocalDateTime> reservadas = citaRepositorio.findByHorarioBetween(horaInicial, horaFinal)
+                .stream()
+                .map(Cita::getHorario)
+                .collect(Collectors.toUnmodifiableList());
+
+        List<LocalDateTime> disponibles = new ArrayList<>();
+
+        for (LocalDateTime hora = horaInicial; hora.isBefore(horaFinal) || hora.isEqual(horaFinal); hora = hora.plusMinutes(30)) {
+            if (hora.isBefore(fecha.atTime(13, 1)) || hora.isAfter(fecha.atTime(15, 59))) {
+                if (!reservadas.contains(hora)) {
+                    disponibles.add(hora);
+                }
+            }
+        }
+        return disponibles;
+    }
 }
