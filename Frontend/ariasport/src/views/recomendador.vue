@@ -44,8 +44,8 @@
               style="padding: 0cm"
               aria-labelledby="dropdownMenuButton"
             >
-              <MDBDropdownItem>
-                <slider-recomendador
+              <MDBDropdownItem >
+                <slider-recomendador 
                   v-model:minVal="minRange"
                   v-model:maxVal="maxRange"
                   :minPosible="0"

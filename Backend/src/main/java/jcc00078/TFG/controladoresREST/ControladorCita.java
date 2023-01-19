@@ -1,5 +1,6 @@
 package jcc00078.TFG.controladoresREST;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -113,5 +114,20 @@ public class ControladorCita {
             }
         }
         return disponibles;
+    }
+
+    @GetMapping("diasDeshabilitados")
+    public List<LocalDate> diasDeshabilitados() {
+        LocalDate diaInicial = LocalDate.now().plusDays(1);
+        LocalDate diaFinal = LocalDate.now().plusDays(1).plusMonths(2);
+        List<LocalDate> deshabilitados = new ArrayList<>();
+        for (LocalDate dia = diaInicial; dia.isBefore(diaFinal) || dia.isEqual(diaFinal); dia = dia.plusDays(1)) {
+            List<LocalDateTime> horas = citasDisponibles(dia);
+            if (dia.getDayOfWeek().equals(DayOfWeek.SATURDAY) || dia.getDayOfWeek().equals(DayOfWeek.SUNDAY) || horas.isEmpty()) {
+                deshabilitados.add(dia);
+            }
+        }
+        return deshabilitados;
+
     }
 }

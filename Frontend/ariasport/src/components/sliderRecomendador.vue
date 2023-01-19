@@ -54,8 +54,11 @@
   justify-content: center;
   width: 600px;
   height: 80px;
-  background: #9c9c9c;
+  background-color: #9c9c9c;
   border-radius: 40px;
+  
+  
+  
   
 }
 .container input[type="number"] {
@@ -76,7 +79,7 @@
   position: relative;
   width: 400px;
   height: 5px;
-  background: #ddd;
+  background: #fff;
   outline: none;
   top: 1px;
   margin: 10px;

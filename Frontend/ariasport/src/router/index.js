@@ -8,10 +8,7 @@ import registroUsuario from '@/views/registroUsuario'
 import recomendador from '@/views/recomendador'
 import sliderRecomendador from '@/components/sliderRecomendador'
 import motoConfig from '@/components/motoConfig'
-
-
-
-// import cita from '@/views/cita'
+import calendarioCita from '@/components/calendarioCita'
 
 import { createRouter, createWebHashHistory } from "vue-router";
 
@@ -66,11 +63,12 @@ const routes = [
       name:"motoConfig",
       component: motoConfig
     },
-    // {
-    //   path:"/citas",
-    //   name:"cita",
-    //   component: cita
-    // }
+    {
+      path:"/citas",
+      name:"cita",
+      component: calendarioCita
+    },
+    
   ];
 
   const router = createRouter({
