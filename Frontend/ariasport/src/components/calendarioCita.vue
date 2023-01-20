@@ -1,72 +1,75 @@
 <template>
-  <div class="container">
-    <div class="row justify-content-center" style="height: 100vh">
-      <div class="row align-items-end">
-        <h2 class="text-center my-1">Selecciona día para reservar la cita</h2>
-      </div>
-
-      <div class="row align-items-center justify-content-center">
-        <v-date-picker
-          v-model="fecha"
-          :min-date="primerDia()"
-          :max-date="fechaLimite()"
-          :disabled-dates="fechasDeshabilitadas"
-          is-dark
-        >
-        </v-date-picker>
-      </div>
-        <MDBModal
-          staticBackdrop
-          id="exampleModal"
-          v-model="modalFormFecha"
-          tabindex="-1"
-          labelledby="exampleModalLabel"
-        >
-          <MDBModalHeader :close="false">
-            <MDBModalTitle id="exampleModalLabel">
-              Completa tu reserva
-            </MDBModalTitle>
-          </MDBModalHeader>
-          <MDBModalBody>
-            <form v-if="fecha" id="formulario" autocomplete="off">
-              <label for="numBastidor"
-                >Selecciona el modelo para asociar la cita:</label
-              >
-              <select class="mx-2" v-model="motoSeleccionada" id="moto">
-                <option
-                  v-for="(moto, index) in motosUsuario"
-                  :value="moto"
-                  :key="index"
-                >
-                  {{ moto.modelo }}
-                </option>
-              </select>
-
-              <div class="text-center my-2">
-                <label for="hora">Seleccione una hora:</label>
-                <select class="mx-2" v-model="horaSeleccionada" id="hora">
-                  <option
-                    v-for="(hora, index) in horas"
-                    :value="hora"
-                    :key="index"
-                  >
-                    {{ getHora(hora) }}
-                  </option>
-                </select>
-              </div>
-            </form>
-          </MDBModalBody>
-          <MDBModalFooter>
-            <MDBBtn color="secondary" @click="fecha = null">Atrás</MDBBtn>
-            <MDBBtn
-              color="primary"
-              :disabled="horaSeleccionada == '' || motoSeleccionada == ''"
-              @click="realizaReserva()"
-              >Reservar</MDBBtn
-            >
-          </MDBModalFooter>
-        </MDBModal>
+  <div class="d-flex align-items-start justify-content-center h-100 w-100">
+    <div class="d-flex flex-column align-items-center">
+      <h2 class="mt-5">Selecciona día para reservar la cita</h2>
+      <v-date-picker
+        class="mt-4"
+        style="height: 300px; width: 500px"
+        v-model="fecha"
+        :min-date="primerDia()"
+        :max-date="fechaLimite()"
+        :disabled-dates="fechasDeshabilitadas"
+        is-dark
+      >
+      </v-date-picker>
     </div>
+  </div>
+  <div class="text-center">
+    <MDBModal
+      staticBackdrop
+      id="exampleModal"
+      v-model="modalFormFecha"
+      tabindex="-1"
+      labelledby="exampleModalLabel"
+    >
+      <div
+        class="alert alert-danger border-color-red"
+        border-color="red"
+        role="alert"
+        v-show="errorReserva != ''"
+      >
+        {{ this.errorReserva }}
+      </div>
+      <MDBModalHeader :close="false">
+        <MDBModalTitle id="exampleModalLabel">
+          Completa tu reserva
+        </MDBModalTitle>
+      </MDBModalHeader>
+      <MDBModalBody>
+        <form v-if="fecha" id="formulario" autocomplete="off">
+          <label for="numBastidor"
+            >Selecciona el modelo para asociar la cita:</label
+          >
+          <select class="mx-2" v-model="motoSeleccionada" id="moto">
+            <option
+              v-for="(moto, index) in motosUsuario"
+              :value="moto"
+              :key="index"
+            >
+              {{ moto.modelo }}
+            </option>
+          </select>
+
+          <div class="text-center my-2">
+            <label for="hora">Seleccione una hora:</label>
+            <select class="mx-2" v-model="horaSeleccionada" id="hora">
+              <option v-for="(hora, index) in horas" :value="hora" :key="index">
+                {{ getHora(hora) }}
+              </option>
+            </select>
+          </div>
+        </form>
+      </MDBModalBody>
+      <MDBModalFooter>
+        <MDBBtn color="secondary" @click="fecha = null">Atrás</MDBBtn>
+        <MDBBtn
+          color="primary"
+          :disabled="horaSeleccionada == '' || motoSeleccionada == ''"
+          @click="realizaReserva()"
+          >Reservar</MDBBtn
+        >
+      </MDBModalFooter>
+    </MDBModal>
   </div>
 </template>
 <style>
@@ -108,6 +111,7 @@ export default {
     const modalFormFecha = ref(false);
     const horas = ref([]);
     const fechasDeshabilitadas = ref([]);
+    const errorReserva = ref("");
 
     onMounted(async () => {
       const { data: dias } = await axios.get("citas/diasDeshabilitados", {
@@ -129,6 +133,7 @@ export default {
     });
 
     watch([fecha], async ([fechaNueva]) => {
+      errorReserva.value="";
       if (fechaNueva == null) {
         modalFormFecha.value = false;
         motoSeleccionada.value = "";
@@ -163,6 +168,7 @@ export default {
       modalFormFecha,
       horas,
       fechasDeshabilitadas,
+      errorReserva,
     };
   },
   methods: {
@@ -184,7 +190,24 @@ export default {
       return fechaUltima;
     },
     realizaReserva() {
-      console.log("Realizando reserva");
+      this.errorReserva="";
+      const json = {
+        horario: this.horaSeleccionada,
+        dni_usuario: this.store.username,
+        numBastidor: this.motoSeleccionada.numBastidor,
+      };
+      axios
+        .post(`citas`, json, {
+          headers: {
+            Authorization: `Bearer ${this.store.jwt}`,
+          },
+        })
+        .then(() => {
+          this.fecha = null;
+        })
+        .catch(() => {
+          this.errorReserva = "Error, cita no creada";
+        });
     },
   },
 };
