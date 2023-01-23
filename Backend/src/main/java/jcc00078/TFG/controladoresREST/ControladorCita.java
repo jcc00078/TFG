@@ -15,6 +15,7 @@ import javax.validation.constraints.PastOrPresent;
 import jcc00078.TFG.controladoresREST.dto.CitaDTO;
 import jcc00078.TFG.entidades.Cita;
 import jcc00078.TFG.entidades.Motocicleta;
+import jcc00078.TFG.entidades.Usuario;
 import jcc00078.TFG.repositorios.CitaRepositorio;
 import jcc00078.TFG.repositorios.MotocicletaRepositorio;
 import jcc00078.TFG.repositorios.UsuarioRepositorio;
@@ -24,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,8 +56,15 @@ public class ControladorCita {
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
 
+    /**
+     * Función que devuelve las citas de una moto
+     *
+     * @param numBastidor
+     * @param usuarioLogueado
+     * @return
+     */
     @GetMapping("{numBastidor}")
-    public List<CitaDTO> getCitas(@PathVariable String numBastidor, @AuthenticationPrincipal String usuarioLogueado) {
+    public List<CitaDTO> getCitasMoto(@PathVariable String numBastidor, @AuthenticationPrincipal String usuarioLogueado) {
         Motocicleta moto = motocicletaRepositorio.findById(numBastidor)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El número de bastidor no se ha encontrado"));
         if (moto.getCliente() == null) {
@@ -65,6 +74,24 @@ public class ControladorCita {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El dni " + moto.getCliente().getDni_usuario() + " no puede acceder a las citas que tiene el dni " + usuarioLogueado);
         }
         return citaRepositorio.findAllByMoto(moto).stream().map(Cita::toDTO).collect(Collectors.toUnmodifiableList());
+    }
+
+    /**
+     * Función que devuelve todas las citas de un usuario
+     *
+     * @param dni_usuario
+     * @param usuarioLogueado
+     * @return
+     */
+    @GetMapping("todas/{dni_usuario}")
+    public List<CitaDTO> getCitasUsuario(@PathVariable String dni_usuario, @AuthenticationPrincipal String usuarioLogueado) {
+        Usuario usuario = usuarioRepositorio.findOneByDni(dni_usuario)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario no se ha encontrado"));
+
+        if (!usuario.getDni_usuario().equals(usuarioLogueado)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El dni " + usuario.getDni_usuario() + " no puede acceder a las citas que tiene el dni " + usuarioLogueado);
+        }
+        return citaRepositorio.findCitaByClienteAndFechaAfterToday(usuario).stream().map(Cita::toDTO).collect(Collectors.toUnmodifiableList());
     }
 
     @PostMapping()
@@ -129,5 +156,15 @@ public class ControladorCita {
         }
         return deshabilitados;
 
+    }
+    
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void borrarCita(@Valid @PathVariable Long id) {
+        if(!citaRepositorio.existsById(id)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se puede borrar la cita con id " + id + " porque no existe");
+        } else {
+            citaRepositorio.deleteById(id);
+        }
     }
 }

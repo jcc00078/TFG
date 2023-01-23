@@ -32,14 +32,12 @@
       </div>
       <MDBModalHeader :close="false">
         <MDBModalTitle id="exampleModalLabel">
-          Completa tu reserva
+          Crea tu reserva
         </MDBModalTitle>
       </MDBModalHeader>
       <MDBModalBody>
         <form v-if="fecha" id="formulario" autocomplete="off">
-          <label for="numBastidor"
-            >Selecciona el modelo para asociar la cita:</label
-          >
+          <label for="modelo">Selecciona el modelo para asociar la cita:</label>
           <select class="mx-2" v-model="motoSeleccionada" id="moto">
             <option
               v-for="(moto, index) in motosUsuario"
@@ -71,6 +69,78 @@
       </MDBModalFooter>
     </MDBModal>
   </div>
+  <div class="text-center mt-5">
+    <MDBBtn color="primary" @click="muestraTCitas()">Mis citas</MDBBtn>
+  </div>
+  <div class="d-flex flex-column align-items-center">
+    <MDBCard
+      v-show="mostrarTCitas"
+      v-if="listaCitas"
+      text="body"
+      bg="info"
+      class="m-5"
+      style="width: 500px"
+    >
+      <MDBCardHeader class="text-center">
+        <h4>Datos de mis citas</h4>
+      </MDBCardHeader>
+      <MDBCardBody>
+        <MDBCardTitle>Días que he pedido cita</MDBCardTitle>
+        <MDBCardText>
+          <ul class="list-group">
+            <li
+              class="list-group-item"
+              v-for="cita in listaCitas.sort(
+                (a, b) =>
+                  new Date(a.horario.replace('T', ' ')) -
+                  new Date(b.horario.replace('T', ' '))
+              )"
+              :key="cita.id"
+            >
+              <p
+                class="text-center"
+                style="text-decoration: underline; font-style: italic"
+              >
+                {{ getModeloMoto(cita.numBastidor) }}
+              </p>
+
+              <p>
+                Fecha:
+                <strong>{{
+                  cita.horario.slice(0, 10).split("-").reverse().join("-")
+                }}</strong>
+                ----> Hora:
+                <strong
+                  >{{
+                    new Date(cita.horario).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  }}
+                </strong>
+                <MDBBtn
+                  @click="eliminarCita(cita.id)"
+                  class="m-2 d-print-none"
+                  outline="danger"
+                  style="border-width: 0px; padding: 0cm; height: auto"
+                >
+                  <i class="fas fa-trash"></i>
+                </MDBBtn>
+                <MDBBtn
+                  @click="eliminarAccesorio(item)"
+                  class="m-2 d-print-none"
+                  outline="warning"
+                  style="border-width: 0px; padding: 0cm; height: auto"
+                >
+                  <i class="fas fa-edit"></i>
+                </MDBBtn>
+              </p>
+            </li>
+          </ul>
+        </MDBCardText>
+      </MDBCardBody>
+    </MDBCard>
+  </div>
 </template>
 <style>
 .vc-day-content.is-disabled {
@@ -88,6 +158,10 @@ import {
   MDBModalBody,
   MDBModalFooter,
   MDBBtn,
+  MDBCard,
+  MDBCardText,
+  MDBCardBody,
+  MDBCardTitle,
 } from "mdb-vue-ui-kit";
 import { ref, watch, onMounted } from "vue";
 
@@ -99,6 +173,10 @@ export default {
     MDBModalBody,
     MDBModalFooter,
     MDBBtn,
+    MDBCard,
+    MDBCardText,
+    MDBCardBody,
+    MDBCardTitle,
   },
   setup() {
     const exampleModalButtonWithIcon = ref(false);
@@ -112,6 +190,8 @@ export default {
     const horas = ref([]);
     const fechasDeshabilitadas = ref([]);
     const errorReserva = ref("");
+    const listaCitas = ref([]);
+    const mostrarTCitas = ref(false);
 
     onMounted(async () => {
       const { data: dias } = await axios.get("citas/diasDeshabilitados", {
@@ -130,10 +210,22 @@ export default {
         }
       );
       motosUsuario.value = arrayMotos;
-    });
 
+      const { data: arrayCitas } = await axios.get(
+        `citas/todas/${store.username}`,
+        {
+          headers: {
+            Authorization: `Bearer ${store.jwt}`,
+          },
+        }
+      );
+      listaCitas.value = arrayCitas;
+    });
+    function muestraTCitas() {
+      mostrarTCitas.value = !mostrarTCitas.value;
+    }
     watch([fecha], async ([fechaNueva]) => {
-      errorReserva.value="";
+      errorReserva.value = "";
       if (fechaNueva == null) {
         modalFormFecha.value = false;
         motoSeleccionada.value = "";
@@ -169,6 +261,9 @@ export default {
       horas,
       fechasDeshabilitadas,
       errorReserva,
+      listaCitas,
+      mostrarTCitas,
+      muestraTCitas,
     };
   },
   methods: {
@@ -190,7 +285,7 @@ export default {
       return fechaUltima;
     },
     realizaReserva() {
-      this.errorReserva="";
+      this.errorReserva = "";
       const json = {
         horario: this.horaSeleccionada,
         dni_usuario: this.store.username,
@@ -207,6 +302,25 @@ export default {
         })
         .catch(() => {
           this.errorReserva = "Error, cita no creada";
+        });
+    },
+    getModeloMoto(numBastidor) {
+      const moto = this.motosUsuario.find(
+        (moto) => moto.numBastidor === numBastidor
+      );
+      return moto.modelo;
+    },
+
+    eliminarCita(idCita) {
+      axios
+        .delete(`citas/${idCita}`, {
+          headers: {
+            Authorization: `Bearer ${this.store.jwt}`,
+          },
+        })
+        .then(() => {
+          const i = this.listaCitas.findIndex(cita => cita.id === idCita);
+          this.listaCitas.splice(i, 1);
         });
     },
   },
