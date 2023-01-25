@@ -31,12 +31,11 @@
         {{ this.errorReserva }}
       </div>
       <MDBModalHeader :close="false">
-        <MDBModalTitle id="exampleModalLabel">
-          Crea tu reserva
-        </MDBModalTitle>
+        <MDBModalTitle id="exampleModalLabel"> {{ fecha==null?'Modifica tu reserva' : 'Crea tu reserva' }} </MDBModalTitle>
+        
       </MDBModalHeader>
       <MDBModalBody>
-        <form v-if="fecha" id="formulario" autocomplete="off">
+        <form id="formulario" autocomplete="off">
           <label for="modelo">Selecciona el modelo para asociar la cita:</label>
           <select class="mx-2" v-model="motoSeleccionada" id="moto">
             <option
@@ -51,7 +50,15 @@
           <div class="text-center my-2">
             <label for="hora">Seleccione una hora:</label>
             <select class="mx-2" v-model="horaSeleccionada" id="hora">
-              <option v-for="(hora, index) in horas" :value="hora" :key="index">
+              <option
+                v-for="(hora, index) in horas.sort(
+                  (a, b) =>
+                    new Date(a.replace('T', ' ')) -
+                    new Date(b.replace('T', ' '))
+                )"
+                :value="hora"
+                :key="index"
+              >
                 {{ getHora(hora) }}
               </option>
             </select>
@@ -59,12 +66,17 @@
         </form>
       </MDBModalBody>
       <MDBModalFooter>
-        <MDBBtn color="secondary" @click="fecha = null">Atrás</MDBBtn>
-        <MDBBtn
+        <MDBBtn color="secondary" @click="cerrarModal()">Atrás</MDBBtn>
+        <MDBBtn v-if="fecha"
           color="primary"
           :disabled="horaSeleccionada == '' || motoSeleccionada == ''"
           @click="realizaReserva()"
           >Reservar</MDBBtn
+        >
+        <MDBBtn v-if="!fecha"
+          color="success"
+          @click="modificaReserva()"
+          >Modificar</MDBBtn
         >
       </MDBModalFooter>
     </MDBModal>
@@ -127,7 +139,7 @@
                   <i class="fas fa-trash"></i>
                 </MDBBtn>
                 <MDBBtn
-                  @click="eliminarAccesorio(item)"
+                  @click="mostrarModificarReserva(cita)"
                   class="m-2 d-print-none"
                   outline="warning"
                   style="border-width: 0px; padding: 0cm; height: auto"
@@ -192,6 +204,7 @@ export default {
     const errorReserva = ref("");
     const listaCitas = ref([]);
     const mostrarTCitas = ref(false);
+    const editando = ref(false);
 
     onMounted(async () => {
       const { data: dias } = await axios.get("citas/diasDeshabilitados", {
@@ -220,25 +233,27 @@ export default {
         }
       );
       listaCitas.value = arrayCitas;
+
+      watch([fecha], async ([fechaNueva]) => {
+        errorReserva.value = "";
+        if (fechaNueva == null) {
+          return;
+        }
+        await calcularHorasDisponibles(fechaNueva);
+        modalFormFecha.value = true;
+      });
     });
+
     function muestraTCitas() {
       mostrarTCitas.value = !mostrarTCitas.value;
     }
-    watch([fecha], async ([fechaNueva]) => {
-      errorReserva.value = "";
-      if (fechaNueva == null) {
-        modalFormFecha.value = false;
-        motoSeleccionada.value = "";
-        horaSeleccionada.value = "";
-        return;
-      }
-      modalFormFecha.value = true;
-      const date = new Date(fechaNueva);
+
+    async function calcularHorasDisponibles(diaFecha) {
+      const date = new Date(diaFecha);
       const dia = date.getDate().toString().padStart(2, "0");
       const mes = (date.getMonth() + 1).toString().padStart(2, "0");
       const anio = date.getFullYear();
       const strFecha = `${anio}-${mes}-${dia}`;
-
       const listaHoras = await axios.get(`citas`, {
         headers: {
           Authorization: `Bearer ${store.jwt}`,
@@ -248,7 +263,7 @@ export default {
         },
       });
       horas.value = listaHoras.data;
-    });
+    }
 
     return {
       exampleModalButtonWithIcon,
@@ -264,8 +279,11 @@ export default {
       listaCitas,
       mostrarTCitas,
       muestraTCitas,
+      editando,
+      calcularHorasDisponibles,
     };
   },
+
   methods: {
     getHora(fecha) {
       const date = new Date(fecha);
@@ -297,8 +315,17 @@ export default {
             Authorization: `Bearer ${this.store.jwt}`,
           },
         })
-        .then(() => {
-          this.fecha = null;
+        .then(async () => {
+          const { data: arrayCitas } = await axios.get(
+            `citas/todas/${this.store.username}`,
+            {
+              headers: {
+                Authorization: `Bearer ${this.store.jwt}`,
+              },
+            }
+          );
+          this.listaCitas = arrayCitas;
+          this.cerrarModal();
         })
         .catch(() => {
           this.errorReserva = "Error, cita no creada";
@@ -319,9 +346,30 @@ export default {
           },
         })
         .then(() => {
-          const i = this.listaCitas.findIndex(cita => cita.id === idCita);
+          const i = this.listaCitas.findIndex((cita) => cita.id === idCita);
           this.listaCitas.splice(i, 1);
         });
+    },
+
+    async mostrarModificarReserva(cita) {
+      await this.calcularHorasDisponibles(cita.horario);
+      this.horas.push(cita.horario);
+
+      this.motoSeleccionada = this.motosUsuario.find(
+        (motoUsuario) => motoUsuario.numBastidor === cita.numBastidor
+      );
+      this.horaSeleccionada = cita.horario;
+      this.modalFormFecha = true;
+    },
+
+    cerrarModal() {
+      this.fecha = null;
+      this.modalFormFecha = false;
+      this.motoSeleccionada = "";
+      this.horaSeleccionada = "";
+    },
+    modificaReserva(){
+
     },
   },
 };
