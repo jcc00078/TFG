@@ -31,8 +31,9 @@
         {{ this.errorReserva }}
       </div>
       <MDBModalHeader :close="false">
-        <MDBModalTitle id="exampleModalLabel"> {{ fecha==null?'Modifica tu reserva' : 'Crea tu reserva' }} </MDBModalTitle>
-        
+        <MDBModalTitle id="exampleModalLabel">
+          {{ fecha == null ? "Modifica tu reserva" : "Crea tu reserva" }}
+        </MDBModalTitle>
       </MDBModalHeader>
       <MDBModalBody>
         <form id="formulario" autocomplete="off">
@@ -67,15 +68,14 @@
       </MDBModalBody>
       <MDBModalFooter>
         <MDBBtn color="secondary" @click="cerrarModal()">Atrás</MDBBtn>
-        <MDBBtn v-if="fecha"
+        <MDBBtn
+          v-if="fecha"
           color="primary"
           :disabled="horaSeleccionada == '' || motoSeleccionada == ''"
           @click="realizaReserva()"
           >Reservar</MDBBtn
         >
-        <MDBBtn v-if="!fecha"
-          color="success"
-          @click="modificaReserva()"
+        <MDBBtn v-if="!fecha" color="success" @click="modificaReserva()"
           >Modificar</MDBBtn
         >
       </MDBModalFooter>
@@ -205,6 +205,7 @@ export default {
     const listaCitas = ref([]);
     const mostrarTCitas = ref(false);
     const editando = ref(false);
+    const citaModificada = ref(null);
 
     onMounted(async () => {
       const { data: dias } = await axios.get("citas/diasDeshabilitados", {
@@ -281,6 +282,7 @@ export default {
       muestraTCitas,
       editando,
       calcularHorasDisponibles,
+      citaModificada,
     };
   },
 
@@ -345,7 +347,17 @@ export default {
             Authorization: `Bearer ${this.store.jwt}`,
           },
         })
-        .then(() => {
+        .then(async () => {
+          const { data: arrayCitas } = await axios.get(
+            `citas/todas/${this.store.username}`,
+            {
+              headers: {
+                Authorization: `Bearer ${this.store.jwt}`,
+              },
+            }
+          );
+          this.listaCitas = arrayCitas;
+
           const i = this.listaCitas.findIndex((cita) => cita.id === idCita);
           this.listaCitas.splice(i, 1);
         });
@@ -360,6 +372,7 @@ export default {
       );
       this.horaSeleccionada = cita.horario;
       this.modalFormFecha = true;
+      this.citaModificada = cita;
     },
 
     cerrarModal() {
@@ -368,8 +381,30 @@ export default {
       this.motoSeleccionada = "";
       this.horaSeleccionada = "";
     },
-    modificaReserva(){
-
+    modificaReserva() {
+      const idCita = this.citaModificada.id;
+      let json = {
+        id: idCita,
+        horario: this.horaSeleccionada,
+        numBastidor: this.motoSeleccionada.numBastidor,
+      };
+      axios
+        .put(`citas/${idCita}`, json, {
+          headers: {
+            Authorization: `Bearer ${this.store.jwt}`,
+          },
+        })
+        .then(() => {
+          const i = this.listaCitas.findIndex((cita) => cita.id === idCita);
+          const nuevaCita = this.listaCitas[i];
+          nuevaCita.horario = json.horario;
+          nuevaCita.numBastidor = json.numBastidor;
+          this.listaCitas.splice(i, 1, nuevaCita);
+          this.cerrarModal();
+        })
+        .catch(() => {
+          this.errorReserva = "No ha sido posible modificar la cita";
+        });
     },
   },
 };

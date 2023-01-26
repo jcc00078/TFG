@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -124,6 +125,10 @@ public class ControladorCita {
     }
 
     private List<LocalDateTime> calcularCitasDisponibles(LocalDate fecha) {
+        LocalDate hoy = LocalDate.now();
+        if (hoy.isAfter(fecha)) { //Devuelvo array sin horas disponibles ya que la fecha es antigua a la de hoy
+            return new ArrayList<>();
+        }
         LocalDateTime horaInicial = fecha.atTime(9, 0);
         LocalDateTime horaFinal = fecha.atTime(18, 0);
         List<LocalDateTime> reservadas = citaRepositorio.findByHorarioBetween(horaInicial, horaFinal)
@@ -134,9 +139,11 @@ public class ControladorCita {
         List<LocalDateTime> disponibles = new ArrayList<>();
 
         for (LocalDateTime hora = horaInicial; hora.isBefore(horaFinal) || hora.isEqual(horaFinal); hora = hora.plusMinutes(30)) {
-            if (hora.isBefore(fecha.atTime(13, 1)) || hora.isAfter(fecha.atTime(15, 59))) {
+            if (hora.isBefore(fecha.atTime(13, 1)) || hora.isAfter(fecha.atTime(15, 59))) { //Horas deshabilitadas entre 1pm-4pm por cierre
                 if (!reservadas.contains(hora)) {
-                    disponibles.add(hora);
+                    if ((hoy.isEqual(fecha) && hora.isAfter(LocalDateTime.now()) || hoy.isBefore(fecha))) {
+                        disponibles.add(hora);
+                    }
                 }
             }
         }
@@ -157,14 +164,29 @@ public class ControladorCita {
         return deshabilitados;
 
     }
-    
+
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void borrarCita(@Valid @PathVariable Long id) {
-        if(!citaRepositorio.existsById(id)){
+        if (!citaRepositorio.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se puede borrar la cita con id " + id + " porque no existe");
         } else {
             citaRepositorio.deleteById(id);
         }
+    }
+
+    @PutMapping("{id}")
+    public void modificarCita(@RequestBody CitaDTO cita, @Valid @PathVariable Long id) {
+        Cita c = citaRepositorio.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No se puede modificar la cita con id " + id + " porque no existe"));
+
+        if (!id.equals(cita.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No coinciden los ids de las citas");
+        }
+        Motocicleta m = motocicletaRepositorio.findById(cita.getNumBastidor())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El numero de bastidor " + cita.getNumBastidor() + " no existe"));
+        c.setHorario(cita.getHorario());
+        c.setMoto(m);
+        citaRepositorio.save(c);
     }
 }
