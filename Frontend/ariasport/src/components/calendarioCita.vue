@@ -64,6 +64,19 @@
               </option>
             </select>
           </div>
+          <div class="text-center my-2" v-if="fecha == null">
+            <label for="hora">Seleccione una fecha:</label>
+            <v-date-picker
+              class="mt-4"
+              style="height: 300px; width: 400px"
+              v-model="nuevaFecha"
+              :min-date="new Date()"
+              :max-date="fechaLimite()"
+              :disabled-dates="fechasDeshabilitadas"
+              is-dark
+            >
+            </v-date-picker>
+          </div>
         </form>
       </MDBModalBody>
       <MDBModalFooter>
@@ -118,18 +131,9 @@
 
               <p>
                 Fecha:
-                <strong>{{
-                  cita.horario.slice(0, 10).split("-").reverse().join("-")
-                }}</strong>
+                <strong>{{ getDia(cita.horario) }}</strong>
                 ----> Hora:
-                <strong
-                  >{{
-                    new Date(cita.horario).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
-                  }}
-                </strong>
+                <strong>{{ getHora(cita.horario) }} </strong>
                 <MDBBtn
                   @click="eliminarCita(cita.id)"
                   class="m-2 d-print-none"
@@ -206,6 +210,7 @@ export default {
     const mostrarTCitas = ref(false);
     const editando = ref(false);
     const citaModificada = ref(null);
+    const nuevaFecha = ref(null);
 
     onMounted(async () => {
       const { data: dias } = await axios.get("citas/diasDeshabilitados", {
@@ -243,18 +248,35 @@ export default {
         await calcularHorasDisponibles(fechaNueva);
         modalFormFecha.value = true;
       });
+
+      watch([nuevaFecha], async ([fechaNueva]) => {
+        errorReserva.value = "";
+        if (fechaNueva == null) {
+          return;
+        }
+        await calcularHorasDisponibles(fechaNueva);
+        modalFormFecha.value = true;
+        if (getDia(citaModificada.value.horario) == getDia(fechaNueva)) {
+          horas.value.push(citaModificada.value.horario);
+        }
+      });
     });
 
     function muestraTCitas() {
       mostrarTCitas.value = !mostrarTCitas.value;
     }
 
-    async function calcularHorasDisponibles(diaFecha) {
-      const date = new Date(diaFecha);
+    function getDia(fecha) {
+      const date = new Date(fecha);
       const dia = date.getDate().toString().padStart(2, "0");
       const mes = (date.getMonth() + 1).toString().padStart(2, "0");
       const anio = date.getFullYear();
       const strFecha = `${anio}-${mes}-${dia}`;
+      return strFecha;
+    }
+
+    async function calcularHorasDisponibles(diaFecha) {
+      const strFecha = getDia(diaFecha);
       const listaHoras = await axios.get(`citas`, {
         headers: {
           Authorization: `Bearer ${store.jwt}`,
@@ -283,6 +305,8 @@ export default {
       editando,
       calcularHorasDisponibles,
       citaModificada,
+      nuevaFecha,
+      getDia,
     };
   },
 
@@ -293,6 +317,7 @@ export default {
       const minuto = date.getMinutes().toString().padStart(2, "0");
       return `${hora}:${minuto}`;
     },
+
     primerDia() {
       let fechaComienzo = new Date();
       fechaComienzo.setDate(fechaComienzo.getDate() + 1); //Mañana
@@ -373,6 +398,7 @@ export default {
       this.horaSeleccionada = cita.horario;
       this.modalFormFecha = true;
       this.citaModificada = cita;
+      this.nuevaFecha = new Date(cita.horario);
     },
 
     cerrarModal() {
@@ -380,6 +406,7 @@ export default {
       this.modalFormFecha = false;
       this.motoSeleccionada = "";
       this.horaSeleccionada = "";
+      this.nuevaFecha = null;
     },
     modificaReserva() {
       const idCita = this.citaModificada.id;
