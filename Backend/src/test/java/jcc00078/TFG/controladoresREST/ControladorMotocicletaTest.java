@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javax.annotation.PostConstruct;
+import jcc00078.TFG.datos.GeneradorDatos;
 import jcc00078.TFG.entidades.Mantenimiento;
 import jcc00078.TFG.entidades.Marca;
 import jcc00078.TFG.repositorios.MarcaRepositorio;
@@ -34,6 +35,9 @@ public class ControladorMotocicletaTest {
     @Autowired
     MarcaRepositorio marcaRepositorio;
 
+    @Autowired
+    GeneradorDatos generadorDatos;
+
     /**
      * Función para crear un TestRestTemplate para las pruebas
      */
@@ -49,45 +53,22 @@ public class ControladorMotocicletaTest {
         restTemplate = new TestRestTemplate(restTemplateBuilder);
     }
 
-    
-    Marca generaNuevaMarca(){
-        Marca m = new Marca();
-        m.setNombre("Suzuki");
-        Mantenimiento mant = new Mantenimiento();
-        Mantenimiento mant2 = new Mantenimiento();
-        mant.setKilometrajeRevision(1000);
-        mant.setDescripcion("Cambio de aceite");
-        mant2.setKilometrajeRevision(6000);
-        mant2.setDescripcion("Cambio de filtro de aire");
-        ArrayList<Mantenimiento> listaMant = new ArrayList<>();
-        listaMant.add(mant);
-        listaMant.add(mant2);
-        m.setKilometrajeRevisiones(listaMant);
-       
-        Marca m2 = new Marca();
-        m2.setNombre("Ducati");
-        Mantenimiento mant3 = new Mantenimiento();
-        mant3.setKilometrajeRevision(2000);
-        mant3.setDescripcion("Cambio de bujias");
-        ArrayList<Mantenimiento> listaMant2 = new ArrayList<>();
-        listaMant2.add(mant3);
-        m2.setKilometrajeRevisiones(listaMant2);
-
-        marcaRepositorio.saveAndFlush(m); //Para guardar entidad en BBDD y garantizar que los cambios se hayan confirmado y sincronizado con la BBDD inmediatamente
-        marcaRepositorio.saveAndFlush(m2); //Para guardar entidad en BBDD y garantizar que los cambios se hayan confirmado y sincronizado con la BBDD inmediatamente
+    private Marca getMarca() {
+        List<Marca> listaMarcas = generadorDatos.generarListaMarcas();
+        listaMarcas.forEach(m -> marcaRepositorio.save(m));
+        marcaRepositorio.flush();
         Random r = new Random();
-        List<Marca> lista = new ArrayList<>();
-        lista.add(m);
-        lista.add(m2);
-        return lista.get(r.nextInt(lista.size())); //Devuelvo el elemento m o m2 aleatoriamente
+        return listaMarcas.get(r.nextInt(listaMarcas.size()));
     }
 
     /**
-     * Test para comprobar que dado una marca nueva cuando consulto la lista de marcas entonces me devuelve el nombre de la marca creada. Devuelve la lista de marcas
+     * Test para comprobar que dado una marca nueva cuando consulto la lista de
+     * marcas entonces me devuelve el nombre de la marca creada. Devuelve la
+     * lista de marcas
      */
     @Test
     public void listarMarcasTest() {
-        Marca m = generaNuevaMarca();
+        Marca m = getMarca();
         String[] listaMarcas
                 = restTemplate.getForEntity("/marcas", String[].class).getBody();
         Assertions.assertThat(listaMarcas).hasSizeGreaterThanOrEqualTo(2);//Compruebo que el vector de respuesta solo tiene una moto
