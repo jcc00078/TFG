@@ -11,7 +11,7 @@
     <MDBCard class="shadow-4-strong w-responsive mx-auto" text="center">
       <MDBCardBody>
         <MDBCardTitle>Inicia sesión</MDBCardTitle>
-        <form>
+        <form @submit.prevent="login()">
           <!-- Dni input -->
           <MDBInput
             type="text"
@@ -29,7 +29,7 @@
             wrapperClass="mb-4"
           />
           <!-- Submit button -->
-          <MDBBtn id="estoyLogueado" color="primary" block @click="login()">
+          <MDBBtn id="estoyLogueado" color="primary" block type="submit">
             Conectarse
           </MDBBtn>
           <router-link to="/registrarme">

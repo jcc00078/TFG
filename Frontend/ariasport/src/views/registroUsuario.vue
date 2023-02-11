@@ -3,7 +3,7 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title text-center">Registro de usuarios</h3>
-        <form class="row g-3 form-floating" novalidate>
+        <form class="row g-3 form-floating" novalidate  @submit.prevent="registro()">
           <div class="col-md-12">
             <label for="dni" class="form-label">Introduce tu DNI</label>
             <input 
@@ -47,7 +47,7 @@
           </div>
           <div class="row">
             <div class="d-grid col-4 mx-auto">
-              <button class="btn btn-primary center my-5" type="submit" to="/iniciarSesion" @click="registro()">
+              <button class="btn btn-primary center my-5" type="submit" to="/iniciarSesion">
                 Registrarme
               </button>
             </div>

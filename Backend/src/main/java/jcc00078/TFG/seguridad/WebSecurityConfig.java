@@ -34,7 +34,7 @@ public class WebSecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable()
                 .authorizeRequests()
-                .mvcMatchers(HttpMethod.OPTIONS).permitAll()
+                .mvcMatchers(HttpMethod.OPTIONS,"/**").permitAll() //En mvcMatchers es necesario poner todas las rutas ("/**")
                 .mvcMatchers(HttpMethod.POST,"/motos").authenticated()
                 .mvcMatchers("/login","/motos/**").permitAll()
                 .mvcMatchers(HttpMethod.POST,"/usuarios").permitAll()
