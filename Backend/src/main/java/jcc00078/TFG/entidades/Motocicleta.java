@@ -3,6 +3,7 @@ package jcc00078.TFG.entidades;
 import com.sun.istack.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,12 +47,12 @@ public class Motocicleta implements Serializable {
 
     //@Positive
     private float precio;
-    
+
     @Lob
     private String imagen;
-    
+
     private int cilindrada;
-    
+
     private boolean offRoad;
     @NotNull
     private String carnetCompatible;
@@ -68,39 +69,37 @@ public class Motocicleta implements Serializable {
      */
     @OneToMany(mappedBy = "moto")
     private List<Cita> citas;
-    
-    
-  /**
-     * Revisiones  asociadas a una motocicleta
+
+    /**
+     * Revisiones asociadas a una motocicleta
      */
     @OneToMany(mappedBy = "moto")
     private List<Revision> revisiones;
-    
-    
+
     @ManyToMany(mappedBy = "motos")
     private Set<Accesorio> accesorios;
 
-    @OneToMany(mappedBy="moto")
+    @OneToMany(mappedBy = "moto")
     private Set<GrupoAccesorios> grupoMoto;
-    
-    
+
     public MotocicletaDTO toDTO() {
-        MotocicletaDTO motoDTO = new MotocicletaDTO(getNumBastidor(), getMarca().getNombre(), getModelo(), getColor(), 
-                getTipo(), getPrecio(), cliente!=null? cliente.getDni_usuario(): null,
-                getImagen(), getCilindrada(), isOffRoad(),getCarnetCompatible());
+        MotocicletaDTO motoDTO = new MotocicletaDTO(getNumBastidor(), getMarca().getNombre(), getModelo(), getColor(),
+                getTipo(), getPrecio(), cliente != null ? cliente.getDni_usuario() : null,
+                getImagen(), getCilindrada(), isOffRoad(), getCarnetCompatible());
         return motoDTO;
     }
-    
+
     public void fromDTO(MotocicletaDTO moto) {
         this.modelo = moto.getModelo();
         this.numBastidor = moto.getNumBastidor();
         this.color = moto.getColor();
         this.tipo = moto.getTipo();
         this.precio = moto.getPrecio();
-        this.cilindrada=moto.getCilindrada();
-        this.offRoad=moto.isOffRoad();
-        this.carnetCompatible=moto.getCarnetCompatible();
+        this.cilindrada = moto.getCilindrada();
+        this.offRoad = moto.isOffRoad();
+        this.carnetCompatible = moto.getCarnetCompatible();
     }
+
     /**
      * @return the numBastidor
      */
@@ -310,8 +309,46 @@ public class Motocicleta implements Serializable {
     public void setGrupoMoto(Set<GrupoAccesorios> grupoMoto) {
         this.grupoMoto = grupoMoto;
     }
-    
-     public List<Mantenimiento> getKilometrajeRevisiones() {
+
+    public List<Mantenimiento> getKilometrajeRevisiones() {
         return marca.getKilometrajeRevisiones();
     }
+
+    /**
+     * Función que sobrescribe el método hashCode debido a que si dos objetos
+     * son iguales según equals(), entonces deben devolver el mismo valor hash.
+     *
+     * @note Es común tener que sobrescribir hasCode() cuando sobrescribimos
+     * equals()
+     * @return
+     */
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + Objects.hashCode(this.numBastidor);
+        return hash;
+    }
+
+    /**
+     * Función que sobrescribe el método equals para comparar dos objetos de
+     * tipo Motocicleta en función del número de bastidor que tienen
+     *
+     * @param obj
+     * @return
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Motocicleta other = (Motocicleta) obj;
+        return Objects.equals(this.numBastidor, other.numBastidor);
+    }
+
 }

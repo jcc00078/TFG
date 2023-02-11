@@ -21,6 +21,9 @@ public class MotocicletaDTO {
     private boolean offRoad;
     private String carnetCompatible;
 
+    public MotocicletaDTO() {
+    }
+
     public MotocicletaDTO(String num_bastidor, String marca, String modelo, String color, String tipo, float precio, String dni, String imagenData, int cilindrada, boolean offRoad, String carnetCompatible) {
         this.numBastidor = num_bastidor;
         this.marca = marca;
