@@ -382,9 +382,6 @@ export default {
             }
           );
           this.listaCitas = arrayCitas;
-
-          const i = this.listaCitas.findIndex((cita) => cita.id === idCita);
-          this.listaCitas.splice(i, 1);
         });
     },
 
