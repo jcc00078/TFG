@@ -7,7 +7,6 @@ package jcc00078.TFG.seguridad;
 import java.util.Collection;
 import java.util.Collections;
 import jcc00078.TFG.entidades.Usuario;
-import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

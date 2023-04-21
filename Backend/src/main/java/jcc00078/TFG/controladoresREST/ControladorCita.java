@@ -12,6 +12,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.PastOrPresent;
+
 import jcc00078.TFG.controladoresREST.dto.CitaDTO;
 import jcc00078.TFG.entidades.Cita;
 import jcc00078.TFG.entidades.Motocicleta;
@@ -39,7 +40,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- *
  * @author juanc
  */
 @Validated

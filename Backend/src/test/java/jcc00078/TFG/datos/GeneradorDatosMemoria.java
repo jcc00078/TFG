@@ -3,10 +3,8 @@ package jcc00078.TFG.datos;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import jcc00078.TFG.entidades.Mantenimiento;
-import jcc00078.TFG.entidades.Marca;
-import jcc00078.TFG.entidades.Motocicleta;
-import jcc00078.TFG.entidades.Usuario;
+
+import jcc00078.TFG.entidades.*;
 import org.springframework.stereotype.Service;
 
 /**
@@ -54,6 +52,7 @@ public class GeneradorDatosMemoria implements GeneradorDatos {
         moto.setOffRoad(false);
         moto.setCarnetCompatible("A");
         this.motos = List.of(moto);
+
         Usuario u = new Usuario();
         u.setDni_usuario("4873387");
         u.setNombre("J");
@@ -62,6 +61,9 @@ public class GeneradorDatosMemoria implements GeneradorDatos {
         this.usuarios = List.of(u);
         //u.setMotos(motos);
         moto.setCliente(u);
+
+
+
     }
 
     @Override
@@ -78,4 +80,6 @@ public class GeneradorDatosMemoria implements GeneradorDatos {
     public List<Usuario> generarListaUsuarios() {
         return usuarios;
     }
+
 }
+
