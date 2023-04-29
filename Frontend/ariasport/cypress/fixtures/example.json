@@ -1,0 +1,5 @@
+{
+  "testFiles": [
+    "cypress/e2e/calendarioCita.cy.js"
+  ]
+}

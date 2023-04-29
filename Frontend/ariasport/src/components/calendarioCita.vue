@@ -1,161 +1,179 @@
 <template>
-  <div class="d-flex align-items-start justify-content-center h-100 w-100">
-    <div class="d-flex flex-column align-items-center">
-      <h2 class="mt-5">Selecciona día para reservar la cita</h2>
-      <v-date-picker
-        class="mt-4"
-        style="height: 300px; width: 500px"
-        v-model="fecha"
-        :min-date="primerDia()"
-        :max-date="fechaLimite()"
-        :disabled-dates="fechasDeshabilitadas"
-        is-dark
-      >
-      </v-date-picker>
-    </div>
-  </div>
-  <div class="text-center">
-    <MDBModal
-      staticBackdrop
-      id="exampleModal"
-      v-model="modalFormFecha"
-      tabindex="-1"
-      labelledby="exampleModalLabel"
-    >
-      <div
-        class="alert alert-danger border-color-red"
-        border-color="red"
-        role="alert"
-        v-show="errorReserva != ''"
-      >
-        {{ this.errorReserva }}
+  <div>
+    <div class="d-flex align-items-start justify-content-center h-100 w-100">
+      <div class="d-flex flex-column align-items-center">
+        <h2 class="mt-5">Selecciona día para reservar la cita</h2>
+        <div
+          v-if="cargandoCalendario"
+          class="spinner-border mt-4"
+          style="width: 3rem; height: 3rem"
+          role="status"
+        >
+          <span class="sr-only">Loading...</span>
+        </div>
+        <v-date-picker
+          v-else
+          id="calendario"
+          class="mt-4"
+          style="height: 300px; width: 500px"
+          v-model="fecha"
+          :min-date="primerDiaReserva()"
+          :max-date="fechaLimite()"
+          :disabled-dates="fechasDeshabilitadas"
+          is-dark
+        >
+        </v-date-picker>
       </div>
-      <MDBModalHeader :close="false">
-        <MDBModalTitle id="exampleModalLabel">
-          {{ fecha == null ? "Modifica tu reserva" : "Crea tu reserva" }}
-        </MDBModalTitle>
-      </MDBModalHeader>
-      <MDBModalBody>
-        <form id="formulario" autocomplete="off">
-          <label for="modelo">Selecciona el modelo para asociar la cita:</label>
-          <select class="mx-2" v-model="motoSeleccionada" id="moto">
-            <option
-              v-for="(moto, index) in motosUsuario"
-              :value="moto"
-              :key="index"
+    </div>
+    <div class="text-center">
+      <MDBModal
+        staticBackdrop
+        id="exampleModal"
+        v-model="modalFormFecha"
+        tabindex="-1"
+        labelledby="exampleModalLabel"
+      >
+        <div
+          class="alert alert-danger border-color-red"
+          border-color="red"
+          role="alert"
+          v-show="errorReserva != ''"
+        >
+          {{ this.errorReserva }}
+        </div>
+        <MDBModalHeader :close="false">
+          <MDBModalTitle id="exampleModalLabel">
+            {{ fecha == null ? "Modifica tu reserva" : "Crea tu reserva" }}
+          </MDBModalTitle>
+        </MDBModalHeader>
+        <MDBModalBody>
+          <form id="formulario" autocomplete="off">
+            <label for="modelo"
+              >Selecciona el modelo para asociar la cita:</label
             >
-              {{ moto.modelo }}
-            </option>
-          </select>
-
-          <div class="text-center my-2">
-            <label for="hora">Seleccione una hora:</label>
-            <select class="mx-2" v-model="horaSeleccionada" id="hora">
+            <select class="mx-2" v-model="motoSeleccionada" id="moto">
               <option
-                v-for="(hora, index) in horas.sort(
-                  (a, b) =>
-                    new Date(a.replace('T', ' ')) -
-                    new Date(b.replace('T', ' '))
-                )"
-                :value="hora"
+                v-for="(moto, index) in motosUsuario"
+                :value="moto"
                 :key="index"
               >
-                {{ getHora(hora) }}
+                {{ moto.modelo }}
               </option>
             </select>
-          </div>
-          <div class="text-center my-2" v-if="fecha == null">
-            <label for="hora">Seleccione una fecha:</label>
-            <v-date-picker
-              class="mt-4"
-              style="height: 300px; width: 400px"
-              v-model="nuevaFecha"
-              :min-date="new Date()"
-              :max-date="fechaLimite()"
-              :disabled-dates="fechasDeshabilitadas"
-              is-dark
-            >
-            </v-date-picker>
-          </div>
-        </form>
-      </MDBModalBody>
-      <MDBModalFooter>
-        <MDBBtn color="secondary" @click="cerrarModal()">Atrás</MDBBtn>
-        <MDBBtn
-          v-if="fecha"
-          color="primary"
-          :disabled="horaSeleccionada == '' || motoSeleccionada == ''"
-          @click="realizaReserva()"
-          >Reservar</MDBBtn
-        >
-        <MDBBtn v-if="!fecha" color="success" @click="modificaReserva()"
-          >Modificar</MDBBtn
-        >
-      </MDBModalFooter>
-    </MDBModal>
-  </div>
-  <div class="text-center mt-5">
-    <MDBBtn color="primary" @click="muestraTCitas()">Mis citas</MDBBtn>
-  </div>
-  <div class="d-flex flex-column align-items-center">
-    <MDBCard
-      v-show="mostrarTCitas"
-      v-if="listaCitas"
-      text="body"
-      bg="info"
-      class="m-5"
-      style="width: 500px"
-    >
-      <MDBCardHeader class="text-center">
-        <h4>Datos de mis citas</h4>
-      </MDBCardHeader>
-      <MDBCardBody>
-        <MDBCardTitle>Días que he pedido cita</MDBCardTitle>
-        <MDBCardText>
-          <ul class="list-group">
-            <li
-              class="list-group-item"
-              v-for="cita in listaCitas.sort(
-                (a, b) =>
-                  new Date(a.horario.replace('T', ' ')) -
-                  new Date(b.horario.replace('T', ' '))
-              )"
-              :key="cita.id"
-            >
-              <p
-                class="text-center"
-                style="text-decoration: underline; font-style: italic"
-              >
-                {{ getModeloMoto(cita.numBastidor) }}
-              </p>
 
-              <p>
-                Fecha:
-                <strong>{{ getDia(cita.horario) }}</strong>
-                ----> Hora:
-                <strong>{{ getHora(cita.horario) }} </strong>
-                <MDBBtn
-                  @click="eliminarCita(cita.id)"
-                  class="m-2 d-print-none"
-                  outline="danger"
-                  style="border-width: 0px; padding: 0cm; height: auto"
+            <div class="text-center my-2">
+              <label for="hora">Seleccione una hora:</label>
+              <select class="mx-2" v-model="horaSeleccionada" id="hora">
+                <option
+                  v-for="(hora, index) in horas.sort(
+                    (a, b) =>
+                      new Date(a.replace('T', ' ')) -
+                      new Date(b.replace('T', ' '))
+                  )"
+                  :value="hora"
+                  :key="index"
                 >
-                  <i class="fas fa-trash"></i>
-                </MDBBtn>
-                <MDBBtn
-                  @click="mostrarModificarReserva(cita)"
-                  class="m-2 d-print-none"
-                  outline="warning"
-                  style="border-width: 0px; padding: 0cm; height: auto"
+                  {{ getHora(hora) }}
+                </option>
+              </select>
+            </div>
+            <div class="text-center my-2" v-if="fecha == null">
+              <label for="hora">Seleccione una fecha:</label>
+              <v-date-picker
+                class="mt-4"
+                style="height: 300px; width: 400px"
+                v-model="nuevaFecha"
+                :min-date="primerDiaModificarReserva()"
+                :max-date="fechaLimite()"
+                :disabled-dates="fechasDeshabilitadas"
+                is-dark
+              >
+              </v-date-picker>
+            </div>
+          </form>
+        </MDBModalBody>
+        <MDBModalFooter>
+          <MDBBtn color="secondary" @click="cerrarModal()">Cerrar</MDBBtn>
+          <MDBBtn
+            v-if="fecha"
+            color="primary"
+            :disabled="horaSeleccionada == '' || motoSeleccionada == ''"
+            @click="realizaReserva()"
+            >Reservar</MDBBtn
+          >
+          <MDBBtn
+            v-if="!fecha"
+            color="success"
+            @click="modificaReserva()"
+            :disabled="horaSeleccionada == '' || motoSeleccionada == ''"
+            >Modificar</MDBBtn
+          >
+        </MDBModalFooter>
+      </MDBModal>
+    </div>
+    <div class="text-center mt-5">
+      <MDBBtn color="primary" @click="muestraTCitas()">Mis citas</MDBBtn>
+    </div>
+    <div class="d-flex flex-column align-items-center">
+      <MDBCard
+        v-show="mostrarTCitas"
+        v-if="listaCitas"
+        text="body"
+        bg="info"
+        class="m-5"
+        style="width: 500px"
+      >
+        <MDBCardHeader class="text-center">
+          <h4>Datos de mis citas</h4>
+        </MDBCardHeader>
+        <MDBCardBody>
+          <MDBCardTitle>Días que he pedido cita</MDBCardTitle>
+          <MDBCardText>
+            <ul class="list-group">
+              <li
+                class="list-group-item"
+                v-for="cita in listaCitas.sort(
+                  (a, b) =>
+                    new Date(a.horario.replace('T', ' ')) -
+                    new Date(b.horario.replace('T', ' '))
+                )"
+                :key="cita.id"
+              >
+                <p
+                  class="text-center"
+                  style="text-decoration: underline; font-style: italic"
                 >
-                  <i class="fas fa-edit"></i>
-                </MDBBtn>
-              </p>
-            </li>
-          </ul>
-        </MDBCardText>
-      </MDBCardBody>
-    </MDBCard>
+                  {{ getModeloMoto(cita.numBastidor) }}
+                </p>
+
+                <p>
+                  Fecha:
+                  <strong>{{ getDia(cita.horario) }}</strong>
+                  ----> Hora:
+                  <strong>{{ getHora(cita.horario) }} </strong>
+                  <MDBBtn
+                    @click="eliminarCita(cita.id)"
+                    class="m-2 d-print-none"
+                    outline="danger"
+                    style="border-width: 0px; padding: 0cm; height: auto"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </MDBBtn>
+                  <MDBBtn
+                    @click="mostrarModificarReserva(cita)"
+                    class="m-2 d-print-none"
+                    outline="warning"
+                    style="border-width: 0px; padding: 0cm; height: auto"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </MDBBtn>
+                </p>
+              </li>
+            </ul>
+          </MDBCardText>
+        </MDBCardBody>
+      </MDBCard>
+    </div>
   </div>
 </template>
 <style>
@@ -179,7 +197,7 @@ import {
   MDBCardBody,
   MDBCardTitle,
 } from "mdb-vue-ui-kit";
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, onBeforeMount } from "vue";
 
 export default {
   components: {
@@ -195,6 +213,7 @@ export default {
     MDBCardTitle,
   },
   setup() {
+    const cargandoCalendario = ref(true);
     const exampleModalButtonWithIcon = ref(false);
     const fecha = ref(null);
     const motosUsuario = ref([]);
@@ -212,14 +231,23 @@ export default {
     const citaModificada = ref(null);
     const nuevaFecha = ref(null);
 
-    onMounted(async () => {
+    onBeforeMount(async () => {
+      // Hacer una llamada al servidor para obtener los datos del calendario
       const { data: dias } = await axios.get("citas/diasDeshabilitados", {
         headers: {
           Authorization: `Bearer ${store.jwt}`,
         },
       });
-      fechasDeshabilitadas.value = dias.map((f) => new Date(f));
+      cargandoCalendario.value = false;
 
+      fechasDeshabilitadas.value = dias.map((f) => {
+        let fecha = new Date(f);
+        fecha.setHours(0, 0, 0, 0); // Establecer la hora a las 00:00:00
+        return fecha;
+      });
+    });
+
+    onMounted(async () => {
       const { data: arrayMotos } = await axios.get(
         `usuarios/${store.username}/motos`,
         {
@@ -241,6 +269,7 @@ export default {
       listaCitas.value = arrayCitas;
 
       watch([fecha], async ([fechaNueva]) => {
+        //fecha corresponde al valor previo de la variable fecha
         errorReserva.value = "";
         if (fechaNueva == null) {
           return;
@@ -250,14 +279,20 @@ export default {
       });
 
       watch([nuevaFecha], async ([fechaNueva]) => {
+        // nuevaFecha corresponde al valor previo de la variable fechaNueva
         errorReserva.value = "";
         if (fechaNueva == null) {
           return;
+        }
+        //Desactivo botón modificar cuando cambio de día
+        if (getDia(horaSeleccionada.value) != getDia(fechaNueva)) {
+          horaSeleccionada.value = "";
         }
         await calcularHorasDisponibles(fechaNueva);
         modalFormFecha.value = true;
         if (getDia(citaModificada.value.horario) == getDia(fechaNueva)) {
           horas.value.push(citaModificada.value.horario);
+          horaSeleccionada.value = citaModificada.value.horario;
         }
       });
     });
@@ -289,6 +324,7 @@ export default {
     }
 
     return {
+      cargandoCalendario,
       exampleModalButtonWithIcon,
       fecha,
       motosUsuario,
@@ -311,6 +347,9 @@ export default {
   },
 
   methods: {
+    getDisabledDates() {
+      return this.fechasDeshabilitadas;
+    },
     getHora(fecha) {
       const date = new Date(fecha);
       const hora = date.getHours().toString().padStart(2, "0");
@@ -318,16 +357,37 @@ export default {
       return `${hora}:${minuto}`;
     },
 
-    primerDia() {
+    primerDiaReserva() {
       let fechaComienzo = new Date();
-      fechaComienzo.setDate(fechaComienzo.getDate() + 1); //Mañana
-      return fechaComienzo;
+      fechaComienzo.setDate(fechaComienzo.getDate() + 1); // Mañana
+      return this.calcularFechaDisponible(fechaComienzo);
+    },
+    primerDiaModificarReserva() {
+      let fechaComienzo = new Date();
+      return this.calcularFechaDisponible(fechaComienzo);
     },
     fechaLimite() {
       let fechaUltima = new Date();
       fechaUltima.setDate(fechaUltima.getDate() + 1); //Mañana
       fechaUltima.setMonth(fechaUltima.getMonth() + 2); //Se puede elegir cita hasta 2 meses posteriormente al día de hoy
       return fechaUltima;
+    },
+    calcularFechaDisponible(fechaComienzo) {
+      fechaComienzo.setHours(0, 0, 0, 0); // Establecer la hora a las 00:00:00
+      let ultimaFecha = this.fechaLimite();
+      let fechaDisponible = null;
+
+      while (!fechaDisponible && fechaComienzo <= ultimaFecha) {
+        const esFechaDeshabilitada = this.fechasDeshabilitadas.find(
+          (fecha) => fecha.getTime() === fechaComienzo.getTime()
+        );
+        if (!esFechaDeshabilitada) {
+          fechaDisponible = fechaComienzo;
+        } else {
+          fechaComienzo.setDate(fechaComienzo.getDate() + 1);
+        }
+      }
+      return fechaDisponible;
     },
     realizaReserva() {
       this.errorReserva = "";

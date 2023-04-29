@@ -99,6 +99,10 @@ public class ControladorCita {
     @ResponseStatus(HttpStatus.CREATED)
     public void crearCita(@Valid @RequestBody CitaDTO cita) {
         cita.setHorario(cita.getHorario().truncatedTo(ChronoUnit.MINUTES));
+        LocalDate mañana = LocalDate.now().plusDays(1);
+        if(cita.getHorario().toLocalDate().isBefore(mañana)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se puede hacer una reserva previa a mañana");
+        }
         List<LocalDateTime> disponibles = calcularCitasDisponibles(cita.getHorario().toLocalDate());
         if (!disponibles.contains(cita.getHorario())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La hora debe estar en el horario disponible");
@@ -152,7 +156,7 @@ public class ControladorCita {
 
     @GetMapping("diasDeshabilitados")
     public List<LocalDate> diasDeshabilitados() {
-        LocalDate diaInicial = LocalDate.now().plusDays(1);
+        LocalDate diaInicial = LocalDate.now();
         LocalDate diaFinal = LocalDate.now().plusDays(1).plusMonths(2);
         List<LocalDate> deshabilitados = new ArrayList<>();
         for (LocalDate dia = diaInicial; dia.isBefore(diaFinal) || dia.isEqual(diaFinal); dia = dia.plusDays(1)) {

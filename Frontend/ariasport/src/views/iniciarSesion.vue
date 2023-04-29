@@ -1,6 +1,7 @@
 <template>
   <div class="container my-5">
     <div
+      id="errorMensaje"
       class="alert alert-danger border-color-red"
       border-color="red"
       role="alert"
@@ -11,7 +12,7 @@
     <MDBCard class="shadow-4-strong w-responsive mx-auto" text="center">
       <MDBCardBody>
         <MDBCardTitle>Inicia sesión</MDBCardTitle>
-        <form @submit.prevent="login()">
+        <form id="login-form" @submit.prevent="login()">
           <!-- Dni input -->
           <MDBInput
             type="text"
