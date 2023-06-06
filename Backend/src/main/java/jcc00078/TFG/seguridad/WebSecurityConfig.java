@@ -30,10 +30,27 @@ public class WebSecurityConfig {
     @Autowired
     JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
+
+    private static final String[] AUTH_WHITELIST = {
+            //Swagger UI v2 (el que usamos)
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            //Para usar Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+    };
+
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable()
                 .authorizeRequests()
+                .antMatchers(AUTH_WHITELIST).permitAll()
                 .mvcMatchers(HttpMethod.OPTIONS,"/**").permitAll() //En mvcMatchers es necesario poner todas las rutas ("/**")
                 .mvcMatchers(HttpMethod.POST,"/motos").authenticated()
                 .mvcMatchers("/login","/motos/**").permitAll()

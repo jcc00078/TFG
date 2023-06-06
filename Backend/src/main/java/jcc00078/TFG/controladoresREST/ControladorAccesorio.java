@@ -1,24 +1,19 @@
 package jcc00078.TFG.controladoresREST;
 
-import java.io.IOException;
-import java.util.Base64;
 import jcc00078.TFG.controladoresREST.dto.AccesorioDTO;
 import jcc00078.TFG.entidades.Accesorio;
+import jcc00078.TFG.repositorios.AccesorioRepositorio;
+import jcc00078.TFG.seguridad.SecuredApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import jcc00078.TFG.repositorios.AccesorioRepositorio;
+
+import java.io.IOException;
+import java.util.Base64;
 
 /**
- *
  * @author juanc
  */
 @RestController
@@ -29,6 +24,7 @@ public class ControladorAccesorio {
     @Autowired
     private AccesorioRepositorio accesorioRepositorio;
 
+    @SecuredApiOperation
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public void crearAccesorio(@ModelAttribute AccesorioDTO accesorio) throws IOException {

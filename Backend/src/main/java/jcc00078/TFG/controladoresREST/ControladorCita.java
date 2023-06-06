@@ -1,18 +1,5 @@
 package jcc00078.TFG.controladoresREST;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
-import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.PastOrPresent;
-
 import jcc00078.TFG.controladoresREST.dto.CitaDTO;
 import jcc00078.TFG.entidades.Cita;
 import jcc00078.TFG.entidades.Motocicleta;
@@ -20,24 +7,24 @@ import jcc00078.TFG.entidades.Usuario;
 import jcc00078.TFG.repositorios.CitaRepositorio;
 import jcc00078.TFG.repositorios.MotocicletaRepositorio;
 import jcc00078.TFG.repositorios.UsuarioRepositorio;
+import jcc00078.TFG.seguridad.SecuredApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import javax.validation.Valid;
+import javax.validation.constraints.FutureOrPresent;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author juanc
@@ -64,6 +51,7 @@ public class ControladorCita {
      * @param usuarioLogueado
      * @return
      */
+    @SecuredApiOperation
     @GetMapping("{numBastidor}")
     public List<CitaDTO> getCitasMoto(@PathVariable String numBastidor, @AuthenticationPrincipal String usuarioLogueado) {
         Motocicleta moto = motocicletaRepositorio.findById(numBastidor)
@@ -72,7 +60,7 @@ public class ControladorCita {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Para consultar la cita la moto necesita tener dueño ");
         }
         if (!moto.getCliente().getDni_usuario().equals(usuarioLogueado)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El dni " + moto.getCliente().getDni_usuario() + " no puede acceder a las citas que tiene el dni " + usuarioLogueado);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El dni " + moto.getCliente().getDni_usuario() + " no puede acceder a las citas que tiene el dni " + usuarioLogueado);
         }
         return citaRepositorio.findAllByMoto(moto).stream().map(Cita::toDTO).collect(Collectors.toUnmodifiableList());
     }
@@ -84,23 +72,25 @@ public class ControladorCita {
      * @param usuarioLogueado
      * @return
      */
+    @SecuredApiOperation
     @GetMapping("todas/{dni_usuario}")
     public List<CitaDTO> getCitasUsuario(@PathVariable String dni_usuario, @AuthenticationPrincipal String usuarioLogueado) {
         Usuario usuario = usuarioRepositorio.findOneByDni(dni_usuario)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario no se ha encontrado"));
 
         if (!usuario.getDni_usuario().equals(usuarioLogueado)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El dni " + usuario.getDni_usuario() + " no puede acceder a las citas que tiene el dni " + usuarioLogueado);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El dni " + usuario.getDni_usuario() + " no puede acceder a las citas que tiene el dni " + usuarioLogueado);
         }
         return citaRepositorio.findCitaByClienteAndFechaAfterToday(usuario).stream().map(Cita::toDTO).collect(Collectors.toUnmodifiableList());
     }
 
+    @SecuredApiOperation
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public void crearCita(@Valid @RequestBody CitaDTO cita) {
         cita.setHorario(cita.getHorario().truncatedTo(ChronoUnit.MINUTES));
         LocalDate mañana = LocalDate.now().plusDays(1);
-        if(cita.getHorario().toLocalDate().isBefore(mañana)){
+        if (cita.getHorario().toLocalDate().isBefore(mañana)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se puede hacer una reserva previa a mañana");
         }
         List<LocalDateTime> disponibles = calcularCitasDisponibles(cita.getHorario().toLocalDate());
@@ -123,6 +113,7 @@ public class ControladorCita {
         citaRepositorio.save(c);
     }
 
+    @SecuredApiOperation
     @GetMapping()
     public List<LocalDateTime> citasDisponibles(@FutureOrPresent @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
         return calcularCitasDisponibles(fecha);
@@ -154,6 +145,7 @@ public class ControladorCita {
         return disponibles;
     }
 
+    @SecuredApiOperation
     @GetMapping("diasDeshabilitados")
     public List<LocalDate> diasDeshabilitados() {
         LocalDate diaInicial = LocalDate.now();
@@ -169,6 +161,7 @@ public class ControladorCita {
 
     }
 
+    @SecuredApiOperation
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void borrarCita(@Valid @PathVariable Long id) {
@@ -179,6 +172,7 @@ public class ControladorCita {
         }
     }
 
+    @SecuredApiOperation
     @PutMapping("{id}")
     public void modificarCita(@RequestBody CitaDTO cita, @Valid @PathVariable Long id) {
         Cita c = citaRepositorio.findById(id)

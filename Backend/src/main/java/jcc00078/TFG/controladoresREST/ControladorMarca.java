@@ -1,27 +1,18 @@
 package jcc00078.TFG.controladoresREST;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import jcc00078.TFG.controladoresREST.dto.MarcaDTO;
-import jcc00078.TFG.entidades.Mantenimiento;
 import jcc00078.TFG.entidades.Marca;
 import jcc00078.TFG.repositorios.MarcaRepositorio;
+import jcc00078.TFG.seguridad.SecuredApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
- *
  * @author juanc
  */
 @RestController
@@ -32,6 +23,7 @@ public class ControladorMarca {
     @Autowired
     private MarcaRepositorio marcaRepositorio;
 
+    @SecuredApiOperation
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void crearMarca(@RequestBody MarcaDTO marca) {
@@ -49,11 +41,12 @@ public class ControladorMarca {
         return marcas.stream().map((marca) -> marca.toDTO()).collect(Collectors.toUnmodifiableList());
     }
 
+    @SecuredApiOperation
     @PutMapping(path = "{nombreMarca}")
     public void modificarRevisiones(@RequestBody MarcaDTO marca, @PathVariable String nombreMarca) {
         Marca m = marcaRepositorio.findById(nombreMarca)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No existe ninguna marca con ese nombre"));
-        if(!nombreMarca.equals(marca.getNombre())){
+        if (!nombreMarca.equals(marca.getNombre())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No coinciden los nombres de las marcas");
         }
         m.addKilometrajeRevisiones(marca.getKilometrajeRevisiones());

@@ -1,27 +1,21 @@
 package jcc00078.TFG.controladoresREST;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
 import jcc00078.TFG.controladoresREST.dto.UsuarioDTO;
 import jcc00078.TFG.entidades.Usuario;
 import jcc00078.TFG.repositorios.UsuarioRepositorio;
+import jcc00078.TFG.seguridad.SecuredApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
- *
  * @author juanc
  */
 @RestController
@@ -35,6 +29,7 @@ public class ControladorUsuario {
     @Autowired
     private PasswordEncoder pass;
 
+    @SecuredApiOperation
     @GetMapping
     public List<UsuarioDTO> listaUsuarios() {
         List<Usuario> usuarios = usuarioRepositorio.findAll();
@@ -53,15 +48,15 @@ public class ControladorUsuario {
         usuarioRepositorio.save(u);
     }
 
+    @SecuredApiOperation
     @GetMapping("{dni}/motos")
     public List<MotocicletaDTO> listarMotosUsuario(@PathVariable String dni, @AuthenticationPrincipal String usuarioLogueado) {
         Usuario usuario = usuarioRepositorio.findOneByDni(dni)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario con " + dni + " no existe"));
-        if(!usuario.getDni_usuario().equals(usuarioLogueado)){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El dni " + usuario.getDni_usuario() + " no puede acceder a las motos que tiene el dni " + usuarioLogueado);
+        if (!usuario.getDni_usuario().equals(usuarioLogueado)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El dni " + usuario.getDni_usuario() + " no puede acceder a las motos que tiene el dni " + usuarioLogueado);
         }
-        //System.out.println("Usuario logueado: " + usuarioLogueado);
         return usuario.getMotos().stream().map((moto) -> moto.toDTO()).collect(Collectors.toUnmodifiableList());
     }
-    
+
 }

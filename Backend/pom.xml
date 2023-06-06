@@ -14,8 +14,8 @@
     <name>TFG</name>
     <description>aplicación web para concesionario general de motocicletas</description>
     <properties>
-        <springFramework.version>5.7.5 </springFramework.version>
-        <springsecurity.version>5.7.5 </springsecurity.version>
+        <springFramework.version>5.7.5</springFramework.version>
+        <springsecurity.version>5.7.5</springsecurity.version>
         <java.version>11</java.version>
         <start-class>jcc00078.TFG.TfgApplication</start-class>
         <!--<start-class>jcc00078.TFG.seguridad.JWTAuthenticationFilter</start-class>-->
@@ -33,7 +33,7 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
-        
+
         <!-- TEST -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -46,19 +46,19 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        
+
         <!-- MySQL -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-        
+
         <!-- Spring security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        
+
         <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -90,10 +90,16 @@
             <scope>test</scope>
             <type>jar</type>
         </dependency>
+        <!-- Swagger -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
     </dependencies>
-        
-    
-        
+
+
     <build>
         <plugins>
             <plugin>

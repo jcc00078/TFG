@@ -1,43 +1,25 @@
 package jcc00078.TFG.controladoresREST;
 
-import java.io.IOException;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
-import jcc00078.TFG.controladoresREST.dto.AccesorioDTO;
-import jcc00078.TFG.controladoresREST.dto.GrupoAccesoriosDTO;
-import jcc00078.TFG.controladoresREST.dto.AccesorioMotocicletaDTO;
-import jcc00078.TFG.controladoresREST.dto.MarcaDTO;
-import jcc00078.TFG.entidades.GrupoAccesorios;
-import jcc00078.TFG.entidades.Motocicleta;
+import jcc00078.TFG.controladoresREST.dto.*;
 import jcc00078.TFG.entidades.Accesorio;
-import jcc00078.TFG.entidades.Mantenimiento;
+import jcc00078.TFG.entidades.GrupoAccesorios;
 import jcc00078.TFG.entidades.Marca;
-import jcc00078.TFG.repositorios.MotocicletaRepositorio;
-import jcc00078.TFG.repositorios.UsuarioRepositorio;
+import jcc00078.TFG.entidades.Motocicleta;
+import jcc00078.TFG.repositorios.*;
+import jcc00078.TFG.seguridad.SecuredApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import jcc00078.TFG.repositorios.AccesorioRepositorio;
-import jcc00078.TFG.repositorios.GrupoAccesoriosRepositorio;
-import jcc00078.TFG.repositorios.MarcaRepositorio;
+
+import java.io.IOException;
+import java.util.Base64;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- *
  * @author juanc
  */
 @RestController
@@ -105,6 +87,7 @@ public class ControladorMotocicleta {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    @SecuredApiOperation
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public void crearMotocicleta(@ModelAttribute MotocicletaDTO moto) throws IOException {
@@ -141,6 +124,7 @@ public class ControladorMotocicleta {
 
     }
 
+    @SecuredApiOperation
     @PutMapping(path = "{modelo}/accesorios", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void modificarAccesorios(@ModelAttribute AccesorioMotocicletaDTO pm, @PathVariable String modelo) {
         Accesorio p = accesorioRepositorio.findById(pm.getCodAccesorio())
@@ -169,6 +153,7 @@ public class ControladorMotocicleta {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    @SecuredApiOperation
     @PostMapping(path = "{modelo}/grupos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public void crearGrupoAccesorios(@ModelAttribute GrupoAccesoriosDTO grupo, @PathVariable String modelo) throws IOException {

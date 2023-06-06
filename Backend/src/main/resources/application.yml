@@ -4,7 +4,7 @@ spring.dataSource.username: ariasport
 spring.dataSource.password: secret
 
 #Configuración JPA
-spring.jpa.hibernate.ddl-auto: update 
+spring.jpa.hibernate.ddl-auto: update
 #spring.jpa.hibernate.ddl-auto: drop-and-create
 #spring.jpa.hibernate.ddl-auto: none
 #spring.jpa.hibernate.ddl-auto: create
@@ -20,3 +20,14 @@ jwt.tiempo_seg: 5184000
 
 #No mostrar campos nulos del JSON en las response
 spring.jackson.default-property-inclusion: NON_NULL
+
+#Swagger config
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+
+#Para dejar activa la documentación de swagger
+springfox:
+  documentation:
+    enabled: true
