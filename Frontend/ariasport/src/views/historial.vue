@@ -22,7 +22,14 @@
               >
                 <th scope="row">{{ item.codRevision }}</th>
                 <td>{{ item.kilometros }}</td>
-                <td>{{ item.fecha }}</td>
+                <td>
+                  {{
+                    new Intl.DateTimeFormat("es-ES", {
+                      dateStyle: "full",
+                      timeStyle: "short"
+                    }).format(item.fecha)
+                  }}
+                </td>
                 <td>{{ item.precio }} €</td>
               </tr>
             </tbody>
@@ -56,12 +63,12 @@
           <strong>Kilómetros</strong>
           <MDBTooltip v-model="tooltip1" direction="right" tag="a">
             <template #reference>
-                <i
-                  @click="muestraTMantenimiento()"
-                  class="far fa-question-circle"
-                  style="color: black; margin-left: 5px; cursor: pointer;"
-                >
-                </i>
+              <i
+                @click="muestraTMantenimiento()"
+                class="far fa-question-circle"
+                style="color: black; margin-left: 5px; cursor: pointer"
+              >
+              </i>
             </template>
             <template #tip> Ver tabla de mantenimientos </template>
           </MDBTooltip>
@@ -76,22 +83,43 @@
       </MDBCardBody>
     </MDBCard>
 
-    <MDBCard v-show="mostrarTablaM" v-if="datosMarca" text="body" bg="info" class="m-5">
+    <MDBCard
+      v-show="mostrarTablaM"
+      v-if="datosMarca"
+      text="body"
+      style="background-color: #5cafff"
+      class="m-5"
+    >
       <MDBCardHeader class="text-center">
         <h4>Tabla de mantenimiento de {{ datosMarca.nombre }}</h4>
       </MDBCardHeader>
       <MDBCardBody>
-        <MDBCardTitle>Trabajos que se realizan en las distintas revisiones</MDBCardTitle>
+        <MDBCardTitle
+          >Trabajos que se realizan en las distintas revisiones</MDBCardTitle
+        >
         <MDBCardText>
           <ul class="list-group">
-              <li class="list-group-item" v-for="revision in datosMarca.kilometrajeRevisiones" :key="revision.kilometrajeRevision" >
-                <p :class="[revision.kilometrajeRevision == kilometrosMantenimiento.kilometrajeRevision? 'fw-bold' : '']"> {{ revision.kilometrajeRevision }} Kilometros -->  {{ revision.descripcion }}</p>
+            <li
+              class="list-group-item"
+              v-for="revision in datosMarca.kilometrajeRevisiones"
+              :key="revision.kilometrajeRevision"
+            >
+              <p
+                :class="[
+                  revision.kilometrajeRevision ==
+                  kilometrosMantenimiento.kilometrajeRevision
+                    ? 'fw-bold'
+                    : '',
+                ]"
+              >
+                {{ revision.kilometrajeRevision }} Kilometros -->
+                {{ revision.descripcion }}
+              </p>
             </li>
           </ul>
         </MDBCardText>
       </MDBCardBody>
     </MDBCard>
-    
   </div>
 </template>
   
@@ -155,7 +183,10 @@ export default {
           },
         }
       );
-      revisionesUsuario.value = arrayRevisiones;
+      revisionesUsuario.value = arrayRevisiones.map((r) => {
+        r.fecha = new Date(r.fecha);
+        return r;
+      });
     });
     function muestraTMantenimiento() {
       mostrarTablaM.value = !mostrarTablaM.value;

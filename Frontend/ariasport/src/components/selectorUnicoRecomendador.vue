@@ -1,5 +1,5 @@
 <template>
-  <MDBDropdownMenu dark aria-labelledby="dropdownMenuButton">
+  <MDBDropdownMenu class="text-center " dark aria-labelledby="dropdownMenuButton">
     <template
       v-for="(seleccionable, index) in seleccionables"
       v-bind:key="seleccionable.texto"
@@ -8,16 +8,21 @@
         <MDBBtn
           :color="seleccionable.valor == seleccionado ? 'primary' : ''"
           @click="actualizarSeleccion(seleccionable.valor)"
-          class="text-white primary"
+          class="w-100 m-0 text-white primary"
         >
           {{ seleccionable.texto }}
         </MDBBtn>
       </MDBDropdownItem>
-      <MDBDropdownItem v-if="index !== seleccionables.length - 1" divider />
+      <MDBDropdownItem class="m-0" v-if="index !== seleccionables.length - 1" divider  />
     </template>
   </MDBDropdownMenu>
 </template>
+<style>
+hr.dropdown-divider{
+  margin: 0;
+}
 
+</style>
 <script>
 import { MDBDropdownMenu, MDBDropdownItem, MDBBtn } from "mdb-vue-ui-kit";
 export default {

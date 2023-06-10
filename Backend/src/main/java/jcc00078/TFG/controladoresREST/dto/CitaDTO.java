@@ -3,6 +3,8 @@ package jcc00078.TFG.controladoresREST.dto;
 import java.time.LocalDateTime;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
+
+import jcc00078.TFG.entidades.Cita;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**

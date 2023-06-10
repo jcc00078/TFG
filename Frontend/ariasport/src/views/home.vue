@@ -5,7 +5,14 @@
       fade
     />
   </template>
-  
+  <style>
+.carousel-control-prev-icon::after,
+.carousel-control-next-icon::after {
+  content: "";
+}
+
+</style>
+
 <script>
   import { ref } from "vue";
   import { MDBCarousel } from "mdb-vue-ui-kit";

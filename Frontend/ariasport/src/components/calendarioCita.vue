@@ -15,7 +15,7 @@
           v-else
           id="calendario"
           class="mt-4"
-          style="height: 300px; width: 500px"
+          style="width: 20rem"
           v-model="fecha"
           :min-date="primerDiaReserva()"
           :max-date="fechaLimite()"
@@ -30,8 +30,8 @@
         staticBackdrop
         id="exampleModal"
         v-model="modalFormFecha"
-        tabindex="-1"
-        labelledby="exampleModalLabel"
+        labelledby="modalModificarRes"
+        style="padding: 0rem"
       >
         <div
           class="alert alert-danger border-color-red"
@@ -42,56 +42,71 @@
           {{ this.errorReserva }}
         </div>
         <MDBModalHeader :close="false">
-          <MDBModalTitle id="exampleModalLabel">
+          <MDBModalTitle id="modalModificarRes">
             {{ fecha == null ? "Modifica tu reserva" : "Crea tu reserva" }}
           </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody>
-          <form id="formulario" autocomplete="off">
-            <label for="modelo"
-              >Selecciona el modelo para asociar la cita:</label
-            >
-            <select class="mx-2" v-model="motoSeleccionada" id="moto">
-              <option
-                v-for="(moto, index) in motosUsuario"
-                :value="moto"
-                :key="index"
-              >
-                {{ moto.modelo }}
-              </option>
-            </select>
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-4 col-md-12">
+                <form id="formulario" autocomplete="off">
+                  <label for="modelo"
+                    >Selecciona el modelo para asociar la cita:</label
+                  >
+                  <select class="m-2" v-model="motoSeleccionada" id="moto">
+                    <option
+                      v-for="(moto, index) in motosUsuario"
+                      :value="moto"
+                      :key="index"
+                    >
+                      {{ moto.modelo }}
+                    </option>
+                  </select>
+                  <div class="row">
+                    <div class="text-center">
+                      <label for="hora">Seleccione una hora:</label>
+                      <select class="mx-2" v-model="horaSeleccionada" id="hora">
+                        <option
+                          v-for="(hora, index) in horas.sort(
+                            (a, b) =>
+                              new Date(a.replace('T', ' ')) -
+                              new Date(b.replace('T', ' '))
+                          )"
+                          :value="hora"
+                          :key="index"
+                        >
+                          {{ getHora(hora) }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="text-center my-2" v-if="fecha == null">
+                        <label for="hora">Seleccione una fecha:</label>
+                        <div class="d-flex justify-content-center">
+                          <v-date-picker
+                            class="mt-4"
+                            style="height: 18rem; width: 25rem"
+                            v-model="nuevaFecha"
+                            :min-date="primerDiaModificarReserva()"
+                            :max-date="fechaLimite()"
+                            :disabled-dates="fechasDeshabilitadas"
+                            is-dark
 
-            <div class="text-center my-2">
-              <label for="hora">Seleccione una hora:</label>
-              <select class="mx-2" v-model="horaSeleccionada" id="hora">
-                <option
-                  v-for="(hora, index) in horas.sort(
-                    (a, b) =>
-                      new Date(a.replace('T', ' ')) -
-                      new Date(b.replace('T', ' '))
-                  )"
-                  :value="hora"
-                  :key="index"
-                >
-                  {{ getHora(hora) }}
-                </option>
-              </select>
+                          >
+                          </v-date-picker>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
             </div>
-            <div class="text-center my-2" v-if="fecha == null">
-              <label for="hora">Seleccione una fecha:</label>
-              <v-date-picker
-                class="mt-4"
-                style="height: 300px; width: 400px"
-                v-model="nuevaFecha"
-                :min-date="primerDiaModificarReserva()"
-                :max-date="fechaLimite()"
-                :disabled-dates="fechasDeshabilitadas"
-                is-dark
-              >
-              </v-date-picker>
-            </div>
-          </form>
+          </div>
         </MDBModalBody>
+
         <MDBModalFooter>
           <MDBBtn color="secondary" @click="cerrarModal()">Cerrar</MDBBtn>
           <MDBBtn
@@ -114,71 +129,131 @@
     <div class="text-center mt-5">
       <MDBBtn color="primary" @click="muestraTCitas()">Mis citas</MDBBtn>
     </div>
-    <div class="d-flex flex-column align-items-center">
-      <MDBCard
-        v-show="mostrarTCitas"
-        v-if="listaCitas"
-        text="body"
-        bg="info"
-        class="m-5"
-        style="width: 500px"
-      >
-        <MDBCardHeader class="text-center">
-          <h4>Datos de mis citas</h4>
-        </MDBCardHeader>
-        <MDBCardBody>
-          <MDBCardTitle>Días que he pedido cita</MDBCardTitle>
-          <MDBCardText>
-            <ul class="list-group">
-              <li
-                class="list-group-item"
-                v-for="cita in listaCitas.sort(
-                  (a, b) =>
-                    new Date(a.horario.replace('T', ' ')) -
-                    new Date(b.horario.replace('T', ' '))
-                )"
-                :key="cita.id"
-              >
-                <p
-                  class="text-center"
-                  style="text-decoration: underline; font-style: italic"
-                >
-                  {{ getModeloMoto(cita.numBastidor) }}
-                </p>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12">
+          <div class="d-flex flex-column">
+            <MDBCard
+              v-show="mostrarTCitas"
+              v-if="listaCitas"
+              text="body"
+              style="background-color: #5cafff"
+              class="m-5"
+            >
+              <MDBCardHeader class="text-center">
+                <h4>
+                  <u>Datos de mis citas</u>
+                </h4>
+              </MDBCardHeader>
+              <MDBCardBody>
+                <div class="container">
+                  <MDBCardTitle class="text-center"
+                    >Días que he pedido cita</MDBCardTitle
+                  >
+                  <div class="row">
+                    <MDBCardText>
+                      <ul class="list-group">
+                        <li
+                          class="list-group-item"
+                          v-for="cita in listaCitas.sort(
+                            (a, b) =>
+                              new Date(a.horario.replace('T', ' ')) -
+                              new Date(b.horario.replace('T', ' '))
+                          )"
+                          :key="cita.id"
+                        >
+                          <p
+                            class="text-center"
+                            style="
+                              text-decoration: underline;
+                              font-style: italic;
+                            "
+                          >
+                            {{ getModeloMoto(cita.numBastidor) }}
+                          </p>
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="d-sm-none">
+                                <p>
+                                  Fecha:
+                                  <strong>{{
+                                    new Intl.DateTimeFormat("es-ES", {
+                                      dateStyle: "short",
+                                      timeStyle: "short",
+                                    }).format(new Date(cita.horario))
+                                  }}</strong>
+                                </p>
+                              </div>
+                              <div class="d-none d-sm-block">
+                                <p>
+                                  Fecha:
+                                  <strong>{{
+                                    new Intl.DateTimeFormat("es-ES", {
+                                      dateStyle: "long",
+                                      timeStyle: "short",
+                                    }).format(new Date(cita.horario))
+                                  }}</strong>
+                                </p>
+                              </div>
 
-                <p>
-                  Fecha:
-                  <strong>{{ getDia(cita.horario) }}</strong>
-                  ----> Hora:
-                  <strong>{{ getHora(cita.horario) }} </strong>
-                  <MDBBtn
-                    @click="eliminarCita(cita.id)"
-                    class="m-2 d-print-none"
-                    outline="danger"
-                    style="border-width: 0px; padding: 0cm; height: auto"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </MDBBtn>
-                  <MDBBtn
-                    @click="mostrarModificarReserva(cita)"
-                    class="m-2 d-print-none"
-                    outline="warning"
-                    style="border-width: 0px; padding: 0cm; height: auto"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </MDBBtn>
-                </p>
-              </li>
-            </ul>
-          </MDBCardText>
-        </MDBCardBody>
-      </MDBCard>
+                              <div class="col-12 d-flex justify-content-center">
+                                <MDBBtn
+                                  @click="eliminarCita(cita.id)"
+                                  class="m-2 d-print-none custom-btn"
+                                  color="danger"
+                                  style="
+                                    border-width: 0rem;
+                                    padding: 0.3rem;
+                                    height: auto;
+                                  "
+                                >
+                                  <div class="d-none d-sm-block">
+                                    Eliminar <i class="fas fa-trash"></i>
+                                  </div>
+                                  <div class="d-sm-none">
+                                    <i class="fas fa-trash"> </i>
+                                  </div>
+                                </MDBBtn>
+                                <MDBBtn
+                                  @click="mostrarModificarReserva(cita)"
+                                  class="m-2 d-print-none custom-btn"
+                                  color="warning"
+                                  style="
+                                    border-width: 0px;
+                                    padding: 0.3rem;
+                                    height: auto;
+                                  "
+                                >
+                                  <div class="d-none d-sm-block">
+                                    Editar <i class="fas fa-edit"></i>
+                                  </div>
+                                  <div class="d-sm-none">
+                                    <i class="fas fa-edit"> </i>
+                                  </div>
+                                </MDBBtn>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </MDBCardText>
+                  </div>
+                </div>
+              </MDBCardBody>
+            </MDBCard>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <style>
 .vc-day-content.is-disabled {
   pointer-events: none; /* Desactivo los eventos(click,hover...) para los días que no se pueden elegir cita */
+}
+.custom-btn:hover {
+  filter: brightness(90%);
+  transform: scale(1.05); /* Ajusta la escala */
 }
 </style>
 <script>
