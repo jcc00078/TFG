@@ -1,15 +1,15 @@
 <template>
   <div class="container">
-    <div class="row">
-      <cartaComparador
+    <div class="row justify-content-center">
+      <cartaComparador class="col-md"
         v-for="(moto, i) in motos"
         v-bind:key="moto"
-        class="col"
         v-model:moto-seleccionada="motos[i].value"
         :desactivado="i > 0 && motos[i - 1].value === ''"
         titulo="Moto elegida"
         style="font-family: Verdana"
       />
+      
     </div>
     <table class="table" v-if="propiedades.length !== 0">
       <thead>
@@ -33,7 +33,7 @@
     </table>
     <div class="row justify-content-between" v-if="propiedades.length !== 0">
       <a
-        class="col-4 link-primary"
+        class="col-4 text-center link-primary"
         v-for="moto in propiedades"
         v-bind:key="moto.modelo"
         @click="calcularCompetidores(moto)"
@@ -41,7 +41,7 @@
       </a>
 
       <div class="row justify-content-center">
-        <div class="card" style="width: 18rem">
+        <div class="mt-4 card" style="width: 18rem">
           <div class="text-center" v-if="competidores.length !== 0">
             <p>Los competidores de la moto seleccionada son</p>
           </div>
