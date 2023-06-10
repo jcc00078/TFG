@@ -1,11 +1,11 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="col align-self-center">
+      <div class="col-8 align-self-center">
         <foto-moto class="mt-5 justify-content-end" :imagenData="fotoMoto" />
       </div>
-      <div class="col align-self-center d-flex justify-content-end">
-        <MDBCard class="m-5 w-50 bg-light">
+      <div class="col col-md-4 align-self-center d-flex justify-content-end">
+        <MDBCard class="m-5 w-100 bg-light">
           <MDBCardBody>
             <MDBCardTitle class="text-center">Presupuesto</MDBCardTitle>
             <ul class="list-group">
@@ -40,8 +40,8 @@
       </div>
     </div>
     <div class="d-print-none row my-2" style="background-color: transparent;">
-      <div class="my-5 col" style="position: relative">
-        <div class="my-5 border bg-success bg-gradient text-white" style="position: relative">
+      <div class="my-2 col" style="position: relative">
+        <div class="my-2 border bg-success bg-gradient text-white" style="position: relative">
           <h2
             class="d-flex align-items-center m-0 "
             style="

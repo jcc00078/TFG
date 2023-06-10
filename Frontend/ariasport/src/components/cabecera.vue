@@ -1,8 +1,15 @@
 <template>
-  <MDBNavbar class="d-print-none justify-content-end"  expand="lg" light bg="light" container>
+  <MDBNavbar
+    class="d-print-none justify-content-end"
+    expand="lg"
+    light
+    bg="light"
+    container
+  >
     <MDBNavbarBrand router-link to="/">
-      <!-- <img src="../assets/logo.png"> -->
-      LOGO
+      <router-link to="/">
+        <img src="@/assets/logo.png" style="width: 2rem" />
+      </router-link>
     </MDBNavbarBrand>
     <MDBNavbarToggler
       @click="collapse1 = !collapse1"
@@ -16,7 +23,7 @@
         <MDBNavbarItem to="/recomendador">Recomendador </MDBNavbarItem>
         <MDBNavbarItem>
           <!-- Navbar dropdown -->
-         
+
           <MDBDropdown class="nav-item" v-model="dropdown1">
             <MDBDropdownToggle
               tag="a"
@@ -25,7 +32,7 @@
               >Servicios</MDBDropdownToggle
             >
             <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
-              <MDBDropdownItem to="/mantenimiento"  :disabled="!store.username"
+              <MDBDropdownItem to="/mantenimiento" :disabled="!store.username"
                 >Consultar Mantenimiento</MDBDropdownItem
               >
               <MDBDropdownItem to="/citas" :disabled="!store.username"
@@ -38,7 +45,7 @@
           Usuario anónimo
         </MDBNavbarItem>
         <MDBNavbarItem v-if="store.username" to="/" disabled>
-          Bienvenido {{store.username}}
+          Bienvenido {{ store.username }}
         </MDBNavbarItem>
       </MDBNavbarNav>
       <router-link to="/inicioSesion">
@@ -76,7 +83,7 @@ import {
   MDBBtn,
 } from "mdb-vue-ui-kit";
 import { ref } from "vue";
-import {useAuthStore } from "@/store/autenticar";
+import { useAuthStore } from "@/store/autenticar";
 import router from "@/router";
 
 export default {
