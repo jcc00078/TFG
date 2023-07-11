@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +37,7 @@ public class ControladorRevision {
     @SecuredApiOperation
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void anotarRevision(@RequestBody RevisionDTO revision, @AuthenticationPrincipal String usuarioLogueado) {
+    public void anotarRevision(@RequestBody RevisionDTO revision,@ApiIgnore @AuthenticationPrincipal String usuarioLogueado) {
 
         if (!StringUtils.hasText(revision.getNumBastidor())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Necesitas introducir un numero de bastidor para crear una revisión");
@@ -75,7 +76,7 @@ public class ControladorRevision {
 
     @SecuredApiOperation
     @GetMapping("{numBastidor}")
-    public List<RevisionDTO> getRevisiones(@PathVariable String numBastidor, @AuthenticationPrincipal String usuarioLogueado) {
+    public List<RevisionDTO> getRevisiones(@PathVariable String numBastidor, @ApiIgnore @AuthenticationPrincipal String usuarioLogueado) {
         Motocicleta moto = motocicletaRepositorio.findById(numBastidor)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El número de bastidor no se ha encontrado"));
         if (moto.getCliente() == null) {

@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,7 +51,7 @@ public class ControladorUsuario {
 
     @SecuredApiOperation
     @GetMapping("{dni}/motos")
-    public List<MotocicletaDTO> listarMotosUsuario(@PathVariable String dni, @AuthenticationPrincipal String usuarioLogueado) {
+    public List<MotocicletaDTO> listarMotosUsuario(@PathVariable String dni, @ApiIgnore @AuthenticationPrincipal String usuarioLogueado) {
         Usuario usuario = usuarioRepositorio.findOneByDni(dni)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario con " + dni + " no existe"));
         if (!usuario.getDni_usuario().equals(usuarioLogueado)) {

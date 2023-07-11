@@ -15,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.FutureOrPresent;
@@ -53,7 +54,7 @@ public class ControladorCita {
      */
     @SecuredApiOperation
     @GetMapping("{numBastidor}")
-    public List<CitaDTO> getCitasMoto(@PathVariable String numBastidor, @AuthenticationPrincipal String usuarioLogueado) {
+    public List<CitaDTO> getCitasMoto(@PathVariable String numBastidor, @ApiIgnore @AuthenticationPrincipal String usuarioLogueado) {
         Motocicleta moto = motocicletaRepositorio.findById(numBastidor)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El número de bastidor no se ha encontrado"));
         if (moto.getCliente() == null) {
@@ -74,7 +75,7 @@ public class ControladorCita {
      */
     @SecuredApiOperation
     @GetMapping("todas/{dni_usuario}")
-    public List<CitaDTO> getCitasUsuario(@PathVariable String dni_usuario, @AuthenticationPrincipal String usuarioLogueado) {
+    public List<CitaDTO> getCitasUsuario(@PathVariable String dni_usuario, @ApiIgnore @AuthenticationPrincipal String usuarioLogueado) {
         Usuario usuario = usuarioRepositorio.findOneByDni(dni_usuario)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario no se ha encontrado"));
 
