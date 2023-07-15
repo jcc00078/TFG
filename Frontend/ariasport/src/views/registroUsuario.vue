@@ -1,5 +1,14 @@
 <template>
   <div class="container my-5">
+    <div
+      id="errorMensaje"
+      class="alert alert-danger border-color-red"
+      border-color="red"
+      role="alert"
+      v-show="creacionCorrecta != ''"
+    >
+      {{ this.creacionCorrecta }}
+    </div>
     <div class="card">
       <div class="card-body">
         <h3 class="card-title text-center">Registro de usuarios</h3>
@@ -69,7 +78,7 @@ setup() {
   const password = ref("");
   const nombre = ref("");
   const apellidos = ref("");
-  const creacionCorrecta=ref("false");
+  const creacionCorrecta=ref("");
 
   return {
     dni,

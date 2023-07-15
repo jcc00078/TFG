@@ -57,6 +57,8 @@ public class GeneradorDatosMemoria implements GeneradorDatos {
         u.setDni_usuario("4873387");
         u.setNombre("J");
         u.setApellidos("C C");
+        //Para indicar que la contraseña que se envía no está encriptada usamos {noop}
+        u.setContrasena("{noop}secreto");
         u.setCitas(new ArrayList<>());
         this.usuarios = List.of(u);
         //u.setMotos(motos);
