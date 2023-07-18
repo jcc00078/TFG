@@ -34,6 +34,7 @@
     <div class="row justify-content-between" v-if="propiedades.length !== 0">
       <a
         class="col-4 text-center link-primary"
+        id="competidores"
         v-for="moto in propiedades"
         v-bind:key="moto.modelo"
         @click="calcularCompetidores(moto)"

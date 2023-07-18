@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import javax.annotation.PostConstruct;
+import jcc00078.TFG.controladoresREST.dto.UsuarioDTO;
 import jcc00078.TFG.datos.GeneradorDatos;
 import jcc00078.TFG.entidades.Usuario;
 import jcc00078.TFG.repositorios.UsuarioRepositorio;
@@ -16,6 +17,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
@@ -24,6 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
  */
 @ActiveProfiles("test") //Para coger el application-test.yml
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ControladorUsuarioTest {
 
     @LocalServerPort
@@ -31,8 +34,6 @@ public class ControladorUsuarioTest {
 
     TestRestTemplate restTemplate;
 
-    @Autowired
-    GeneradorDatos generadorDatos;
 
     @Autowired
     UsuarioRepositorio usuarioRepositorio;
@@ -47,10 +48,10 @@ public class ControladorUsuarioTest {
         restTemplate = new TestRestTemplate(restTemplateBuilder);
     }
 
-    private Usuario getUsuario() {
-        List<Usuario> listaUsuarios = generadorDatos.generarListaUsuarios();
+    private UsuarioDTO getUsuarioDTO() {
+        List<Usuario> listaUsuarios = usuarioRepositorio.findAll();
         Random r = new Random();
-        return listaUsuarios.get(r.nextInt(listaUsuarios.size()));
+        return listaUsuarios.get(r.nextInt(listaUsuarios.size())).toDTO();
     }
 
     /**
@@ -60,7 +61,9 @@ public class ControladorUsuarioTest {
      */
     @Test
     public void crearUsuarioTest() {
-        Usuario u = getUsuario();
+        UsuarioDTO u = getUsuarioDTO();
+        u.setDni_usuario("23524543");
+        u.setContrasena("secreto");
         ResponseEntity<Void> respuesta = restTemplate.postForEntity("/", u, Void.class);
         Assertions.assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Optional<Usuario> usuarioGuardado = usuarioRepositorio.findOneByDni(u.getDni_usuario());
@@ -68,7 +71,7 @@ public class ControladorUsuarioTest {
         // Verificar que la contraseña almacenada sea distinta de la contraseña en texto plano que se envía
         Assertions.assertThat(usuarioGuardado.get().getContrasena()).isNotEqualTo(u.getContrasena());
         // Verificar que la contraseña almacenada comienza con {bcrypt} para asegurar que está encriptada
-        Assertions.assertThat(usuarioGuardado.get().getContrasena()).startsWith("{bcrypt}");;
+        Assertions.assertThat(usuarioGuardado.get().getContrasena()).startsWith("{bcrypt}");
     }
 
     /**
@@ -76,7 +79,9 @@ public class ControladorUsuarioTest {
      */
     @Test
     public void crearUsuarioRepetidoTest() {
-        Usuario u = getUsuario();
+        UsuarioDTO u = getUsuarioDTO();
+        u.setDni_usuario("74637485");
+        u.setContrasena("secreto");
         ResponseEntity<Void> respuesta = restTemplate.postForEntity("/", u, Void.class);
         Assertions.assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         ResponseEntity<Void> respuestaRepetido = restTemplate.postForEntity("/", u, Void.class);

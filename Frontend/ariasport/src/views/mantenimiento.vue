@@ -6,7 +6,7 @@
         <MDBCardTitle>Tus motocicletas</MDBCardTitle>
         <MDBCardText>
           <div class="row-6 bg-image hover-zoom hover-overlay" v-for="moto in motosUsuario" v-bind:key="moto">
-            <img class="col-6" :src="`data:image/png;base64,${moto.imagenData}`"/>
+            <img id="imagenMoto" class="col-6" :src="`data:image/png;base64,${moto.imagenData}`"/>
             <router-link :to="`/mantenimiento/historial/${moto.numBastidor}`">
               <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
             </router-link>

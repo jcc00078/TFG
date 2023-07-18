@@ -1,5 +1,5 @@
 
-  Cypress.Commands.add("login", (username, password, shouldFail = false) => {
+  Cypress.Commands.add("citas", (username, password, shouldFail = false) => {
   cy.visit("http://localhost:8080/#/inicioSesion"); // Visitar la página de inicio de sesión
   cy.get("#dni").type(username); // Ingresar el nombre de usuario
   cy.get("#password").type(password); // Ingresar la contraseña
@@ -14,7 +14,7 @@
 
 describe("Test citas", () => {
   it("Carga exitosa de datos", () => {
-    cy.login("111111", "isa");
+    cy.citas("111111", "isa");
     cy.visit("http://localhost:8080/#/citas"); // Visitar el apartado de citas
     cy.url().should("include", "/citas");
     //cy.visit('http://localhost:8080/#/citas/diasDeshabilitados') // Visita la página que muestra las fechas deshabilitadas

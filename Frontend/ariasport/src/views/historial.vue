@@ -26,7 +26,7 @@
                   {{
                     new Intl.DateTimeFormat("es-ES", {
                       dateStyle: "full",
-                      timeStyle: "short"
+                      timeStyle: "short",
                     }).format(item.fecha)
                   }}
                 </td>
@@ -36,7 +36,11 @@
           </table>
           <div class="row">
             <div class="d-flex justify-content-center">
-              <MDBBtn color="primary" @click="mostrarProxRev()"
+              <MDBBtn
+                id="proxR"
+                :disabled="revisionesUsuario.length == 0"
+                color="primary"
+                @click="mostrarProxRev()"
                 >Mostrar próxima revisión
               </MDBBtn>
             </div>
@@ -64,6 +68,7 @@
           <MDBTooltip v-model="tooltip1" direction="right" tag="a">
             <template #reference>
               <i
+                id="iconoTabla"
                 @click="muestraTMantenimiento()"
                 class="far fa-question-circle"
                 style="color: black; margin-left: 5px; cursor: pointer"
@@ -84,6 +89,7 @@
     </MDBCard>
 
     <MDBCard
+      id="tablaMarca"
       v-show="mostrarTablaM"
       v-if="datosMarca"
       text="body"

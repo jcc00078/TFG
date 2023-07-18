@@ -12,6 +12,7 @@
             :disabled="desactivado"
             v-model="seleccion"
             class="form-select"
+            id="selectComparador"
             aria-label="Default select example"
           >
             <option value="">Selecciona una marca</option>
@@ -26,6 +27,7 @@
             :value="motoSeleccionada"
             @input="$emit('update:motoSeleccionada', $event.target.value)"
             class="form-select"
+            id="selectComparador2"
             aria-label="Default select example"
           >
             <option selected value="">Selecciona un modelo</option>

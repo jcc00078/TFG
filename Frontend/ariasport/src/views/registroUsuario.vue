@@ -12,7 +12,7 @@
     <div class="card">
       <div class="card-body">
         <h3 class="card-title text-center">Registro de usuarios</h3>
-        <form class="row g-3 form-floating" novalidate  @submit.prevent="registro()">
+        <form id="registro-form" class="row g-3 form-floating" novalidate  @submit.prevent="registro()">
           <div class="col-md-12">
             <label for="dni" class="form-label">Introduce tu DNI</label>
             <input 

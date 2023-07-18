@@ -2,10 +2,7 @@ package jcc00078.TFG.datos;
 
 import java.util.List;
 
-import jcc00078.TFG.entidades.Cita;
-import jcc00078.TFG.entidades.Marca;
-import jcc00078.TFG.entidades.Motocicleta;
-import jcc00078.TFG.entidades.Usuario;
+import jcc00078.TFG.entidades.*;
 
 /**
  *
@@ -18,4 +15,8 @@ public interface GeneradorDatos {
     public List<Motocicleta> generarListaMotocicletas();
 
     public List<Usuario> generarListaUsuarios();
+    public List<Cita> generarListaCitas();
+    public List<Revision> generarListaRevisiones();
+    public List<Mantenimiento> generarListaMantenimientos();
+
 }

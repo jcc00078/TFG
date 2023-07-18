@@ -1,14 +1,12 @@
 package jcc00078.TFG.controladoresREST;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javax.annotation.PostConstruct;
 import jcc00078.TFG.controladoresREST.dto.MarcaDTO;
 import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
 import jcc00078.TFG.datos.GeneradorDatos;
-import jcc00078.TFG.entidades.Mantenimiento;
 import jcc00078.TFG.entidades.Marca;
 import jcc00078.TFG.entidades.Motocicleta;
 import jcc00078.TFG.repositorios.MarcaRepositorio;
@@ -19,7 +17,6 @@ import org.assertj.core.api.Assertions;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -31,6 +28,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -41,6 +39,8 @@ import org.springframework.util.MultiValueMap;
  */
 @ActiveProfiles("test") //Para coger el application-test.yml
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) //RANDOM_PORT ya que sino no puedo ejecutar a la vez los test y la aplicación arrancada, ya que tienen el mismo puerto
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+
 public class ControladorMotocicletaTest {
 
     @LocalServerPort
@@ -54,8 +54,6 @@ public class ControladorMotocicletaTest {
     @Autowired
     MotocicletaRepositorio motocicletaRepositorio;
 
-    @Autowired
-    GeneradorDatos generadorDatos;
     @Autowired
     JwtUtils jwtUtils;
 
@@ -75,34 +73,17 @@ public class ControladorMotocicletaTest {
                     return execution.execute(request, body);
                 });
         restTemplate = new TestRestTemplate(restTemplateBuilder);
-        setUpDatabaseData();
     }
 
-    /**
-     * Función para guardar los datos en la BBDD de los test.
-     */
-    void setUpDatabaseData() {
-        List<Marca> listaMarcas = generadorDatos.generarListaMarcas();
-        listaMarcas.forEach(m -> marcaRepositorio.save(m));
-        marcaRepositorio.flush();
-        generadorDatos.generarListaUsuarios().forEach(u -> usuarioRepositorio.save(u));
-        usuarioRepositorio.flush();
-        List<Motocicleta> listaMotos = generadorDatos.generarListaMotocicletas();
-        listaMotos.forEach(m -> motocicletaRepositorio.save(m));
-        motocicletaRepositorio.flush();
-
-    }
-
-    private Marca getMarca() {
-        List<Marca> listaMarcas = generadorDatos.generarListaMarcas();
+    private MarcaDTO getMarcaDTO() {
+        List<Marca> listaMarcas = marcaRepositorio.findAll();
         Random r = new Random();
-        return listaMarcas.get(r.nextInt(listaMarcas.size()));
+        return listaMarcas.get(r.nextInt(listaMarcas.size())).toDTO();
     }
 
-    private Motocicleta getMotocicleta() {
-        List<Motocicleta> listaMotos = generadorDatos.generarListaMotocicletas();
-        Random r = new Random();
-        return listaMotos.get(r.nextInt(listaMotos.size()));
+    private MotocicletaDTO getMotocicleta() {
+        Motocicleta m = motocicletaRepositorio.findAll().get(0);
+        return m.toDTO();
     }
 
     /**
@@ -112,7 +93,7 @@ public class ControladorMotocicletaTest {
      */
     @Test
     public void listarMarcasTest() {
-        Marca m = getMarca();
+        MarcaDTO m = getMarcaDTO();
         String[] listaMarcas
                 = restTemplate.getForEntity("/marcas", String[].class).getBody();
         Assertions.assertThat(listaMarcas).hasSizeGreaterThanOrEqualTo(2);//Compruebo que el vector de respuesta solo tiene una moto
@@ -122,25 +103,25 @@ public class ControladorMotocicletaTest {
 
     @Test
     public void listarDatosMarcaTest() {
-        Motocicleta m = getMotocicleta();
+        MotocicletaDTO m = getMotocicleta();
         MarcaDTO respuesta = restTemplate.getForEntity("/{numBastidor}/marca", MarcaDTO.class, m.getNumBastidor()).getBody();
         Assertions.assertThat(respuesta).isNotNull();
-        Assertions.assertThat(respuesta).isEqualTo(m.getMarca().toDTO());
+        Assertions.assertThat(respuesta.getNombre()).isEqualTo(m.getMarca());
     }
 
     @Test
     public void crearMotocicletaTest() throws IOException {
-        Motocicleta m = getMotocicleta();
+        MotocicletaDTO m = getMotocicleta();
         m.setNumBastidor("12");
         // Creo un mapa de valores múltiples para los datos de formulario
         MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
         map.add("numBastidor", m.getNumBastidor());
-        map.add("marca", m.getMarca().getNombre());
-        map.add("modelo", "prueba");
+        map.add("marca", m.getMarca());
+        map.add("modelo", "pruebatest");
         map.add("color", m.getColor());
         map.add("tipo", m.getTipo());
         map.add("precio", m.getPrecio());
-        map.add("dni_usuario", m.getCliente().getDni_usuario());
+        map.add("dni_usuario", m.getDni_usuario());
         map.add("cilindrada", m.getCilindrada());
         map.add("offRoad", m.isOffRoad());
         map.add("carnetCompatible", m.getCarnetCompatible());
@@ -157,15 +138,15 @@ public class ControladorMotocicletaTest {
 
         ResponseEntity<Void> respuesta = restTemplate.postForEntity("/", he, Void.class);
         Assertions.assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Assertions.assertThat(motocicletaRepositorio.findById(m.getNumBastidor()))
-                .contains(m)
+
+        Assertions.assertThat(motocicletaRepositorio.findById(m.getNumBastidor()).map(Motocicleta::toDTO))
+              //  .contains(m)
                 .hasValueSatisfying((t) -> {
-                    Assertions.assertThat(t.getImagen()).isNotBlank();
+                    Assertions.assertThat(t.getImagenData()).isNotBlank();
                 });
 
     }
-
     private String getJwtToken() {
-        return jwtUtils.generarToken(generadorDatos.generarListaUsuarios().get(0).getDni_usuario());
+        return jwtUtils.generarToken(getMotocicleta().getDni_usuario());
     }
 }

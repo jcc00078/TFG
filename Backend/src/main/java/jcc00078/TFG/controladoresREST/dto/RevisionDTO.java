@@ -14,6 +14,9 @@ public class RevisionDTO {
     private Long idCita;
     private String numBastidor;
 
+    public RevisionDTO() {
+    }
+
     
 
     public RevisionDTO(Integer codRevision, float precio, int kilometros, LocalDateTime fecha, Long idCita, String numBastidor) {

@@ -2,6 +2,8 @@ package jcc00078.TFG.controladoresREST.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
+
 /**
  *
  * @author juanc
@@ -207,4 +209,16 @@ public class MotocicletaDTO {
         this.carnetCompatible = carnetCompatible;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MotocicletaDTO that = (MotocicletaDTO) o;
+        return Objects.equals(numBastidor, that.numBastidor) && Objects.equals(modelo, that.modelo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(numBastidor, modelo);
+    }
 }

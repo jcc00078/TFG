@@ -25,10 +25,7 @@ public class Marca implements Serializable {
     @OrderColumn
     @ElementCollection(targetClass = Mantenimiento.class)
     private List<Mantenimiento> kilometrajeRevisiones;
-
-    @OneToMany
-    private List<Motocicleta> motos;
-
+    
     public MarcaDTO toDTO() {
         MarcaDTO marcaDTO = new MarcaDTO(getNombre(), getKilometrajeRevisiones());
         return marcaDTO;
