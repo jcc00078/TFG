@@ -39,7 +39,7 @@ import org.springframework.util.MultiValueMap;
  */
 @ActiveProfiles("test") //Para coger el application-test.yml
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) //RANDOM_PORT ya que sino no puedo ejecutar a la vez los test y la aplicación arrancada, ya que tienen el mismo puerto
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 
 public class ControladorMotocicletaTest {
 
@@ -113,11 +113,12 @@ public class ControladorMotocicletaTest {
     public void crearMotocicletaTest() throws IOException {
         MotocicletaDTO m = getMotocicleta();
         m.setNumBastidor("12");
+        m.setModelo("modeloPrueba");
         // Creo un mapa de valores múltiples para los datos de formulario
         MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
         map.add("numBastidor", m.getNumBastidor());
         map.add("marca", m.getMarca());
-        map.add("modelo", "pruebatest");
+        map.add("modelo", m.getModelo());
         map.add("color", m.getColor());
         map.add("tipo", m.getTipo());
         map.add("precio", m.getPrecio());
@@ -139,13 +140,15 @@ public class ControladorMotocicletaTest {
         ResponseEntity<Void> respuesta = restTemplate.postForEntity("/", he, Void.class);
         Assertions.assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
+        //Comprueba que los datos almacenados en la bbdd son correctos
         Assertions.assertThat(motocicletaRepositorio.findById(m.getNumBastidor()).map(Motocicleta::toDTO))
-              //  .contains(m)
+                .contains(m)
                 .hasValueSatisfying((t) -> {
                     Assertions.assertThat(t.getImagenData()).isNotBlank();
                 });
 
     }
+
     private String getJwtToken() {
         return jwtUtils.generarToken(getMotocicleta().getDni_usuario());
     }

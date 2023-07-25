@@ -1,5 +1,6 @@
 package jcc00078.TFG.controladoresREST;
 
+import java.util.ArrayList;
 import jcc00078.TFG.controladoresREST.dto.RevisionDTO;
 import jcc00078.TFG.datos.GeneradorDatos;
 import jcc00078.TFG.entidades.Motocicleta;
@@ -18,10 +19,14 @@ import org.springframework.test.context.ActiveProfiles;
 import javax.annotation.PostConstruct;
 import jcc00078.TFG.controladoresREST.dto.MotocicletaDTO;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 @ActiveProfiles("test") //Para coger el application-test.yml
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //RANDOM_PORT ya que sino no puedo ejecutar a la vez los test y la aplicación arrancada, ya que tienen el mismo puerto
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ControladorRevisionTest {
 
     @LocalServerPort
@@ -47,7 +52,7 @@ public class ControladorRevisionTest {
         restTemplate = new TestRestTemplate(restTemplateBuilder);
     }
 
-     private MotocicletaDTO getMotocicleta() {
+    private MotocicletaDTO getMotocicleta() {
         Motocicleta m = revisionRepositorio.findAll().get(0).getMoto();
         return m.toDTO();
     }
@@ -58,6 +63,10 @@ public class ControladorRevisionTest {
         String bastidor = m.getNumBastidor();
         RevisionDTO[] listaRev = restTemplate.getForEntity("/" + bastidor, RevisionDTO[].class).getBody();
         Assertions.assertThat(listaRev).isNotEmpty();
+        //Para comprobar que las revisiones están ordenadas, hacemos una copia del vector y lo ordenamos. Posteriormente lo comparamos con el vector inicial.
+        RevisionDTO[] listaRev2 = listaRev;
+        Arrays.sort(listaRev2, Comparator.comparing(RevisionDTO::getFecha));
+        Assertions.assertThat(listaRev).containsExactly(listaRev2);
     }
 
     private String getJwtToken() {

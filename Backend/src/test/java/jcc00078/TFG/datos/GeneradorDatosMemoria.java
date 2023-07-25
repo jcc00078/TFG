@@ -63,7 +63,7 @@ public class GeneradorDatosMemoria implements GeneradorDatos {
         u.setNombre("J");
         u.setApellidos("C C");
         //Para indicar que la contraseña que se envía no está encriptada usamos {noop}
-        u.setContrasena("{noop}secreto");
+        u.setContrasena("secreto");
         u.setCitas(new ArrayList<>());
         u.setMotos(new ArrayList<>());
         this.usuarios = List.of(u);
@@ -76,9 +76,13 @@ public class GeneradorDatosMemoria implements GeneradorDatos {
         r.setCod_revision(32425);
         r.setPrecio(750);
         r.setKilometros(1000);
-        r.setFecha(LocalDateTime.now().minusDays(7));
-        this.revisiones = List.of(r);
-
+        r.setFecha(LocalDateTime.now().minusDays(40));
+        Revision r2 = new Revision();
+        r2.setCod_revision(12324);
+        r2.setPrecio(300);
+        r2.setKilometros(6000);
+        r2.setFecha(LocalDateTime.now().minusDays(5));
+        this.revisiones = List.of(r,r2);
     }
 
 

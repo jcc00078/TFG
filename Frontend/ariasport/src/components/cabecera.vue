@@ -48,6 +48,12 @@
           Bienvenido {{ store.username }}
         </MDBNavbarItem>
       </MDBNavbarNav>
+      <router-link to="/admin">
+        <MDBBtn v-if="store.esAdmin" color="warning" class="text-white">
+          Funcionalidad de admin
+        </MDBBtn>
+
+      </router-link>
       <router-link to="/inicioSesion">
         <MDBBtn v-if="!store.username" color="primary" class="text-white">
           Iniciar Sesión

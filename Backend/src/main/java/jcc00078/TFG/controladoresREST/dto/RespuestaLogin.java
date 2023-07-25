@@ -9,11 +9,14 @@ package jcc00078.TFG.controladoresREST.dto;
  * @author juanc
  */
 public class RespuestaLogin {
-    
+
     public String access_token;
+
+    public RespuestaLogin() {
+    }
 
     public RespuestaLogin(String access_token) {
         this.access_token = access_token;
     }
-    
+
 }

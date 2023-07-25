@@ -3,8 +3,25 @@
     <MDBCard class="shadow-4-strong w-responsive mx-auto" text="center">
       <MDBCardBody>
         <MDBCardTitle>Historial de revisiones</MDBCardTitle>
-        <MDBCardText>
-          <table class="table">
+        <div
+          v-if="cargandoDatos"
+          class="spinner-border mt-4"
+          style="width: 3rem; height: 3rem"
+          role="status"
+        >
+          <span class="sr-only">Loading...</span>
+        </div>
+        <MDBCardText v-else>
+          <div
+            id="errorMRevisiones"
+            class="alert alert-danger border-color-red"
+            border-color="red"
+            role="alert"
+            v-show="revisionesUsuario.length == 0"
+          >
+            No hay ninguna revisión
+          </div>
+          <table v-show="revisionesUsuario.length > 0" class="table">
             <thead>
               <tr>
                 <th scope="col">Cód.Revisión</th>
@@ -36,11 +53,7 @@
           </table>
           <div class="row">
             <div class="d-flex justify-content-center">
-              <MDBBtn
-                id="proxR"
-                :disabled="revisionesUsuario.length == 0"
-                color="primary"
-                @click="mostrarProxRev()"
+              <MDBBtn id="proxR" color="primary" @click="mostrarProxRev()"
                 >Mostrar próxima revisión
               </MDBBtn>
             </div>
@@ -57,13 +70,15 @@
       <MDBCardBody style="color: aliceblue">
         <MDBCardTitle class="text-center">Próxima revisión</MDBCardTitle>
         <MDBCardText style="color: aliceblue">
-          <strong>Fecha</strong>
+          <strong v-if="proximaFecha">Fecha</strong>
           <MDBInput
             class="text-center"
             type="date"
+            v-if="proximaFecha"
             v-model="proximaFecha"
             readonly
           />
+
           <strong>Kilómetros</strong>
           <MDBTooltip v-model="tooltip1" direction="right" tag="a">
             <template #reference>
@@ -177,6 +192,7 @@ export default {
     const numBast = ref("");
     const datosMarca = ref([]);
     const mostrarTablaM = ref(false);
+    const cargandoDatos = ref(true);
 
     onMounted(async () => {
       const numBastidor = route.params.numBastidor;
@@ -189,6 +205,7 @@ export default {
           },
         }
       );
+      cargandoDatos.value = false;
       revisionesUsuario.value = arrayRevisiones.map((r) => {
         r.fecha = new Date(r.fecha);
         return r;
@@ -211,21 +228,25 @@ export default {
       datosMarca,
       mostrarTablaM,
       muestraTMantenimiento,
+      cargandoDatos,
     };
   },
   methods: {
     mostrarProxRev() {
-      const fecha = new Date(
-        this.revisionesUsuario[this.revisionesUsuario.length - 1].fecha
-      );
-      fecha.setFullYear(fecha.getFullYear() + 1);
-      const dia = fecha.getDate().toString().padStart(2, "0");
-      const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
-      const anio = fecha.getFullYear();
-      this.proximaFecha = `${anio}-${mes}-${dia}`;
+      if (this.revisionesUsuario.length > 0) {
+        const fecha = new Date(
+          this.revisionesUsuario[this.revisionesUsuario.length - 1]?.fecha
+        );
+        fecha.setFullYear(fecha.getFullYear() + 1);
+        const dia = fecha.getDate().toString().padStart(2, "0");
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, "0");
+        const anio = fecha.getFullYear();
+        this.proximaFecha = `${anio}-${mes}-${dia}`;
+      }
 
       const ultimoKilometraje =
-        this.revisionesUsuario[this.revisionesUsuario.length - 1].kilometros;
+        this.revisionesUsuario[this.revisionesUsuario.length - 1]?.kilometros ??
+        1;
 
       axios.get(`motos/${this.numBast}/marca`).then((resp) => {
         this.datosMarca = resp.data;

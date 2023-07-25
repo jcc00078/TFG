@@ -34,9 +34,10 @@
             Conectarse
           </MDBBtn>
           <router-link to="/registrarme">
-          <MDBBtn color="link" style="background-color:transparent ">¿No tienes cuenta? Regístrate aquí
-          </MDBBtn>
-        </router-link>
+            <MDBBtn color="link" style="background-color: transparent"
+              >¿No tienes cuenta? Regístrate aquí
+            </MDBBtn>
+          </router-link>
         </form>
       </MDBCardBody>
     </MDBCard>
@@ -86,16 +87,20 @@ export default {
       };
       axios
         .post("login", json)
-        .then(({data}) => {
-            this.loginCorrecto = true;
-            router.push("/");
-            this.store.login(this.dni,data.access_token);
+        .then(async ({ data }) => {
+          this.loginCorrecto = true;
+          router.push("/");
+          const usuario = await axios.get(`usuarios/${this.dni}`, {
+            headers: {
+              Authorization: `Bearer ${data.access_token}`,
+            },
+          });
+          this.store.login(this.dni, data.access_token, usuario.data.admin);
         })
         .catch(() => {
           this.comprobarLogin = "Error, introduce las credenciales de nuevo";
         });
     },
-    
-    }
+  },
 };
 </script>

@@ -26,7 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
  */
 @ActiveProfiles("test") //Para coger el application-test.yml
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ControladorUsuarioTest {
 
     @LocalServerPort

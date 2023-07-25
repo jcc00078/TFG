@@ -14,9 +14,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import jcc00078.TFG.entidades.Cita;
 import jcc00078.TFG.entidades.Marca;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import jcc00078.TFG.entidades.Usuario;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.Scope;
 
 @Service
 @Profile("test") //Para coger el application-test.yml
@@ -42,32 +41,17 @@ public class ImportadorDatos {
      */
     @PostConstruct
     void setUpDatabaseData() {
-       List<Motocicleta> motos = motocicletaRepositorio.findAll().stream().map(M->{
-            M.setMarca(null);
-            M.setCliente(null);
-            return M;
-        }).collect(Collectors.toList());
-       motocicletaRepositorio.saveAll(motos);
-        usuarioRepositorio.deleteAll();
-        motocicletaRepositorio.deleteAll();
-        citaRepositorio.deleteAll();
-        revisionRepositorio.deleteAll();
-        marcaRepositorio.deleteAll();
-
-        marcaRepositorio.saveAll(generadorDatos.generarListaMarcas());
-        marcaRepositorio.flush();
-
-        usuarioRepositorio.saveAll(generadorDatos.generarListaUsuarios());
-        usuarioRepositorio.flush();
-
-        citaRepositorio.saveAll(generadorDatos.generarListaCitas());
-        citaRepositorio.flush();
-
-        revisionRepositorio.saveAll(generadorDatos.generarListaRevisiones());
-        revisionRepositorio.flush();
-
-        motocicletaRepositorio.saveAll(generadorDatos.generarListaMotocicletas());
-        motocicletaRepositorio.flush();
+        marcaRepositorio.saveAllAndFlush(generadorDatos.generarListaMarcas());
+        //Creo usuario auxiliar para cambiar contraseña sin modificar el usuario original
+        usuarioRepositorio.saveAllAndFlush(generadorDatos.generarListaUsuarios().stream().map(usuario -> {
+            Usuario usuarioAux = new Usuario();
+            usuarioAux.fromDTO(usuario.toDTO());
+            usuarioAux.setContrasena("{noop}" + usuario.getContrasena());
+            return usuarioAux;
+        }).collect(Collectors.toUnmodifiableList()));
+        citaRepositorio.saveAllAndFlush(generadorDatos.generarListaCitas());
+        revisionRepositorio.saveAllAndFlush(generadorDatos.generarListaRevisiones());
+        motocicletaRepositorio.saveAllAndFlush(generadorDatos.generarListaMotocicletas());
         relacionarDatos();
     }
 
@@ -124,7 +108,7 @@ public class ImportadorDatos {
 
     private <T> List<T> getRandomRange(List<T> list) {
         if (list == null || list.isEmpty()) {
-            throw new IllegalArgumentException("The list must not be empty.");
+            throw new IllegalArgumentException("La lista no debe estar vacía");
         }
 
         int rangeSize = random.nextInt(list.size()) + 1; // Random size between 1 and list.size()

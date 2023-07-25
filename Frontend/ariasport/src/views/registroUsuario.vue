@@ -103,7 +103,7 @@ setup() {
         router.push("inicioSesion");        
       })
       .catch(()=> {
-        this.creacionCorrecta = "Error, no se ha podido registrar al usuario";
+        this.creacionCorrecta = "Error, usuario ya registrado";
       });
     },
   }

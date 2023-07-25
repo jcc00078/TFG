@@ -33,6 +33,7 @@ public class Usuario {
     // @Size(min = 1, max = 20)
     private String contrasena;
 
+    private boolean admin;
     /**
      * Citas asociadas al usuario
      */
@@ -46,7 +47,7 @@ public class Usuario {
     private List<Motocicleta> motos;
 
     public UsuarioDTO toDTO() {
-        UsuarioDTO usrDTO = new UsuarioDTO(getDni_usuario(), getNombre(), getApellidos());
+        UsuarioDTO usrDTO = new UsuarioDTO(getDni_usuario(), getNombre(), getApellidos(), isAdmin());
         return usrDTO;
     }
 
@@ -107,6 +108,20 @@ public class Usuario {
     }
 
     /**
+     * @return the admin
+     */
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    /**
+     * @param admin the admin to set
+     */
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
+    /**
      * @return the citas
      */
     public List<Cita> getCitas() {
@@ -139,6 +154,7 @@ public class Usuario {
         this.nombre = usuario.getNombre();
         this.apellidos = usuario.getApellidos();
         this.contrasena = usuario.getContrasena();
+        this.admin=usuario.isAdmin();
     }
 
 }

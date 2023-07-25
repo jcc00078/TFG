@@ -1,28 +1,25 @@
-import {defineStore} from 'pinia'
+import { defineStore } from "pinia";
 
-export const useAuthStore = defineStore('autenticar',{
-    state: () => {
-      return {
-        username: "",
-        jwt: ""
-      }
+export const useAuthStore = defineStore("autenticar", {
+  state: () => {
+    return {
+      username: "",
+      jwt: "",
+      esAdmin: false,
+    };
+  },
+  getters: {},
+  actions: {
+    login(username, jwt, esAdmin) {
+      this.username = username;
+      this.jwt = jwt;
+      this.esAdmin = esAdmin;
     },
-    getters: {
-      // noEsanonimo(state){
-      //     return state.esAnonimo;
-      // },
-
+    logout() {
+      this.username = "";
+      this.jwt = "";
+      this.esAdmin = false;
     },
-    actions: {
-      login(username, jwt) {
-        this.username=username;
-        this.jwt=jwt;
-      },
-      logout(){
-        this.username="";
-        this.jwt="";
-      }
-      ,
-    },
-  })
+  },
+});
 export default useAuthStore;

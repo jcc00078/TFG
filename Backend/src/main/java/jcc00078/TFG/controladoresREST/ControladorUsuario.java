@@ -30,13 +30,6 @@ public class ControladorUsuario {
     @Autowired
     private PasswordEncoder pass;
 
-    @SecuredApiOperation
-    @GetMapping
-    public List<UsuarioDTO> listaUsuarios() {
-        List<Usuario> usuarios = usuarioRepositorio.findAll();
-        return usuarios.stream().map((usuario) -> usuario.toDTO()).collect(Collectors.toUnmodifiableList());
-    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void crearUsuario(@RequestBody UsuarioDTO usuario) throws RuntimeException {
@@ -60,4 +53,14 @@ public class ControladorUsuario {
         return usuario.getMotos().stream().map((moto) -> moto.toDTO()).collect(Collectors.toUnmodifiableList());
     }
 
+    @SecuredApiOperation
+    @GetMapping("{dni}")
+    public UsuarioDTO listarDatosUsuario(@PathVariable String dni, @ApiIgnore @AuthenticationPrincipal String usuarioLogueado) {
+        Usuario usuario = usuarioRepositorio.findOneByDni(dni)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario con " + dni + " no existe"));
+        if (!usuario.getDni_usuario().equals(usuarioLogueado)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El dni " + usuario.getDni_usuario() + " no puede acceder a las motos que tiene el dni " + usuarioLogueado);
+        }
+        return usuario.toDTO();
+    }
 }

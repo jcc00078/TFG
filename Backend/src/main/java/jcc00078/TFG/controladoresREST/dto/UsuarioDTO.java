@@ -5,16 +5,18 @@ package jcc00078.TFG.controladoresREST.dto;
  * @author juanc
  */
 public class UsuarioDTO {
-    
+
     private String dni_usuario;
     private String nombre;
     private String apellidos;
     private String contrasena;
-    
-    public UsuarioDTO(String dni_usuario, String nombre, String apellidos) {
-            this.dni_usuario=dni_usuario;
-            this.nombre=nombre;
-            this.apellidos=apellidos;
+    private boolean admin;
+
+    public UsuarioDTO(String dni_usuario, String nombre, String apellidos, boolean admin) {
+        this.dni_usuario = dni_usuario;
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.admin = admin;
     }
 
     /**
@@ -72,5 +74,19 @@ public class UsuarioDTO {
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
     }
-        
+
+    /**
+     * @return the admin
+     */
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    /**
+     * @param admin the admin to set
+     */
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
 }
