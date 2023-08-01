@@ -13,7 +13,7 @@ import VCalendar from 'v-calendar';
   const pinia = createPinia()
   pinia.use(persist())
   const app = createApp(App)
-  axios.defaults.baseURL='http://localhost:8084/'
+  axios.defaults.baseURL='http://localhost:8084/' //Para acceder desde movil poner en esta url http://ipv4wifi:8084/ y desde el movil acceder a http://ipv4wifi:8080/
   app.use(pinia)
   app.use(router)
   app.use(VueAxios,axios)

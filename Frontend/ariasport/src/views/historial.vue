@@ -23,7 +23,7 @@
           </div>
           <table v-show="revisionesUsuario.length > 0" class="table">
             <thead>
-              <tr>
+              <tr style="font-family: Verdana">
                 <th scope="col">Cód.Revisión</th>
                 <th scope="col">Kilómetros</th>
                 <th scope="col">Fecha</th>
@@ -53,7 +53,11 @@
           </table>
           <div class="row">
             <div class="d-flex justify-content-center">
-              <MDBBtn id="proxR" color="primary" @click="mostrarProxRev()"
+              <MDBBtn
+                class="bg-gradient"
+                id="proxR"
+                color="success"
+                @click="mostrarProxRev()"
                 >Mostrar próxima revisión
               </MDBBtn>
             </div>
@@ -63,8 +67,8 @@
     </MDBCard>
     <MDBCard
       v-if="kilometrosMantenimiento"
-      class="shadow-4-strong mx-auto mt-5"
-      style="width: 250px; background-color: lightslategray"
+      class="shadow-4-strong mx-auto mt-5 grad"
+      style="width: 250px"
       text="start"
     >
       <MDBCardBody style="color: aliceblue">
@@ -108,8 +112,8 @@
       v-show="mostrarTablaM"
       v-if="datosMarca"
       text="body"
-      style="background-color: #5cafff"
-      class="m-5"
+      style="background-color: #e2d1c3"
+      class="m-5 bg-gradient"
     >
       <MDBCardHeader class="text-center">
         <h4>Tabla de mantenimiento de {{ datosMarca.nombre }}</h4>
@@ -133,7 +137,8 @@
                     : '',
                 ]"
               >
-                {{ revision.kilometrajeRevision }} Kilometros -->
+                {{ revision.kilometrajeRevision }} Kilometros
+                <i class="fas fa-long-arrow-alt-right"></i>
                 {{ revision.descripcion }}
               </p>
             </li>
@@ -143,17 +148,17 @@
     </MDBCard>
   </div>
 </template>
-  
+  <style>
+.grad {
+  background-image: linear-gradient(to right, #868f96 0%, #596164 100%);
+}
+</style>
   <script>
-//import router from "@/router";
 import { useAuthStore } from "@/store/autenticar";
 import { useRoute } from "vue-router";
 import axios from "axios";
 import {
-  //MDBRow,
-  //   MDBCol,
   MDBInput,
-  //   MDBCheckbox,
   MDBBtn,
   MDBCard,
   MDBCardText,
@@ -168,10 +173,7 @@ export default {
     motoSeleccionada: String,
   },
   components: {
-    //MDBRow,
-    // MDBCol,
     MDBInput,
-    // MDBCheckbox,
     MDBBtn,
     MDBCardText,
     MDBCard,

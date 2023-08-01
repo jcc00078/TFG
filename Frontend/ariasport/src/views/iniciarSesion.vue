@@ -29,15 +29,27 @@
             v-model="password"
             wrapperClass="mb-4"
           />
-          <!-- Submit button -->
-          <MDBBtn id="estoyLogueado" color="primary" block type="submit">
-            Conectarse
-          </MDBBtn>
+          <div class="row">
+            <div class="col-12">
+            <!-- Submit button -->
+            <MDBBtn
+              class="bg-gradient"
+              color="success"
+              id="estoyLogueado"
+              type="submit"
+              style="color: white"
+            >
+              Conectarse
+            </MDBBtn>
+          </div>
+          </div>
+          <div class="col-12">
           <router-link to="/registrarme">
             <MDBBtn color="link" style="background-color: transparent"
               >¿No tienes cuenta? Regístrate aquí
             </MDBBtn>
           </router-link>
+          </div>
         </form>
       </MDBCardBody>
     </MDBCard>

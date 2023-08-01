@@ -60,7 +60,6 @@ public class ControladorRevision {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No es posible crear la revisión ya que no eres el creador de la cita " + revision.getIdCita());
         }
         r.setFecha(c.getHorario());
-        r.setCita(c);
         Motocicleta m = motocicletaRepositorio.findById(revision.getNumBastidor())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Moto no encontrada"));
 

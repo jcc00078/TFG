@@ -3,12 +3,7 @@
     <div class="row align-items-center bg-light mb-2">
       <h2
         class="text-center"
-        style="
-          color: darkred;
-          font-size: 300%;
-          font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
-            'Lucida Sans', Arial, sans-serif;
-        "
+        style="color: darkred; font-size: 300%; font-family: Verdana"
       >
         Tu recomendador
       </h2>
@@ -19,8 +14,7 @@
         style="
           color: black;
           font-size: 2.5rem;
-          font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
-            'Lucida Sans', Arial, sans-serif;
+          font-family: Verdana;
           padding: 0.063rem;
         "
       >
@@ -29,7 +23,8 @@
       <div class="row text-center">
         <div class="col-md-3 col-sm-6 col-lg-3 my-md-4 my-2">
           <MDBDropdown v-model="dropdownCilindrada">
-            <MDBDropdownToggle
+            <MDBDropdownToggle class="bg-gradient"
+              style="font-family: Verdana"
               @click="dropdownCilindrada = !dropdownCilindrada"
               color="secondary"
             >
@@ -63,7 +58,8 @@
         </div>
         <div class="col-md-3 col-sm-6 col-lg-3 my-md-4 my-2">
           <MDBDropdown v-model="dropdownOnOffRoad">
-            <MDBDropdownToggle
+            <MDBDropdownToggle class="bg-gradient"
+              style="font-family: Verdana"
               @click="dropdownOnOffRoad = !dropdownOnOffRoad"
               color="secondary"
             >
@@ -81,7 +77,8 @@
         </div>
         <div class="col-md-3 col-sm-6 col-lg-3 my-md-4 my-2">
           <MDBDropdown v-model="dropdownCarnet">
-            <MDBDropdownToggle
+            <MDBDropdownToggle class="bg-gradient"
+              style="font-family: Verdana"
               @click="dropdownCarnet = !dropdownCarnet"
               color="secondary"
             >
@@ -101,7 +98,8 @@
         </div>
         <div class="col-md-3 col-sm-6 col-lg-3 my-md-4 my-2">
           <MDBDropdown v-model="dropdownTipo">
-            <MDBDropdownToggle
+            <MDBDropdownToggle class="bg-gradient"
+              style="font-family: Verdana"
               @click="dropdownTipo = !dropdownTipo"
               color="secondary"
             >
@@ -124,7 +122,6 @@
       <MDBCard>
         <MDBCardBody>
           <MDBCardTitle>Modelos recomendados</MDBCardTitle>
-          <MDBCardText> Elige 2 motocicletas para compararlas </MDBCardText>
         </MDBCardBody>
         <div class="row">
           <div
@@ -135,6 +132,7 @@
             <img
               :src="`data:image/png;base64,${moto.imagenData}`"
               class="w-100"
+              :title="moto.modelo"
             />
           </div>
         </div>
@@ -169,6 +167,7 @@
   inset: unset !important;
   transform: none !important;
 }
+
 </style>
 <script>
 import sliderRecomendador from "@/components/sliderRecomendador.vue";
@@ -178,7 +177,6 @@ import {
   MDBCard,
   MDBCardBody,
   MDBCardTitle,
-  MDBCardText,
   MDBDropdown,
   MDBDropdownToggle,
   MDBDropdownMenu,
@@ -202,11 +200,9 @@ export default {
     MDBCard,
     MDBCardBody,
     MDBCardTitle,
-    MDBCardText,
     MDBBtn,
     MDBTooltip,
     selectorUnicoRecomendador,
-    //MDBRange
   },
   setup() {
     const minRange = useDebouncedRef(0, 400);

@@ -7,16 +7,19 @@
       <div class="col col-md-4 align-self-center d-flex justify-content-end">
         <MDBCard class="m-5 w-100 bg-light">
           <MDBCardBody>
-            <MDBCardTitle class="text-center">Presupuesto</MDBCardTitle>
+            <MDBCardTitle style="font-family: Verdana" class="text-center"
+              >Presupuesto</MDBCardTitle
+            >
             <ul class="list-group">
               <li
+                style="font-family: Verdana"
                 class="list-group-item"
                 v-for="(item, index) in presupuesto"
                 v-bind:key="item.nombre"
               >
                 {{ item.nombre }} {{ item.precio }} €
 
-                <MDBBtn 
+                <MDBBtn
                   @click="eliminarAccesorio(item)"
                   v-if="index > 0"
                   class="m-2 d-print-none"
@@ -28,10 +31,18 @@
               </li>
             </ul>
             <div class="m-3 text-end" style="font-size: large">
-              <span>Precio total: {{ totalPrecio }} € </span>
+              <span style="font-family: Verdana"
+                >Precio total: {{ totalPrecio }} €
+              </span>
             </div>
-            <div class="d-print-none col my-4 text-center d-flex justify-content-center">
-              <MDBBtn @click="impPag" color="primary" 
+            <div
+              class="d-print-none col my-4 text-center d-flex justify-content-center"
+            >
+              <MDBBtn
+                class="bg-gradient"
+                color="secondary"
+                @click="impPag"
+                style="font-family: Verdana; color: white"
                 >Imprimir presupuesto</MDBBtn
               >
             </div>
@@ -39,17 +50,14 @@
         </MDBCard>
       </div>
     </div>
-    <div class="d-print-none row my-2" style="background-color: transparent;">
+    <div class="d-print-none row my-2" style="background-color: transparent">
       <div class="my-2 col" style="position: relative">
-        <div class="my-2 border bg-success bg-gradient text-white" style="position: relative">
-          <h2
-            class="d-flex align-items-center m-0 "
-            style="
-              font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman',
-                serif;
-            "
-          >
-            <MDBBtn 
+        <div
+          class="my-2 border bg-success bg-gradient text-white"
+          style="position: relative"
+        >
+          <h2 class="d-flex align-items-center m-0">
+            <MDBBtn
               @click="muestraAccesorio()"
               class="m-2"
               outline="dark"
@@ -66,9 +74,9 @@
           </h2>
         </div>
       </div>
-      <div class="row" style="margin: 0;" v-if="mostrarAccesorio">
+      <div class="row" style="margin: 0" v-if="mostrarAccesorio">
         <lista-foto-piezas
-          class="col-3"
+          class="col-4"
           v-for="accesorio in accesorios.sort((a, b) => a.cod - b.cod)"
           v-bind:key="accesorio.cod"
           :imagenData="accesorio.imagenData"
@@ -78,7 +86,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import {
   MDBCard,
@@ -163,38 +170,37 @@ export default {
 
     eliminarAccesorio(accesorio) {
       for (let i = 0; i < this.presupuesto.length; i++) {
-        if(this.presupuesto[i].nombre===accesorio.nombre){
-          this.presupuesto.splice(i,1);
+        if (this.presupuesto[i].nombre === accesorio.nombre) {
+          this.presupuesto.splice(i, 1);
         }
-}
+      }
     },
-    impPag(){
+    impPag() {
       window.print();
-
     },
   },
-    computed: {
-      totalPrecio() {
-        return this.presupuesto.reduce(
-          (precioAcc, accesorio) => precioAcc + accesorio.precio,
-          0
-        );
-      },
-      fotoMoto() {
-        const seleccionados = this.presupuesto
-          .filter((item) => item.cod)
-          .map((item) => item.cod);
-        if (seleccionados.length == 0) {
-          return this.moto.imagenData;
-        }
-        const grupos = this.grupoAccesorios.filter(
-          (grupo) => grupo.codAccesorios.length === seleccionados.length
-        );
-
-        return grupos.find((grupo) =>
-          this.mismosAccesorios(seleccionados, grupo.codAccesorios)
-        )?.imagenData;
-      },
+  computed: {
+    totalPrecio() {
+      return this.presupuesto.reduce(
+        (precioAcc, accesorio) => precioAcc + accesorio.precio,
+        0
+      );
     },
-  };
+    fotoMoto() {
+      const seleccionados = this.presupuesto
+        .filter((item) => item.cod)
+        .map((item) => item.cod);
+      if (seleccionados.length == 0) {
+        return this.moto.imagenData;
+      }
+      const grupos = this.grupoAccesorios.filter(
+        (grupo) => grupo.codAccesorios.length === seleccionados.length
+      );
+
+      return grupos.find((grupo) =>
+        this.mismosAccesorios(seleccionados, grupo.codAccesorios)
+      )?.imagenData;
+    },
+  },
+};
 </script>

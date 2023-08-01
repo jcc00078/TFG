@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="font-family: Verdana">
     <div class="d-flex align-items-start justify-content-center h-100 w-100">
       <div class="d-flex flex-column align-items-center">
         <h2 class="mt-5">Selecciona día para reservar la cita</h2>
@@ -94,7 +94,6 @@
                             :max-date="fechaLimite()"
                             :disabled-dates="fechasDeshabilitadas"
                             is-dark
-
                           >
                           </v-date-picker>
                         </div>
@@ -108,15 +107,15 @@
         </MDBModalBody>
 
         <MDBModalFooter>
-          <MDBBtn color="secondary" @click="cerrarModal()">Cerrar</MDBBtn>
-          <MDBBtn
+          <MDBBtn class="bg-gradient" color="secondary" @click="cerrarModal()">Cerrar</MDBBtn>
+          <MDBBtn class="bg-gradient"
             v-if="fecha"
-            color="primary"
+            color="success"
             :disabled="horaSeleccionada == '' || motoSeleccionada == ''"
             @click="realizaReserva()"
             >Reservar</MDBBtn
           >
-          <MDBBtn
+          <MDBBtn class="bg-gradient"
             v-if="!fecha"
             color="success"
             @click="modificaReserva()"
@@ -127,7 +126,7 @@
       </MDBModal>
     </div>
     <div class="text-center mt-5">
-      <MDBBtn color="primary" @click="muestraTCitas()">Mis citas</MDBBtn>
+      <MDBBtn class="bg-gradient" color="primary" @click="muestraTCitas()">Mis citas</MDBBtn>
     </div>
     <div class="container">
       <div class="row justify-content-center">
@@ -138,7 +137,7 @@
               v-if="listaCitas"
               text="body"
               style="background-color: #5cafff"
-              class="m-5"
+              class="m-5 bg-gradient"
             >
               <MDBCardHeader class="text-center">
                 <h4>
@@ -199,7 +198,7 @@
                               <div class="col-12 d-flex justify-content-center">
                                 <MDBBtn
                                   @click="eliminarCita(cita.id)"
-                                  class="m-2 d-print-none custom-btn"
+                                  class="m-2 d-print-none custom-btn bg-gradient"
                                   color="danger"
                                   style="
                                     border-width: 0rem;
@@ -216,7 +215,7 @@
                                 </MDBBtn>
                                 <MDBBtn
                                   @click="mostrarModificarReserva(cita)"
-                                  class="m-2 d-print-none custom-btn"
+                                  class="m-2 d-print-none custom-btn bg-gradient"
                                   color="warning"
                                   style="
                                     border-width: 0px;

@@ -1,7 +1,12 @@
 <template>
   <div class="card" :class="{ desactivado }">
-    <img :src="`data:image/png;base64,${datosModelo[motoSeleccionada]?.imagenData}`" v-if="datosModelo[motoSeleccionada]?.imagenData" class="card-img-top" alt="..." />
-    <img src="../assets/logoComparador.png" v-else/>
+    <img
+      :src="`data:image/png;base64,${datosModelo[motoSeleccionada]?.imagenData}`"
+      v-if="datosModelo[motoSeleccionada]?.imagenData"
+      class="card-img-top"
+      alt="..."
+    />
+    <img src="../assets/logoComparador.png" v-else />
     <div class="card-body">
       <h5 class="card-title">
         {{ this.titulo }} {{ ": " + motoSeleccionada }}
@@ -13,9 +18,8 @@
             v-model="seleccion"
             class="form-select"
             id="selectComparador"
-            aria-label="Default select example"
           >
-            <option value="">Selecciona una marca</option>
+            <option value="" disabled>Selecciona una marca</option>
             <option :value="marca" v-for="marca in marcas" :key="marca">
               {{ marca }}
             </option>
@@ -31,7 +35,11 @@
             aria-label="Default select example"
           >
             <option selected value="">Selecciona un modelo</option>
-            <option :value="moto" v-for="moto in motos" :key="moto">
+            <option
+              :value="moto"
+              v-for="moto in motos.filter((m) => m !== this.modeloNoElegible)"
+              :key="moto"
+            >
               {{ moto }}
             </option>
           </select>
@@ -58,6 +66,7 @@ export default {
     titulo: String,
     motoSeleccionada: String,
     desactivado: Boolean,
+    modeloNoElegible: String,
   },
   emits: ["update:motoSeleccionada"],
   setup(props, { emit }) {
@@ -85,12 +94,9 @@ export default {
             `motos/${marca}/modelos`
           );
           store.setModelo(marca, arrayModelos);
-         
-         
+
           arrayModelos.forEach(async (modelo) => {
-            const { data: datosModelo } = await axios.get(
-              `motos/${modelo}`
-            );
+            const { data: datosModelo } = await axios.get(`motos/${modelo}`);
             store.setDatosModelo(modelo, datosModelo);
           });
         });

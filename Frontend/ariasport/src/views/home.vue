@@ -1,46 +1,33 @@
 <template>
-    <MDBCarousel
-      v-model="carousel1"
-      :items="items1"
-      fade
-    />
-  </template>
-  <style>
-.carousel-control-prev-icon::after,
-.carousel-control-next-icon::after {
-  content: "";
+  <div
+    class="container-fluid d-flex justify-content-center align-items-center vh-100"
+  >
+    <div class="d-flex justify-content-center align-items-center">
+      <img
+        class="img-fluid custom-image-size"
+        src="@/assets/logo_index.png"
+        alt="2023"
+      />
+    </div>
+  </div>
+</template>
+<style>
+.custom-image-size {
+  max-width: 100%;
+  height: auto;
 }
-
+/* Estilo global para ocultar la barra de desplazamiento vertical */
+.hide-scrollbar {
+  overflow-y: hidden;
+}
 </style>
-
 <script>
-  import { ref } from "vue";
-  import { MDBCarousel } from "mdb-vue-ui-kit";
-  export default {
-    components: {
-      MDBCarousel
-    },
-    setup() {
-      const items1 = [
-        {
-          src: "https://mdbootstrap.com/img/Photos/Slides/img%20(19).webp",
-          alt: "...",
-          label: "Elige la motocicleta que te apasione",
-          caption: "Imágenes provisionales"
-        },
-        {
-          src: "https://mdbootstrap.com/img/Photos/Slides/img%20(23).webp",
-          alt: "...",
-          label: "Third slide label",
-          caption:
-            "Praesent commodo cursus magna, vel scelerisque nisl consectetur."
-        }
-      ];
-      const carousel1 = ref(0);
-      return {
-        items1,
-        carousel1
-      };
-    }
-  };
+export default {
+  mounted() {
+    document.body.classList.add("hide-scrollbar");
+  },
+  beforeUnmount() {
+    document.body.classList.remove("hide-scrollbar");
+  },
+};
 </script>

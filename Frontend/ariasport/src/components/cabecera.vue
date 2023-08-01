@@ -48,30 +48,56 @@
           Bienvenido {{ store.username }}
         </MDBNavbarItem>
       </MDBNavbarNav>
-      <router-link to="/admin">
-        <MDBBtn v-if="store.esAdmin" color="warning" class="text-white">
-          Funcionalidad de admin
-        </MDBBtn>
-
-      </router-link>
-      <router-link to="/inicioSesion">
-        <MDBBtn v-if="!store.username" color="primary" class="text-white">
-          Iniciar Sesión
-        </MDBBtn>
-        <router-link to="/">
-          <MDBBtn
-            v-if="store.username"
-            color="danger"
-            class="text-white"
-            @click="logout()"
-          >
-            Cerrar Sesión
+      <div class="d-sm-none my-3"> <!-- Version movil -->
+        <router-link to="/admin">
+          <MDBBtn v-if="store.esAdmin" class="gradient-custom text-white">
+            Funcionalidad de admin
           </MDBBtn>
         </router-link>
+      </div>
+      <div class="d-none d-sm-block"><!-- Version escritorio -->
+        <router-link to="/admin">
+          <MDBBtn v-if="store.esAdmin" class="gradient-custom text-white">
+            Funcionalidad de admin
+          </MDBBtn>
+        </router-link>
+      </div>
+      <router-link to="/inicioSesion">
+        <MDBBtn
+          v-if="!store.username"
+          class="gradient-customInicSes text-white"
+        >
+          Iniciar Sesión
+        </MDBBtn>
+      </router-link>
+
+      <router-link to="/">
+        <MDBBtn
+          v-if="store.username"
+          class="gradient-custom2 text-white"
+          @click="logout()"
+        >
+          Cerrar Sesión
+        </MDBBtn>
       </router-link>
     </MDBCollapse>
   </MDBNavbar>
 </template>
+<style >
+.gradient-customInicSes {
+  background-image: linear-gradient(to top, #09203f 0%, #537895 100%);
+}
+.gradient-custom {
+  background-image: linear-gradient(to right, #868f96 0%, #596164 100%);
+}
+.gradient-custom2 {
+  background-image: radial-gradient(
+    circle farthest-corner at 17.1% 22.8%,
+    rgba(226, 24, 24, 1) 0%,
+    rgba(160, 6, 6, 1) 90%
+  );
+}
+</style>
 
 
     <script>

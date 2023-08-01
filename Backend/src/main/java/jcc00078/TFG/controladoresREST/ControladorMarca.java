@@ -53,4 +53,10 @@ public class ControladorMarca {
         marcaRepositorio.save(m);
     }
 
+    @GetMapping("{nombreMarca}")
+    public MarcaDTO listarDatosMarca(@PathVariable String nombreMarca) {
+        return marcaRepositorio.findOneByNombre(nombreMarca)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "La marca " + nombreMarca + " no existe"))
+                .toDTO();
+    }
 }

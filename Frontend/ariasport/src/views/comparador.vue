@@ -1,7 +1,8 @@
 <template>
   <div class="container">
     <div class="row justify-content-center">
-      <cartaComparador class="col-md"
+      <cartaComparador
+        class="col-md"
         v-for="(moto, i) in motos"
         v-bind:key="moto"
         v-model:moto-seleccionada="motos[i].value"
@@ -9,11 +10,10 @@
         titulo="Moto elegida"
         style="font-family: Verdana"
       />
-      
     </div>
     <table class="table" v-if="propiedades.length !== 0">
       <thead>
-        <tr>
+        <tr style="font-family: Verdana">
           <th scope="col">Marca</th>
           <th scope="col">Modelo</th>
           <th scope="col">Color</th>
@@ -33,6 +33,7 @@
     </table>
     <div class="row justify-content-between" v-if="propiedades.length !== 0">
       <a
+        style="font-family: Verdana"
         class="col-4 text-center link-primary"
         id="competidores"
         v-for="moto in propiedades"
@@ -44,7 +45,9 @@
       <div class="row justify-content-center">
         <div class="mt-4 card" style="width: 18rem">
           <div class="text-center" v-if="competidores.length !== 0">
-            <p>Los competidores de la moto seleccionada son</p>
+            <p style="font-family: Verdana">
+              Los competidores de la moto seleccionada son
+            </p>
           </div>
           <ul class="list-group list-group-light">
             <li
@@ -106,7 +109,10 @@ export default {
         this.todosModelos = resp.data;
         for (let i = 0; i < this.todosModelos.length; i++) {
           //Filtro por mismo tipo de moto
-          if (moto.tipo == this.todosModelos[i].tipo && moto.modelo != this.todosModelos[i].modelo) {
+          if (
+            moto.tipo == this.todosModelos[i].tipo &&
+            moto.modelo != this.todosModelos[i].modelo
+          ) {
             this.competidores.push(this.todosModelos[i].modelo);
           }
         }
