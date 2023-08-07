@@ -12,7 +12,7 @@ export default {
       if (this.imagenData) {
         return `data:image/png;base64,${this.imagenData}`;
       } else {
-        return require("@/assets/moto por defecto.png");
+        return require("@/assets/motoPorDefecto.png");
       }
     },
   },

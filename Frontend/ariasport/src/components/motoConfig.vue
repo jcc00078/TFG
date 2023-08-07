@@ -2,7 +2,11 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-8 align-self-center">
-        <foto-moto class="mt-5 justify-content-end" :imagenData="fotoMoto" />
+        <foto-moto
+          class="mt-5 justify-content-end"
+          :imagenData="fotoMoto"
+          style="aspect-ratio: ;"
+        />
       </div>
       <div class="col col-md-4 align-self-center d-flex justify-content-end">
         <MDBCard class="m-5 w-100 bg-light">
@@ -86,6 +90,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import {
   MDBCard,

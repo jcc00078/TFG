@@ -1,9 +1,9 @@
 <template>
   <div
     class="row-6 d-flex"
-    :class="redirectLink ? 'bg-image hover-zoom hover-overlay' : ''"
+    :class="redirectLink ? 'bg-image hover-overlay' : ''"
   >
-    <img class="col-6" :src="imagenSrc" />
+    <img class="col-6 img-fluid" :src="imagenSrc" />
     <router-link v-if="redirectLink" :to="redirectLink">
       <div
         class="mask"
@@ -12,7 +12,12 @@
     </router-link>
   </div>
 </template>
-
+<style>
+  .imagen-moto {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
 <script>
 export default {
   props: {
@@ -24,7 +29,7 @@ export default {
       if (this.imagenData) {
         return `data:image/png;base64,${this.imagenData}`;
       } else {
-        return require("@/assets/moto por defecto.png");
+        return require("@/assets/motoPorDefecto.png");
       }
     },
   },

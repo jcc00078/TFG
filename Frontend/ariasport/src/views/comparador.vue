@@ -7,6 +7,7 @@
         v-bind:key="moto"
         v-model:moto-seleccionada="motos[i].value"
         :desactivado="i > 0 && motos[i - 1].value === ''"
+        :modelo-no-elegible="motos[i === 0 ? 1 : 0].value"
         titulo="Moto elegida"
         style="font-family: Verdana"
       />

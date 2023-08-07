@@ -1,12 +1,14 @@
 <template>
   <div class="card" :class="{ desactivado }">
-    <img
-      :src="`data:image/png;base64,${datosModelo[motoSeleccionada]?.imagenData}`"
-      v-if="datosModelo[motoSeleccionada]?.imagenData"
-      class="card-img-top"
-      alt="..."
-    />
-    <img src="../assets/logoComparador.png" v-else />
+    <div class="image-container">
+      <img
+        :src="`data:image/png;base64,${datosModelo[motoSeleccionada]?.imagenData}`"
+        v-if="datosModelo[motoSeleccionada]?.imagenData"
+        class="card-img-top custom-image"
+        alt="..."
+      />
+      <img class="default-image" src="../assets/motoPorDefecto.png" v-else />
+    </div>
     <div class="card-body">
       <h5 class="card-title">
         {{ this.titulo }} {{ ": " + motoSeleccionada }}
@@ -37,7 +39,7 @@
             <option selected value="">Selecciona un modelo</option>
             <option
               :value="moto"
-              v-for="moto in motos.filter((m) => m !== this.modeloNoElegible)"
+              v-for="moto in motos.filter((m) => m !== modeloNoElegible)"
               :key="moto"
             >
               {{ moto }}
@@ -54,6 +56,29 @@
   margin-right: 20px;
   width: 18rem;
   border: 0px;
+}
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* Aspect ratio 16:9 (9 / 16 * 100) */
+}
+
+.custom-image,
+.default-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.custom-image {
+  object-fit: fill;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.default-image {
+  object-position: center;
 }
 </style>
 <script>

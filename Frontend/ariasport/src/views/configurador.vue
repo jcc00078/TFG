@@ -7,20 +7,34 @@
           <MDBCardText> Elige una motocicleta para configurarla </MDBCardText>
         </MDBCardBody>
         <div class="row">
-          <foto-moto class="justify-content-center"
+          <foto-moto
+            class="justify-content-center moto-container my-3"
             v-for="moto in motos"
             v-bind:key="moto"
             :imagenData="moto.imagenData"
             :redirectLink="`/configurador/${moto.modelo}`"
+            @mouseover="applyBrightness(1.2, moto)"
+            @mouseleave="resetBrightness(moto)"
           />
         </div>
       </MDBCard>
     </div>
   </div>
 </template>
+<style scoped>
+.moto-container {
+  transition: filter 0.3s ease-in-out;
+  max-width: 100%;
+  background: none;
+}
+
+.moto-container:hover {
+  filter: brightness(var(--brightness, 1)); /* Aplicar el brillo */
+}
+</style>
+
 
 <script>
-//import router from "@/router";
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import fotoMoto from "@/components/fotoMoto.vue";
@@ -48,6 +62,14 @@ export default {
     return {
       motos,
     };
+  },
+  methods: {
+    applyBrightness(factor, moto) {
+      moto.brightness = factor;
+    },
+    resetBrightness(moto) {
+      moto.brightness = 1.0;
+    },
   },
 };
 </script>

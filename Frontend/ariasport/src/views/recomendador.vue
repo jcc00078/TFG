@@ -125,7 +125,7 @@
         </MDBCardBody>
         <div class="row">
           <div
-            class="col-sm-6 col-md-4 col-lg-3 bg-image hover-zoom hover-overlay"
+            class="col-sm-6 col-md-4 col-lg-3 bg-image hover-overlay"
             v-for="moto in motos"
             :key="moto"
           >
