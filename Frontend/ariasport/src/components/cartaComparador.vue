@@ -1,5 +1,5 @@
 <template>
-  <div class="card" :class="{ desactivado }">
+  <div class="card" :class="{ desactivado }" style="height: fit-content;">
     <div class="image-container">
       <img
         :src="`data:image/png;base64,${datosModelo[motoSeleccionada]?.imagenData}`"
@@ -22,7 +22,11 @@
             id="selectComparador"
           >
             <option value="" disabled>Selecciona una marca</option>
-            <option :value="marca" v-for="marca in marcas" :key="marca">
+            <option
+              :value="marca"
+              v-for="marca in marcas.filter(mostrarMarca)"
+              :key="marca"
+            >
               {{ marca }}
             </option>
           </select>
@@ -75,6 +79,7 @@
   object-fit: fill;
   max-width: 100%;
   max-height: 100%;
+  border-radius: 30px;
 }
 
 .default-image {
@@ -135,7 +140,14 @@ export default {
       datosModelo,
     };
   },
-
+  methods: {
+    mostrarMarca(marca) {
+      return (
+        this.modelos[marca].filter((m) => m !== this.modeloNoElegible).length >
+        0
+      );
+    },
+  },
   computed: {
     motos() {
       if (this.seleccion != "") {

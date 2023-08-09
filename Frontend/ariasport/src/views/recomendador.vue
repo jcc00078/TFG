@@ -1,14 +1,17 @@
 <template>
   <div class="container">
-    <div class="row align-items-center bg-light mb-2">
+    <div class="row align-items-center bgRec2 mb-2" style="border-radius: 10px">
       <h2
         class="text-center"
-        style="color: darkred; font-size: 300%; font-family: Verdana"
+        style="color: black; font-size: 300%; font-family: Verdana"
       >
         Tu recomendador
       </h2>
     </div>
-    <div class="row justify-content-center my-5 mb-2 bg-light">
+    <div
+      class="row justify-content-center my-5 mb-2 "
+      style="border-radius: 10px"
+    >
       <h2
         class="text-center"
         style="
@@ -23,7 +26,8 @@
       <div class="row text-center">
         <div class="col-md-3 col-sm-6 col-lg-3 my-md-4 my-2">
           <MDBDropdown v-model="dropdownCilindrada">
-            <MDBDropdownToggle class="bg-gradient"
+            <MDBDropdownToggle
+              class="bg-gradient"
               style="font-family: Verdana"
               @click="dropdownCilindrada = !dropdownCilindrada"
               color="secondary"
@@ -58,7 +62,8 @@
         </div>
         <div class="col-md-3 col-sm-6 col-lg-3 my-md-4 my-2">
           <MDBDropdown v-model="dropdownOnOffRoad">
-            <MDBDropdownToggle class="bg-gradient"
+            <MDBDropdownToggle
+              class="bg-gradient"
               style="font-family: Verdana"
               @click="dropdownOnOffRoad = !dropdownOnOffRoad"
               color="secondary"
@@ -77,7 +82,8 @@
         </div>
         <div class="col-md-3 col-sm-6 col-lg-3 my-md-4 my-2">
           <MDBDropdown v-model="dropdownCarnet">
-            <MDBDropdownToggle class="bg-gradient"
+            <MDBDropdownToggle
+              class="bg-gradient"
               style="font-family: Verdana"
               @click="dropdownCarnet = !dropdownCarnet"
               color="secondary"
@@ -98,7 +104,8 @@
         </div>
         <div class="col-md-3 col-sm-6 col-lg-3 my-md-4 my-2">
           <MDBDropdown v-model="dropdownTipo">
-            <MDBDropdownToggle class="bg-gradient"
+            <MDBDropdownToggle
+              class="bg-gradient"
               style="font-family: Verdana"
               @click="dropdownTipo = !dropdownTipo"
               color="secondary"
@@ -118,8 +125,8 @@
         </div>
       </div>
     </div>
-    <div class="row my-5 text-center bg-light mb-2" style="height: 25rem">
-      <MDBCard>
+    <div class="row my-5 text-center mb-2">
+      <MDBCard class="bgRec2">
         <MDBCardBody>
           <MDBCardTitle>Modelos recomendados</MDBCardTitle>
         </MDBCardBody>
@@ -133,6 +140,7 @@
               :src="`data:image/png;base64,${moto.imagenData}`"
               class="w-100"
               :title="moto.modelo"
+              style="border-radius: 30px; aspect-ratio: 16/9"
             />
           </div>
         </div>
@@ -167,8 +175,27 @@
   inset: unset !important;
   transform: none !important;
 }
-
+.bgRec {
+  background: rgb(194, 194, 194);
+  background: linear-gradient(
+    185deg,
+    rgba(194, 194, 194, 1) 0%,
+    rgba(124, 146, 150, 1) 100%
+  );
+}
+.bgRec2 {
+  background: rgb(194, 194, 194);
+  background: linear-gradient(
+    185deg,
+    rgba(194, 194, 194, 1) 51%,
+    rgba(137, 147, 149, 1) 100%
+  );
+}
 </style>
+
+
+
+
 <script>
 import sliderRecomendador from "@/components/sliderRecomendador.vue";
 import sliderRecomendadorMovil from "@/components/sliderRecomendadorMovil.vue";
@@ -183,7 +210,6 @@ import {
   MDBDropdownItem,
   MDBBtn,
   MDBTooltip,
-  //MDBRange
 } from "mdb-vue-ui-kit";
 import { onMounted, ref, watch } from "vue";
 import axios from "axios";

@@ -13,7 +13,6 @@
       <MDBCardBody>
         <MDBCardTitle>Inicia sesión</MDBCardTitle>
         <form id="login-form" @submit.prevent="login()">
-          <!-- Dni input -->
           <MDBInput
             type="text"
             label="DNI"
@@ -21,7 +20,6 @@
             v-model="dni"
             wrapperClass="mb-4"
           />
-          <!-- Password input -->
           <MDBInput
             type="password"
             label="Contraseña"

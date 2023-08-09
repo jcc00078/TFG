@@ -3,7 +3,7 @@
     class="row-6 d-flex"
     :class="redirectLink ? 'bg-image hover-overlay' : ''"
   >
-    <img class="col-6 img-fluid" :src="imagenSrc" />
+    <img class="col-6 img-fluid" :src="imagenSrc" style="border-radius: 30px" />
     <router-link v-if="redirectLink" :to="redirectLink">
       <div
         class="mask"
@@ -12,12 +12,6 @@
     </router-link>
   </div>
 </template>
-<style>
-  .imagen-moto {
-    max-width: 100%;
-    height: auto;
-  }
-</style>
 <script>
 export default {
   props: {

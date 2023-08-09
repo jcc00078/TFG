@@ -1,11 +1,10 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-8 align-self-center">
+      <div class="col-8 align-self-start">
         <foto-moto
           class="mt-5 justify-content-end"
           :imagenData="fotoMoto"
-          style="aspect-ratio: ;"
         />
       </div>
       <div class="col col-md-4 align-self-center d-flex justify-content-end">
@@ -17,21 +16,25 @@
             <ul class="list-group">
               <li
                 style="font-family: Verdana"
-                class="list-group-item"
+                class="d-flex list-group-item justify-content-between"
                 v-for="(item, index) in presupuesto"
                 v-bind:key="item.nombre"
               >
-                {{ item.nombre }} {{ item.precio }} €
-
-                <MDBBtn
-                  @click="eliminarAccesorio(item)"
-                  v-if="index > 0"
-                  class="m-2 d-print-none"
-                  outline="danger"
-                  style="border-width: 0px; padding: 0cm; height: auto"
-                >
-                  <i class="fas fa-backspace"></i>
-                </MDBBtn>
+                <div class="align-middle">
+                  {{ item.nombre }}
+                </div>
+                <span class="align-middle"
+                  >{{ item.precio }} €
+                  <MDBBtn
+                    @click="eliminarAccesorio(item)"
+                    v-if="index > 0"
+                    class="m-2 d-print-none"
+                    outline="danger"
+                    style="border-width: 0px; padding: 0cm; height: auto"
+                  >
+                    <i class="fas fa-backspace"></i>
+                  </MDBBtn>
+                </span>
               </li>
             </ul>
             <div class="m-3 text-end" style="font-size: large">
@@ -65,17 +68,33 @@
               @click="muestraAccesorio()"
               class="m-2"
               outline="dark"
+              :disabled="botonDeshabilitado"
               style="border-width: 4px;height: 40px; width: 50px padding: 0cm;"
               floating
             >
               <i
+                v-if="!botonDeshabilitado"
                 class="fas fa-plus d-flex align-items-center"
-                style="font-size: x-large; margin-left: 4px; marg"
+                style="font-size: x-large; margin-left: 4px"
               >
               </i>
+              <i
+                v-else
+                class="fas fa-ban d-flex align-items-center"
+                style="font-size: x-large; margin-left: 6px"
+              ></i>
             </MDBBtn>
             Añadir accesorios
           </h2>
+        </div>
+        <div
+          v-if="sinAccesorios && muestraError"
+          id="errorMensaje"
+          class="alert alert-danger border-color-red"
+          border-color="red"
+          role="alert"
+        >
+          No hay accesorios disponibles para este modelo
         </div>
       </div>
       <div class="row" style="margin: 0" v-if="mostrarAccesorio">
@@ -90,7 +109,12 @@
     </div>
   </div>
 </template>
-
+<style>
+.align-middle {
+  display: flex;
+  align-items: center;
+}
+</style>
 <script>
 import {
   MDBCard,
@@ -124,7 +148,9 @@ export default {
     const grupoAccesorios = ref([]);
     const presupuesto = ref([]);
     const mostrarAccesorio = ref(false);
-
+    const sinAccesorios = ref(false);
+    const muestraError = ref(false);
+    const botonDeshabilitado = ref(false);
     onMounted(async () => {
       const modelo = route.params.modelo;
       const { data: datosMoto } = await axios.get(`motos/${modelo}`);
@@ -135,8 +161,12 @@ export default {
       const { data: datosAccesorioMoto } = await axios.get(
         `motos/${modelo}/accesorios`
       );
-      accesorios.value = datosAccesorioMoto;
-      grupoAccesorios.value = datosGAccesoriosMoto;
+      if (datosGAccesoriosMoto.length === 0) {
+        sinAccesorios.value = true;
+      } else {
+        accesorios.value = datosAccesorioMoto;
+        grupoAccesorios.value = datosGAccesoriosMoto;
+      }
       presupuesto.value.push({
         nombre: datosMoto.modelo,
         precio: datosMoto.precio,
@@ -144,7 +174,13 @@ export default {
     });
 
     function muestraAccesorio() {
-      mostrarAccesorio.value = !mostrarAccesorio.value;
+      if (sinAccesorios.value) {
+        //alert("Este modelo de moto no tiene accesorios disponibles.");
+        muestraError.value = true;
+        botonDeshabilitado.value = true;
+      } else {
+        mostrarAccesorio.value = !mostrarAccesorio.value;
+      }
     }
 
     return {
@@ -155,6 +191,9 @@ export default {
       presupuesto,
       mostrarAccesorio,
       muestraAccesorio,
+      sinAccesorios,
+      muestraError,
+      botonDeshabilitado,
     };
   },
   methods: {
