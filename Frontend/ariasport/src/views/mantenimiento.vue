@@ -25,6 +25,9 @@
             </router-link>
           </div>
         </MDBCardText>
+        <div v-if="cargandoMotos" class="spinner-border mt-4" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
       </MDBCardBody>
     </MDBCard>
   </div>
@@ -64,6 +67,7 @@ export default {
     const bastidorCorrecto = ref("false");
     const motosUsuario = ref([]);
     const store = useAuthStore();
+    const cargandoMotos = ref(true);
 
     onMounted(async () => {
       const { data: arrayMotos } = await axios.get(
@@ -83,6 +87,7 @@ export default {
       bastidorCorrecto,
       motosUsuario,
       store,
+      cargandoMotos,
     };
   },
   methods: {

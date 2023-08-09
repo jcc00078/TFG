@@ -9,7 +9,7 @@
       </h2>
     </div>
     <div
-      class="row justify-content-center my-5 mb-2 "
+      class="row justify-content-center my-5 mb-2"
       style="border-radius: 10px"
     >
       <h2
@@ -129,6 +129,9 @@
       <MDBCard class="bgRec2">
         <MDBCardBody>
           <MDBCardTitle>Modelos recomendados</MDBCardTitle>
+          <div v-if="cargandoMotos" class="spinner-border mt-4" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
         </MDBCardBody>
         <div class="row">
           <div
@@ -242,10 +245,12 @@ export default {
     const dropdownTipo = ref(false);
     const motos = ref([]);
     const tooltip1 = ref(false);
+    const cargandoMotos = ref(true);
 
     onMounted(async () => {
       const { data: arrayTodosModelos } = await axios.get(`motos/modelos`);
       motos.value = arrayTodosModelos;
+      cargandoMotos.value = false;
     });
 
     watch(
@@ -282,6 +287,7 @@ export default {
       dropdownCarnet,
       dropdownTipo,
       tooltip1,
+      cargandoMotos,
     };
   },
   methods: {

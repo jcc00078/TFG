@@ -5,7 +5,11 @@
         <MDBCardBody>
           <MDBCardTitle>Configura una motocicleta</MDBCardTitle>
           <MDBCardText> Elige una motocicleta para configurarla </MDBCardText>
+          <div v-if="cargandoMotos" class="spinner-border mt-4" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
         </MDBCardBody>
+
         <div class="row">
           <foto-moto
             class="justify-content-center moto-container my-3"
@@ -55,12 +59,15 @@ export default {
   },
   setup() {
     const motos = ref([]);
+    const cargandoMotos = ref(true);
     onMounted(async () => {
       const { data: arrayTodosModelos } = await axios.get(`motos/modelos`);
       motos.value = arrayTodosModelos;
+      cargandoMotos.value = false;
     });
     return {
       motos,
+      cargandoMotos,
     };
   },
   methods: {

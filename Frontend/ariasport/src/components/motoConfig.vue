@@ -2,17 +2,19 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-8 align-self-start">
-        <foto-moto
-          class="mt-5 justify-content-end"
-          :imagenData="fotoMoto"
-        />
+        <foto-moto class="mt-5 justify-content-end" :imagenData="fotoMoto" />
       </div>
-      <div class="col col-md-4 align-self-center d-flex justify-content-end">
-        <MDBCard class="m-5 w-100 bg-light">
+
+      <div class="col col-md-4 align-self-center d-flex justify-content-center">
+        <div v-if="cargando" class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+        <MDBCard v-show="!cargando" class="m-5 w-100 bg-light">
           <MDBCardBody>
             <MDBCardTitle style="font-family: Verdana" class="text-center"
               >Presupuesto</MDBCardTitle
             >
+
             <ul class="list-group">
               <li
                 style="font-family: Verdana"
@@ -37,6 +39,7 @@
                 </span>
               </li>
             </ul>
+
             <div class="m-3 text-end" style="font-size: large">
               <span style="font-family: Verdana"
                 >Precio total: {{ totalPrecio }} €
@@ -114,6 +117,7 @@
   display: flex;
   align-items: center;
 }
+
 </style>
 <script>
 import {
@@ -151,6 +155,8 @@ export default {
     const sinAccesorios = ref(false);
     const muestraError = ref(false);
     const botonDeshabilitado = ref(false);
+    const cargando = ref(true);
+
     onMounted(async () => {
       const modelo = route.params.modelo;
       const { data: datosMoto } = await axios.get(`motos/${modelo}`);
@@ -161,6 +167,7 @@ export default {
       const { data: datosAccesorioMoto } = await axios.get(
         `motos/${modelo}/accesorios`
       );
+      cargando.value = false;
       if (datosGAccesoriosMoto.length === 0) {
         sinAccesorios.value = true;
       } else {
@@ -175,7 +182,6 @@ export default {
 
     function muestraAccesorio() {
       if (sinAccesorios.value) {
-        //alert("Este modelo de moto no tiene accesorios disponibles.");
         muestraError.value = true;
         botonDeshabilitado.value = true;
       } else {
@@ -194,6 +200,7 @@ export default {
       sinAccesorios,
       muestraError,
       botonDeshabilitado,
+      cargando,
     };
   },
   methods: {
