@@ -1,4 +1,26 @@
-# ariasport 
+# Ariasport - Aplicación web para concesionario general de motocicletas
+
+## Funcionalidades Destacadas
+
+Ariasport ofrece una serie de características principales para entusiastas/propietarios de motocicletas:
+
+### Configurador de Motocicletas
+
+¡Personaliza tu moto ideal en minutos! Con nuestro configurador de motocicletas, puedes añadir accesorios, visualizar el presupuesto y obtener una vista previa de tu moto completamente personalizada.
+
+### Recomendador de Motocicletas
+
+Nuestro recomendador está diseñado en base a la elección de filtros para sugerirte las motocicletas que mejor se adaptan a tus necesidades y preferencias.
+
+### Comparador de Motocicletas
+
+¿Difícil elección entre varias motos? Con nuestra herramienta de comparación, podrás ver fácilmente las diferencias clave entre diferentes modelos de motocicletas y tomar decisiones informadas.
+
+### Área de Cliente: Gestión de Servicios y Mantenimiento
+
+Mantén tu moto en óptimas condiciones con Ariasport. Programa citas para la revisión de tu motocicleta y lleva un registro de mantenimiento para garantizar que tu moto esté siempre lista para la carretera.
+
+Además de las funcionalidades destacadas, existen varias funcionalidades más que pueden observarse en la aplicación.
 
 ## Project setup
 
